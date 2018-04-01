@@ -10,9 +10,13 @@ use Phpactor\TestUtils\ExtractOffset;
 
 abstract class CouldCompleteTestCase extends TestCase
 {
-    abstract public function provideComplete(): Generator;
-    abstract public function provideCouldComplete(): Generator;
     abstract protected function createCompletor(string $source): CouldComplete;
+
+    abstract public function provideComplete(): Generator;
+
+    abstract public function provideCouldComplete(): Generator;
+
+    abstract public function provideCouldNotComplete(): Generator;
 
     /**
      * @dataProvider provideComplete
@@ -32,13 +36,25 @@ abstract class CouldCompleteTestCase extends TestCase
     /**
      * @dataProvider provideCouldComplete
      */
-    public function testCouldComplete(string $source, bool $shouldComplete)
+    public function testCouldComplete(string $source)
     {
         list($source, $offset) = ExtractOffset::fromSource($source);
         $completor = $this->createCompletor($source);
         $result = $completor->couldComplete($source, $offset);
 
-        $this->assertEquals($shouldComplete, $result);
+        $this->assertEquals(true, $result);
+    }
+
+    /**
+     * @dataProvider provideCouldNotComplete
+     */
+    public function testCouldNotComplete(string $source)
+    {
+        list($source, $offset) = ExtractOffset::fromSource($source);
+        $completor = $this->createCompletor($source);
+        $result = $completor->couldComplete($source, $offset);
+
+        $this->assertEquals(false, $result);
     }
 
 }

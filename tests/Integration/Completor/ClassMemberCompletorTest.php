@@ -372,20 +372,12 @@ EOT
 
     public function provideCouldComplete(): Generator
     {
-        yield 'instance access positive 1' => [
-                <<<'EOT'
-$hello-><>
-EOT
-                ,
-                true,
-            ];
+        yield 'instance member' => [ '$hello-><>' ];
+        yield 'static access' => [ 'Hello::<>' ];
+    }
 
-        yield 'instance access negative 1' => [
-            <<<'EOT'
-$hello<>
-EOT
-            ,
-            false,
-        ];
+    public function provideCouldNotComplete(): Generator
+    {
+        yield 'non member access' => [ '$hello<>' ];
     }
 }
