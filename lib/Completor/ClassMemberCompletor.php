@@ -35,7 +35,9 @@ class ClassMemberCompletor implements CouldComplete
     public function couldComplete(string $source, int $offset): bool
     {
         list($offset, $partialMatch) = $this->getOffetToReflect($source, $offset);
-        die('asd');
+        $accessor = mb_substr($source, $offset, 2);
+
+        return in_array($accessor, [ '::', '->' ]);
     }
 
     public function complete(string $source, int $offset): Response

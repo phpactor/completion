@@ -10,25 +10,22 @@ use Phpactor\WorseReflection\ReflectorBuilder;
 use Phpactor\Completion\Completor;
 use Phpactor\Completion\Response;
 use Phpactor\Completion\Completor\ClassMemberCompletor;
+use Phpactor\Completion\Tests\Integration\CouldCompleteTestCase;
+use Generator;
+use Phpactor\Completion\CouldComplete;
 
-class ClassMemberCompletorTest extends TestCase
+class ClassMemberCompletorTest extends CouldCompleteTestCase
 {
-    /**
-     * @dataProvider provideComplete
-     */
-    public function testComplete(string $source, int $offset, array $expected)
+    protected function createCompletor(string $source): CouldComplete
     {
-        $result = $this->complete($source, $offset);
-
-        $this->assertEquals($expected, $result->suggestions()->toArray());
-        $this->assertEquals(json_encode($expected, true), json_encode($result->suggestions()->toArray(), true));
+        $reflector = ReflectorBuilder::create()->addSource($source)->build();
+        return new ClassMemberCompletor($reflector);
     }
 
-    public function provideComplete()
+    public function provideComplete(): Generator
     {
-        return [
-            'Public property' => [
-                <<<'EOT'
+        yield 'Public property' => [
+            <<<'EOT'
 <?php
 
 class Foobar
@@ -37,19 +34,20 @@ class Foobar
 }
 
 $foobar = new Foobar();
-$foobar->
+$foobar-><>
 
 EOT
-        , 75, [
-                    [
-                        'type' => 'm',
-                        'name' => 'foo',
-                        'info' => 'pub $foo',
-                    ]
-                ]
-            ],
-            'Private property' => [
-                <<<'EOT'
+        , [
+            [
+                'type' => 'm',
+                'name' => 'foo',
+                'info' => 'pub $foo',
+            ]
+        ]
+    ];
+
+        yield 'Private property' => [
+            <<<'EOT'
 <?php
 
 class Foobar
@@ -58,14 +56,15 @@ class Foobar
 }
 
 $foobar = new Foobar();
-$foobar->
+$foobar-><>
 
 EOT
-        , 76,
+        ,
             [ ]
-            ],
-            'Public property access' => [
-                <<<'EOT'
+        ];
+
+        yield 'Public property access' => [
+            <<<'EOT'
 <?php
 
 class Barar
@@ -82,19 +81,20 @@ class Foobar
 }
 
 $foobar = new Foobar();
-$foobar->foo->
+$foobar->foo-><>
 
 EOT
-                , 148, [
-                    [
-                        'type' => 'm',
-                        'name' => 'bar',
-                        'info' => 'pub $bar',
-                    ]
-                ]
-            ],
-            'Public method with parameters' => [
-                <<<'EOT'
+        , [
+            [
+                'type' => 'm',
+                'name' => 'bar',
+                'info' => 'pub $bar',
+            ]
+        ]
+    ];
+
+        yield 'Public method with parameters' => [
+            <<<'EOT'
 <?php
 
 class Foobar
@@ -105,19 +105,20 @@ class Foobar
 }
 
 $foobar = new Foobar();
-$foobar->
+$foobar-><>
 
 EOT
-                , 132, [
-                    [
-                        'type' => 'f',
-                        'name' => 'foo',
-                        'info' => 'pub foo(string $zzzbar = \'bar\', $def): Barbar',
-                    ]
-                ]
-            ],
-            'Public method multiple return types' => [
-                <<<'EOT'
+        , [
+            [
+                'type' => 'f',
+                'name' => 'foo',
+                'info' => 'pub foo(string $zzzbar = \'bar\', $def): Barbar',
+            ]
+        ]
+    ];
+
+        yield 'Public method multiple return types' => [
+            <<<'EOT'
 <?php
 
 class Foobar
@@ -131,19 +132,20 @@ class Foobar
 }
 
 $foobar = new Foobar();
-$foobar->
+$foobar-><>
 
 EOT
-                , 141, [
-                    [
-                        'type' => 'f',
-                        'name' => 'foo',
-                        'info' => 'pub foo(): Foobar|Barbar',
-                    ]
-                ]
-            ],
-            'Private method' => [
-                <<<'EOT'
+        , [
+            [
+                'type' => 'f',
+                'name' => 'foo',
+                'info' => 'pub foo(): Foobar|Barbar',
+            ]
+        ]
+    ];
+
+        yield 'Private method' => [
+            <<<'EOT'
 <?php
 
 class Foobar
@@ -154,14 +156,15 @@ class Foobar
 }
 
 $foobar = new Foobar();
-$foobar->
+$foobar-><>
 
 EOT
-                , 105, [
-                ]
-            ],
-            'Static method' => [
-                <<<'EOT'
+        , [
+        ]
+    ];
+
+        yield 'Static method' => [
+            <<<'EOT'
 <?php
 
 class Foobar
@@ -170,19 +173,20 @@ class Foobar
 }
 
 $foobar = new Foobar();
-$foobar::
+$foobar::<>
 
 EOT
-                , 82, [
-                    [
-                        'type' => 'm',
-                        'name' => 'foo',
-                        'info' => 'pub static $foo',
-                    ]
-                ]
-            ],
-            'Static method with previous arrow accessor' => [
-                <<<'EOT'
+        , [
+            [
+                'type' => 'm',
+                'name' => 'foo',
+                'info' => 'pub static $foo',
+            ]
+        ]
+    ];
+
+        yield 'Static method with previous arrow accessor' => [
+            <<<'EOT'
 <?php
 
 class Foobar
@@ -196,24 +200,25 @@ class Foobar
 }
 
 $foobar = new Foobar();
-$foobar->me::
+$foobar->me::<>
 
 EOT
-                , 138, [
-                    [
-                        'type' => 'm',
-                        'name' => 'foo',
-                        'info' => 'pub static $foo',
-                    ],
-                    [
-                        'type' => 'm',
-                        'name' => 'me',
-                        'info' => 'pub $me: Foobar',
-                    ]
-                ]
+        , [
+            [
+                'type' => 'm',
+                'name' => 'foo',
+                'info' => 'pub static $foo',
             ],
-            'Partially completed' => [
-                <<<'EOT'
+            [
+                'type' => 'm',
+                'name' => 'me',
+                'info' => 'pub $me: Foobar',
+            ]
+        ]
+    ];
+
+        yield 'Partially completed' => [
+            <<<'EOT'
 <?php
 
 class Foobar
@@ -223,19 +228,20 @@ class Foobar
 }
 
 $foobar = new Foobar();
-$foobar::f
+$foobar::f<>
 
 EOT
-                , 113, [
-                    [
-                        'type' => 'm',
-                        'name' => 'foobar',
-                        'info' => 'pub static $foobar',
-                    ]
-                ]
-            ],
-            'Partially completed' => [
-                <<<'EOT'
+        , [
+            [
+                'type' => 'm',
+                'name' => 'foobar',
+                'info' => 'pub static $foobar',
+            ]
+        ]
+    ];
+
+        yield 'Partially completed' => [
+            <<<'EOT'
 <?php
 
 class Foobar
@@ -245,24 +251,25 @@ class Foobar
 }
 
 $foobar = new Foobar();
-$foobar::
+$foobar::<>
 
 EOT
-                , 116, [
-                    [
-                        'type' => 'm',
-                        'name' => 'FOOBAR',
-                        'info' => 'const FOOBAR',
-                    ],
-                    [
-                        'type' => 'm',
-                        'name' => 'BARFOO',
-                        'info' => 'const BARFOO',
-                    ],
-                ],
+        , [
+            [
+                'type' => 'm',
+                'name' => 'FOOBAR',
+                'info' => 'const FOOBAR',
             ],
-            'Accessor on new line' => [
-                <<<'EOT'
+            [
+                'type' => 'm',
+                'name' => 'BARFOO',
+                'info' => 'const BARFOO',
+            ],
+        ],
+    ];
+
+        yield 'Accessor on new line' => [
+            <<<'EOT'
 <?php
 
 class Foobar
@@ -272,18 +279,17 @@ class Foobar
 
 $foobar = new Foobar();
 $foobar
-    ->
+    -><>
 
 EOT
-                , 83, [
-                    [
-                        'type' => 'm',
-                        'name' => 'foobar',
-                        'info' => 'pub $foobar',
-                    ],
-                ],
-            ]
-        ];
+        , [
+            [
+                'type' => 'm',
+                'name' => 'foobar',
+                'info' => 'pub $foobar',
+            ],
+        ],
+    ];
     }
 
     private function complete(string $source, $offset): Response
@@ -291,6 +297,7 @@ EOT
         $reflector = ReflectorBuilder::create()->addSource($source)->build();
         $complete = new ClassMemberCompletor($reflector);
 
+        $complete->couldComplete($source, $offset);
         $result = $complete->complete($source, $offset);
 
         return $result;
@@ -315,36 +322,36 @@ EOT
 $asd = 'asd';
 $asd->
 EOT
-                ,27,
-                [
-                    'Cannot complete members on scalar value (string)',
-                ]
-            ],
+        ,27,
             [
-                <<<'EOT'
+                'Cannot complete members on scalar value (string)',
+            ]
+        ],
+        [
+            <<<'EOT'
 <?php
 
 $asd->
 EOT
-                ,13,
-                [
-                    'Variable "asd" is undefined',
-                ]
-            ],
+        ,13,
             [
-                <<<'EOT'
+                'Variable "asd" is undefined',
+            ]
+        ],
+        [
+            <<<'EOT'
 <?php
 
 $asd = new BooBar();
 $asd->
 EOT
-                ,34,
-                [
-                    'Could not find class "BooBar"',
-                ]
-            ],
+        ,34,
             [
-                <<<'EOT'
+                'Could not find class "BooBar"',
+            ]
+        ],
+        [
+            <<<'EOT'
 <?php
 
 class Foobar
@@ -355,11 +362,30 @@ class Foobar
 $foobar = new Foobar();
 $foobar->barbar->;
 EOT
-                ,86,
-                [
-                    'Class "Foobar" has no properties named "barbar"',
-                ]
+        ,86,
+            [
+                'Class "Foobar" has no properties named "barbar"',
             ]
+        ]
+    ];
+    }
+
+    public function provideCouldComplete(): Generator
+    {
+        yield 'instance access positive 1' => [
+                <<<'EOT'
+$hello-><>
+EOT
+                ,
+                true,
+            ];
+
+        yield 'instance access negative 1' => [
+            <<<'EOT'
+$hello<>
+EOT
+            ,
+            false,
         ];
     }
 }
