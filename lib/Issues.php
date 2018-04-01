@@ -40,7 +40,7 @@ class Issues implements IteratorAggregate
         return $this->issues;
     }
 
-    public function new(): Issues
+    public static function new(): Issues
     {
         return new self([]);
     }

@@ -18,6 +18,7 @@ use Phpactor\Completion\Response;
 use Phpactor\Completion\Suggestions;
 use Phpactor\Completion\Suggestion;
 use Phpactor\Completion\Issues;
+use Phpactor\WorseReflection\Core\Reflection\ReflectionInterface;
 
 class ClassMemberCompletor implements CouldComplete
 {
@@ -61,6 +62,7 @@ class ClassMemberCompletor implements CouldComplete
 
     private function getOffetToReflect($source, $offset)
     {
+        /** @var string $source */
         $source = str_replace(PHP_EOL, ' ', $source);
         $untilCursor = substr($source, 0, $offset);
 
@@ -100,7 +102,7 @@ class ClassMemberCompletor implements CouldComplete
 
         $paramInfos = [];
 
-        /** @var $parameter ReflectionParameter */
+        /** @var ReflectionParameter $parameter */
         foreach ($method->parameters() as $parameter) {
             $paramInfo = [];
             if ($parameter->type()->isDefined()) {
@@ -139,7 +141,7 @@ class ClassMemberCompletor implements CouldComplete
         $info[] = '$' . $property->name();
 
         if ($property->inferredTypes()->best()->isDefined()) {
-            $info[] = ': ' . (string) $property->inferredTypes()->best()->short();
+            $info[] = ': ' . $property->inferredTypes()->best()->short();
         }
 
         return implode('', $info);
@@ -156,13 +158,13 @@ class ClassMemberCompletor implements CouldComplete
         }
 
         try {
-            $classReflection = $this->reflector->reflectClassLike(ClassName::fromString((string) $type));
+            $classReflection = $this->reflector->reflectClassLike((string) $type);
         } catch (NotFound $e) {
             return $symbolContext->withIssue(sprintf('Could not find class "%s"', (string) $type));
         }
 
         $publicOnly = !in_array($symbolContext->symbol()->name(), ['this', 'self'], true);
-        /** @var $method ReflectionMethod */
+        /** @var ReflectionMethod $method */
         foreach ($classReflection->methods() as $method) {
             if ($method->name() === '__construct') {
                 continue;
@@ -183,8 +185,13 @@ class ClassMemberCompletor implements CouldComplete
             }
         }
 
-        foreach ($classReflection->constants() as $constant) {
-            $suggestions->add(Suggestion::create('m', $constant->name(), 'const ' . $constant->name()));
+        if ($classReflection instanceof ReflectionClass ||
+            $classReflection instanceof ReflectionInterface
+        ) {
+            /** @var ReflectionClass|ReflectionInterface */
+            foreach ($classReflection->constants() as $constant) {
+                $suggestions->add(Suggestion::create('m', $constant->name(), 'const ' . $constant->name()));
+            }
         }
 
         return $symbolContext;

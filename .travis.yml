@@ -15,4 +15,5 @@ cache:
         - composer install
 
     script:
-        - phpunit
+        - ./vendor/bin/phpunit
+        - ./vendor/bin/phpstan analyse --level7 lib
