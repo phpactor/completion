@@ -45,7 +45,7 @@ class Response implements IteratorAggregate
         return new self(Suggestions::new(), Issues::new());
     }
 
-    public function fromSuggestions(Suggestions $suggestions)
+    public static function fromSuggestions(Suggestions $suggestions)
     {
         return new self($suggestions, Issues::new());
     }
