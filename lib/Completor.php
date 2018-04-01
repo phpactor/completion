@@ -26,7 +26,7 @@ class Completor
         $this->reflector = $reflector;
     }
 
-    public function complete(string $source, int $offset): array
+    public function complete(string $source, int $offset): Response
     {
         list($offset, $partialMatch) = $this->getOffetToReflect($source, $offset);
 
@@ -38,16 +38,14 @@ class Completor
         $symbolContext = $reflectionOffset->symbolContext();
         $types = $symbolContext->types();
 
-        $suggestions = [];
+        $suggestions = new Suggestions();
 
         foreach ($types as $type) {
             $symbolContext = $this->populateSuggestions($symbolContext, $type, $suggestions);
         }
 
-        return [
-            'suggestions' => array_values($suggestions),
-            'issues' => $symbolContext->issues(),
-        ];
+
+        return new Response($suggestions, Issues::fromStrings($symbolContext->issues()));
     }
 
     private function getOffetToReflect($source, $offset)
@@ -136,7 +134,7 @@ class Completor
         return implode('', $info);
     }
 
-    private function populateSuggestions(SymbolContext $symbolContext, Type $type, array &$suggestions)
+    private function populateSuggestions(SymbolContext $symbolContext, Type $type, Suggestions $suggestions): SymbolContext
     {
         if (false === $type->isDefined()) {
             return $symbolContext;
@@ -162,11 +160,7 @@ class Completor
                 continue;
             }
             $info = $this->getMethodInfo($method);
-            $suggestions[] = [
-                'type' => 'f',
-                'name' => $method->name(),
-                'info' => $info,
-            ];
+            $suggestions->add(Suggestion::create('f', $method->name(), $info));
         }
 
         if ($classReflection instanceof ReflectionClass) {
@@ -174,20 +168,12 @@ class Completor
                 if ($publicOnly && false === $property->visibility()->isPublic()) {
                     continue;
                 }
-                $suggestions[] = [
-                    'type' => 'm',
-                    'name' => $property->name(),
-                    'info' => $this->getPropertyInfo($property),
-                ];
+                $suggestions->add(Suggestion::create('m', $property->name(), $this->getPropertyInfo($property)));
             }
         }
 
         foreach ($classReflection->constants() as $constant) {
-            $suggestions[] = [
-                'type' => 'm',
-                'name' => $constant->name(),
-                'info' => 'const ' . $constant->name(),
-            ];
+            $suggestions->add(Suggestion::create('m', $constant->name(), 'const ' . $constant->name()));
         }
 
         return $symbolContext;

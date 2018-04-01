@@ -8,6 +8,7 @@ use Phpactor\WorseReflection\Core\SourceCodeLocator\StringSourceLocator;
 use Phpactor\WorseReflection\Core\SourceCode;
 use Phpactor\WorseReflection\ReflectorBuilder;
 use Phpactor\Completion\Completor;
+use Phpactor\Completion\Response;
 
 class CompletorTest extends TestCase
 {
@@ -18,8 +19,8 @@ class CompletorTest extends TestCase
     {
         $result = $this->complete($source, $offset);
 
-        $this->assertEquals($expected, $result['suggestions']);
-        $this->assertEquals(json_encode($expected, true), json_encode($result['suggestions'], true));
+        $this->assertEquals($expected, $result->suggestions()->toArray());
+        $this->assertEquals(json_encode($expected, true), json_encode($result->suggestions()->toArray(), true));
     }
 
     public function provideComplete()
@@ -284,7 +285,7 @@ EOT
         ];
     }
 
-    private function complete(string $source, $offset)
+    private function complete(string $source, $offset): Response
     {
         $reflector = ReflectorBuilder::create()->addSource($source)->build();
         $complete = new Completor($reflector);
@@ -300,7 +301,7 @@ EOT
     public function testErrors(string $source, int $offset, array $expected)
     {
         $results = $this->complete($source, $offset);
-        $this->assertEquals($expected, $results['issues']);
+        $this->assertEquals($expected, $results->issues()->toArray());
     }
 
     public function provideErrors()
