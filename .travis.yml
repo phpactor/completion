@@ -15,4 +15,4 @@ before_script:
 
 script:
     - ./vendor/bin/phpunit
-    - ./vendor/bin/phpstan analyse --level7 lib
+    - ./vendor/bin/phpstan analyse --level=7 lib
