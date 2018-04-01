@@ -10,6 +10,10 @@ use Phpactor\Completion\Suggestion;
 
 class LocalVariableCompletor implements CouldComplete
 {
+    const NAME_REGEX = '{[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]}';
+    const VALID_PRECHARS = [' ', '=', '[', '('];
+    const INVALID_PRECHARS = [ ':' ];
+
     /**
      * @var Reflector
      */
@@ -22,9 +26,26 @@ class LocalVariableCompletor implements CouldComplete
 
     public function couldComplete(string $source, int $offset): bool
     {
-        $char = mb_substr($source, $offset - 1, 1);
+        $source = mb_substr($source, 0, $offset);
 
-        return $char === '$';
+        $potentiallyVariable = false;
+        for ($count = 1; $count < mb_strlen($source); $count++) {
+            $char = mb_substr($source, -$count, 1);
+            if ($char === '$') {
+                $potentiallyVariable = true;
+                continue;
+            }
+
+            if ($potentiallyVariable && in_array($char, self::VALID_PRECHARS)) {
+                return true;
+            }
+
+            if ($potentiallyVariable && false === in_array($char, self::INVALID_PRECHARS)) {
+                return false;
+            }
+        }
+
+        return false;
     }
 
     public function complete(string $source, int $offset): Response
