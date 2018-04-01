@@ -49,7 +49,7 @@ class Suggestions implements IteratorAggregate
         return new self([]);
     }
 
-    public function fromSuggestions(array $suggestions)
+    public static function fromSuggestions(array $suggestions)
     {
         return new self($suggestions);
     }
