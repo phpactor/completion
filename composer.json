@@ -12,7 +12,8 @@
     "require": {
         "phpunit/phpunit": "^7.0",
         "phpactor/worse-reflection": "^1.0@dev",
-        "phpactor/test-utils": "^1.0@dev"
+        "phpactor/test-utils": "^1.0@dev",
+        "phpstan/phpstan": "^0.10.0@dev"
     },
     "require-dev": {
     },

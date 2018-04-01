@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpactor\Completion\Tests\Integration;
+namespace Phpactor\Completion\Tests\Integration\Completor;
 
 use PHPUnit\Framework\TestCase;
 use Phpactor\WorseReflection\Core\Logger\ArrayLogger;
@@ -9,8 +9,9 @@ use Phpactor\WorseReflection\Core\SourceCode;
 use Phpactor\WorseReflection\ReflectorBuilder;
 use Phpactor\Completion\Completor;
 use Phpactor\Completion\Response;
+use Phpactor\Completion\Completor\ClassMemberCompletor;
 
-class CompletorTest extends TestCase
+class ClassMemberCompletorTest extends TestCase
 {
     /**
      * @dataProvider provideComplete
@@ -288,7 +289,7 @@ EOT
     private function complete(string $source, $offset): Response
     {
         $reflector = ReflectorBuilder::create()->addSource($source)->build();
-        $complete = new Completor($reflector);
+        $complete = new ClassMemberCompletor($reflector);
 
         $result = $complete->complete($source, $offset);
 
