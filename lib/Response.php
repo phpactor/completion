@@ -39,4 +39,27 @@ class Response implements IteratorAggregate
     {
         return $this->suggestions;
     }
+
+    public static function new(): Response
+    {
+        return new self(Suggestions::new(), Issues::new());
+    }
+
+    public function fromSuggestions(Suggestions $suggestions)
+    {
+        return new self($suggestions, Issues::new());
+    }
+
+    public function merge(Response $response): Response
+    {
+        foreach ($response->suggestions() as $suggestion) {
+            $this->suggestions->add($suggestion);
+        }
+
+        foreach ($response->issues() as $issue) {
+            $this->issues->add($issue);
+        }
+
+        return $this;
+    }
 }

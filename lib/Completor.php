@@ -31,7 +31,7 @@ class Completor implements CanComplete
 
     public function complete(string $source, int $offset): Response
     {
-        $response = Response::create([]);
+        $response = Response::new();
 
         foreach ($this->completors as $completor) {
             if ($completor->couldComplete($source, $offset)) {

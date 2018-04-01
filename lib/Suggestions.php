@@ -3,6 +3,7 @@
 namespace Phpactor\Completion;
 
 use IteratorAggregate;
+use ArrayIterator;
 
 class Suggestions implements IteratorAggregate
 {
@@ -41,5 +42,15 @@ class Suggestions implements IteratorAggregate
                 'info' => $suggestion->info()
             ];
         }, $this->suggestions);
+    }
+
+    public static function new(): Suggestions
+    {
+        return new self([]);
+    }
+
+    public function fromSuggestions(array $suggestions)
+    {
+        return new self($suggestions);
     }
 }

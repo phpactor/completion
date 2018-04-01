@@ -25,6 +25,11 @@ class Issues implements IteratorAggregate
         return new self($issues);
     }
 
+    public function add(string $issue)
+    {
+        $this->issues[] = $issue;
+    }
+
     public function getIterator()
     {
         return new ArrayIterator($this->issues);
@@ -33,5 +38,10 @@ class Issues implements IteratorAggregate
     public function toArray(): array
     {
         return $this->issues;
+    }
+
+    public function new(): Issues
+    {
+        return new self([]);
     }
 }
