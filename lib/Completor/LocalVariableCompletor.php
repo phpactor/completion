@@ -59,14 +59,21 @@ class LocalVariableCompletor implements CouldComplete
     public function complete(string $source, int $offset): Response
     {
         $partialSource = mb_substr($source, 0, $offset);
-        $partialMatch = mb_substr($partialSource, mb_strrpos('$', $partialSource) - 1);
+        $partialMatch = mb_substr($partialSource, strrpos($partialSource, '$'));
         $suggestions = Suggestions::new();
         $reflectionOffset = $this->reflector->reflectOffset($source, $offset);
         $frame = $reflectionOffset->frame();
 
 
         foreach ($frame->locals() as $local) {
-            if ('$' !== $partialMatch && 1 != mb_strpos($local->name(), $partialMatch)) {
+            $name = ltrim($partialMatch, '$');
+            $matchPos = -1;
+
+            if ($name) {
+                $matchPos = mb_strpos($local->name(), $name);
+            }
+
+            if ('$' !== $partialMatch && 0 !== $matchPos) {
                 continue;
             }
 
