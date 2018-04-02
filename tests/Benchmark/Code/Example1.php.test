@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpactor\Completion\Completor;
+namespace Phpactor\Completion\Tests\Benchmark\Code;
 
 use Phpactor\WorseReflection\Core\ClassName;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
@@ -20,7 +20,7 @@ use Phpactor\Completion\Suggestion;
 use Phpactor\Completion\Issues;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionInterface;
 
-class ClassMemberCompletor implements CouldComplete
+class Example1
 {
     /**
      * @var Reflector
@@ -34,18 +34,18 @@ class ClassMemberCompletor implements CouldComplete
 
     public function couldComplete(string $source, int $offset): bool
     {
-        $buffer = [];
+        $untilCursor = mb_substr($source, 0, $offset);
+
         while ($offset) {
-            $index = $offset % 2;
-
-            $buffer[$index] = @$source[$offset];
-            $offset--;
-
-            if (in_array(join('', $buffer), [ '::', '->' ])) {
+            $chars = mb_substr($untilCursor, $offset - 2, 2);
+            if (in_array($chars, ['->', '::'])) {
+                var_dump($chars);
                 return true;
             }
-        }
 
+            $offset--;
+            $untilCursor = mb_substr($untilCursor, 0, $offset);
+        }
 
         return false;
     }
@@ -203,6 +203,8 @@ class ClassMemberCompletor implements CouldComplete
             /** @var ReflectionClass|ReflectionInterface */
             foreach ($classReflection->constants() as $constant) {
                 $suggestions->add(Suggestion::create('m', $constant->name(), 'const ' . $constant->name()));
+
+                $foobar-><>
             }
         }
 

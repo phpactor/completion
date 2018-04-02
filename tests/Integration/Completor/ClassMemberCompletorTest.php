@@ -13,6 +13,10 @@ use Phpactor\Completion\Completor\ClassMemberCompletor;
 use Phpactor\Completion\Tests\Integration\CouldCompleteTestCase;
 use Generator;
 use Phpactor\Completion\CouldComplete;
+use Phpactor\TestUtils\ExtractOffset;
+use PhpBench\Benchmark\Metadata\Annotations\Subject;
+use PhpBench\Benchmark\Metadata\Annotations\Iterations;
+use PhpBench\Benchmark\Metadata\Annotations\Revs;
 
 class ClassMemberCompletorTest extends CouldCompleteTestCase
 {
@@ -279,7 +283,7 @@ class Foobar
 
 $foobar = new Foobar();
 $foobar
-    -><>
+    ->    <>
 
 EOT
         , [
@@ -292,23 +296,13 @@ EOT
     ];
     }
 
-    private function complete(string $source, $offset): Response
-    {
-        $reflector = ReflectorBuilder::create()->addSource($source)->build();
-        $complete = new ClassMemberCompletor($reflector);
-
-        $complete->couldComplete($source, $offset);
-        $result = $complete->complete($source, $offset);
-
-        return $result;
-    }
-
     /**
      * @dataProvider provideErrors
      */
     public function testErrors(string $source, int $offset, array $expected)
     {
-        $results = $this->complete($source, $offset);
+        $completor = $this->createCompletor($source);
+        $results = $completor->complete($source, $offset);
         $this->assertEquals($expected, $results->issues()->toArray());
     }
 

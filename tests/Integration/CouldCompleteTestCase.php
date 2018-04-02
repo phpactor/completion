@@ -25,8 +25,10 @@ abstract class CouldCompleteTestCase extends TestCase
     {
         list($source, $offset) = ExtractOffset::fromSource($source);
         $completor = $this->createCompletor($source);
+        $result = $completor->complete($source, $offset);
 
-        $completor->couldComplete($source, $offset);
+        $canComplete = $completor->couldComplete($source, $offset);
+        $this->assertTrue($canComplete);
         $result = $completor->complete($source, $offset);
 
         $this->assertEquals($expected, $result->suggestions()->toArray());
