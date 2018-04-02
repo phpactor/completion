@@ -50,6 +50,17 @@ class LocalVariableCompletorTest extends CouldCompleteTestCase
             ]
         ];
 
+        yield 'Partial variable' => [
+            '<?php $barfoo = "goodbye"; $foobar = "hello"; $foo<>',
+            [
+                [
+                    'type' => 'v',
+                    'name' => 'foobar',
+                    'info' => 'string',
+                ]
+            ]
+        ];
+
         yield 'Variables' => [
             '<?php $barfoo = 12; $foobar = "hello"; $<>',
             [
