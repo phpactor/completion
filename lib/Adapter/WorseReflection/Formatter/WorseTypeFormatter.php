@@ -7,9 +7,6 @@ use Phpactor\WorseReflection\Core\Type;
 
 class WorseTypeFormatter
 {
-    /**
-     * @param Types<Type> $types
-     */
     public function formatTypes(Types $types)
     {
         if (Types::empty() == $types) {

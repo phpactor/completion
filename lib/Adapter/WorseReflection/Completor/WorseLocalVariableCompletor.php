@@ -66,7 +66,13 @@ class WorseLocalVariableCompletor implements CouldComplete
     public function complete(string $source, int $offset): Response
     {
         $partialSource = mb_substr($source, 0, $offset);
-        $partialMatch = mb_substr($partialSource, strrpos($partialSource, '$'));
+
+        $dollarPosition = strrpos($partialSource, '$');
+        if (false === $dollarPosition) {
+            return Response::new();
+        }
+
+        $partialMatch = mb_substr($partialSource, $dollarPosition);
         $suggestions = Suggestions::new();
         $reflectionOffset = $this->reflector->reflectOffset($source, $offset);
         $frame = $reflectionOffset->frame();

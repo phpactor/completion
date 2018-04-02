@@ -44,5 +44,10 @@ class WorseTypeFormatterTest extends TestCase
             Types::fromTypes([Type::collection('Collection', 'Item')]),
             'Collection<Item>',
         ];
+
+        yield 'generic' => [
+            Types::fromTypes([Type::collection('Collection', 'Item')]),
+            'Collection<Item>',
+        ];
     }
 }
