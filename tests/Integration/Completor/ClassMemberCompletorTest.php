@@ -370,6 +370,9 @@ EOT
         yield 'static access' => [ '<?php Hello::<>' ];
         yield 'static access with space' => [ '<?php Hello:: <>' ];
         yield 'instance access with space' => [ '<?php Hello -> <>' ];
+        yield 'static property' => [ '<?php Hello::$foo<>' ];
+        yield 'partial static member access' => [ '<?php Hello::foo<>' ];
+        yield 'partial instance access' => [ '<?php $foobar->foo<>' ];
     }
 
     public function provideCouldNotComplete(): Generator
@@ -377,5 +380,7 @@ EOT
         yield 'non member access' => [ '<?php $hello<>' ];
         yield 'variable with previous accessor' => [ '<?php $foobar->hello; $hello<>' ];
         yield 'variable with previous accessor' => [ '<?php $foobar->hello; $hello<>' ];
+        yield 'statement with previous member access' => [ '<?php if ($foobar && $this->foobar) { echo<>' ];
+        yield 'variable with previous static member access' => [ '<?php Hello::hello(); $foo<>' ];
     }
 }
