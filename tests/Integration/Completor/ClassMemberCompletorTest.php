@@ -366,16 +366,16 @@ EOT
 
     public function provideCouldComplete(): Generator
     {
-        yield 'instance member' => [ '$hello-><>' ];
-        yield 'static access' => [ 'Hello::<>' ];
-        yield 'static access with space' => [ 'Hello:: <>' ];
-        yield 'instance access with space' => [ 'Hello -> <>' ];
+        yield 'instance member' => [ '<?php $hello-><>' ];
+        yield 'static access' => [ '<?php Hello::<>' ];
+        yield 'static access with space' => [ '<?php Hello:: <>' ];
+        yield 'instance access with space' => [ '<?php Hello -> <>' ];
     }
 
     public function provideCouldNotComplete(): Generator
     {
-        yield 'non member access' => [ '$hello<>' ];
-        yield 'variable with previous accessor' => [ '$foobar->hello; $hello<>' ];
-        yield 'variable with previous accessor' => [ '$foobar->hello; $hello<>' ];
+        yield 'non member access' => [ '<?php $hello<>' ];
+        yield 'variable with previous accessor' => [ '<?php $foobar->hello; $hello<>' ];
+        yield 'variable with previous accessor' => [ '<?php $foobar->hello; $hello<>' ];
     }
 }

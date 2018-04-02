@@ -19,6 +19,10 @@ use Phpactor\Completion\Suggestions;
 use Phpactor\Completion\Suggestion;
 use Phpactor\Completion\Issues;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionInterface;
+use Microsoft\PhpParser\Parser;
+use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
+use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
+use Microsoft\PhpParser\Node\SourceFileNode;
 
 class ClassMemberCompletor implements CouldComplete
 {
@@ -27,29 +31,33 @@ class ClassMemberCompletor implements CouldComplete
      */
     private $reflector;
 
-    public function __construct(Reflector $reflector)
+    /**
+     * @var Parser
+     */
+    private $parser;
+
+    public function __construct(Reflector $reflector, Parser $parser = null)
     {
-        $this  ->  reflector = $reflector;
+        $this->parser = $parser ?: new Parser();
+        $this->reflector = $reflector;
     }
 
     public function couldComplete(string $source, int $offset): bool
     {
-        $buffer = [];
-        while ($offset) {
-            $chars[0] = @$source[$offset];
-            $chars[1] = @$source[$offset-1];
+        $offset--;
+        while (@$source[$offset] == ' ' || @$source[$offset] == PHP_EOL) {
             $offset--;
+        }
+        $node = $this->parser->parseSourceFile($source);
+        $node = $node->getDescendantNodeAtPosition($offset);
 
-            $chars = join('', [$chars[1], $chars[0]]);
-            if (in_array($chars, [ '::', '->' ])) {
-                return true;
-            }
-
-            if ($chars[0] == '$') {
-                return false;
-            }
+        if ($node instanceof MemberAccessExpression) {
+            return true;
         }
 
+        if ($node instanceof ScopedPropertyAccessExpression) {
+            return true;
+        }
         return false;
     }
 
