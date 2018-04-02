@@ -7,6 +7,7 @@ use Phpactor\Completion\Core\Response;
 use Phpactor\WorseReflection\Reflector;
 use Phpactor\Completion\Core\Suggestions;
 use Phpactor\Completion\Core\Suggestion;
+use Phpactor\Completion\Adapter\WorseReflection\Formatter\WorseTypeFormatter;
 
 class WorseLocalVariableCompletor implements CouldComplete
 {
@@ -19,9 +20,15 @@ class WorseLocalVariableCompletor implements CouldComplete
      */
     private $reflector;
 
-    public function __construct(Reflector $reflector)
+    /**
+     * @var WorseTypeFormatter
+     */
+    private $typeFormatter;
+
+    public function __construct(Reflector $reflector, WorseTypeFormatter $typeFormatter = null)
     {
         $this->reflector = $reflector;
+        $this->typeFormatter = $typeFormatter ?: new WorseTypeFormatter();
     }
 
     public function couldComplete(string $source, int $offset): bool
@@ -81,7 +88,7 @@ class WorseLocalVariableCompletor implements CouldComplete
                 Suggestion::create(
                     'v',
                     $local->name(),
-                    $local->symbolContext()->types()->best()->__toString()
+                    $this->typeFormatter->formatTypes($local->symbolContext()->types())
                 )
             );
         }

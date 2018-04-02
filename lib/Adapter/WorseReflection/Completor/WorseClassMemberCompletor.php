@@ -19,6 +19,7 @@ use Phpactor\Completion\Core\Suggestions;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Issues;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionInterface;
+use Phpactor\Completion\Adapter\WorseReflection\Formatter\WorseTypeFormatter;
 
 class WorseClassMemberCompletor implements CouldComplete
 {
@@ -27,9 +28,15 @@ class WorseClassMemberCompletor implements CouldComplete
      */
     private $reflector;
 
-    public function __construct(Reflector $reflector)
+    /**
+     * @var WorseTypeFormatter
+     */
+    private $formatter;
+
+    public function __construct(Reflector $reflector, WorseTypeFormatter $formatter = null)
     {
         $this->reflector = $reflector;
+        $this->formatter = $formatter ?: new WorseTypeFormatter();
     }
 
     public function couldComplete(string $source, int $offset): bool
@@ -146,8 +153,8 @@ class WorseClassMemberCompletor implements CouldComplete
         /** @var ReflectionParameter $parameter */
         foreach ($method->parameters() as $parameter) {
             $paramInfo = [];
-            if ($parameter->type()->isDefined()) {
-                $paramInfo[] = $parameter->type()->short();
+            if ($parameter->inferredTypes()->count()) {
+                $paramInfo[] = $this->formatter->formatTypes($parameter->inferredTypes());
             }
             $paramInfo[] = '$' . $parameter->name();
 
@@ -159,10 +166,9 @@ class WorseClassMemberCompletor implements CouldComplete
         $info[] = '(' . implode(', ', $paramInfos) . ')';
 
         $returnTypes = $method->inferredReturnTypes();
+
         if ($returnTypes->count() > 0) {
-            $info[] = ': ' . implode('|', array_map(function (Type $type) {
-                return $type->short();
-            }, iterator_to_array($returnTypes)));
+            $info[] = ': ' . $this->formatter->formatTypes($returnTypes);
         }
 
         return implode('', $info);
