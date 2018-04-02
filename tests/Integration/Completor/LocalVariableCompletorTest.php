@@ -44,7 +44,7 @@ class LocalVariableCompletorTest extends CouldCompleteTestCase
             [
                 [
                     'type' => 'v',
-                    'name' => '$foobar',
+                    'name' => 'foobar',
                     'info' => 'string',
                 ]
             ]
@@ -55,12 +55,12 @@ class LocalVariableCompletorTest extends CouldCompleteTestCase
             [
                 [
                     'type' => 'v',
-                    'name' => '$barfoo',
+                    'name' => 'barfoo',
                     'info' => 'int',
                 ],
                 [
                     'type' => 'v',
-                    'name' => '$foobar',
+                    'name' => 'foobar',
                     'info' => 'string',
                 ]
             ]

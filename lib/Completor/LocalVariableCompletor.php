@@ -66,7 +66,7 @@ class LocalVariableCompletor implements CouldComplete
             $suggestions->add(
                 Suggestion::create(
                     'v',
-                    '$' . $local->name(),
+                    $local->name(),
                     $local->symbolContext()->types()->best()->__toString()
                 )
             );
