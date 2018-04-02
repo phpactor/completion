@@ -1,9 +1,10 @@
 <?php
 
-namespace Phpactor\Completion;
+namespace Phpactor\Completion\Core;
 
 use ArrayIterator;
 use IteratorAggregate;
+use Phpactor\Completion\Core\Issues;
 
 class Issues implements IteratorAggregate
 {

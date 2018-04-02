@@ -1,14 +1,14 @@
 <?php
 
-namespace Phpactor\Completion\Completor;
+namespace Phpactor\Completion\Adapter\WorseReflection\Completor;
 
-use Phpactor\Completion\CouldComplete;
-use Phpactor\Completion\Response;
+use Phpactor\Completion\Core\CouldComplete;
+use Phpactor\Completion\Core\Response;
 use Phpactor\WorseReflection\Reflector;
-use Phpactor\Completion\Suggestions;
-use Phpactor\Completion\Suggestion;
+use Phpactor\Completion\Core\Suggestions;
+use Phpactor\Completion\Core\Suggestion;
 
-class LocalVariableCompletor implements CouldComplete
+class WorseLocalVariableCompletor implements CouldComplete
 {
     const NAME_REGEX = '{[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]}';
     const VALID_PRECHARS = [' ', '=', '[', '('];

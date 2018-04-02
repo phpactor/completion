@@ -4,8 +4,8 @@ namespace Phpactor\Completion\Tests\Integration;
 
 use Generator;
 use PHPUnit\Framework\TestCase;
-use Phpactor\Completion\CouldComplete;
-use Phpactor\Completion\Response;
+use Phpactor\Completion\Core\CouldComplete;
+use Phpactor\Completion\Core\Response;
 use Phpactor\TestUtils\ExtractOffset;
 
 abstract class CouldCompleteTestCase extends TestCase

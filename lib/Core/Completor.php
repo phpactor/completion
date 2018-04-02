@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpactor\Completion;
+namespace Phpactor\Completion\Core;
 
 use Phpactor\WorseReflection\Core\ClassName;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
@@ -13,6 +13,7 @@ use Phpactor\WorseReflection\Core\Reflection\ReflectionProperty;
 use Phpactor\WorseReflection\Core\SourceCode;
 use Phpactor\WorseReflection\Core\Type;
 use Phpactor\WorseReflection\Reflector;
+use Phpactor\Completion\Core\CanComplete;
 
 class Completor implements CanComplete
 {

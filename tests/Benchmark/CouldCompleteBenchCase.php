@@ -2,7 +2,7 @@
 
 namespace Phpactor\Completion\Tests\Benchmark;
 
-use Phpactor\Completion\CouldComplete;
+use Phpactor\Completion\Core\CouldComplete;
 use Phpactor\TestUtils\ExtractOffset;
 
 abstract class CouldCompleteBenchCase

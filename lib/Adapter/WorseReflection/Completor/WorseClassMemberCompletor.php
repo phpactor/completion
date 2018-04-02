@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpactor\Completion\Completor;
+namespace Phpactor\Completion\Adapter\WorseReflection\Completor;
 
 use Phpactor\WorseReflection\Core\ClassName;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
@@ -13,14 +13,14 @@ use Phpactor\WorseReflection\Core\Reflection\ReflectionProperty;
 use Phpactor\WorseReflection\Core\SourceCode;
 use Phpactor\WorseReflection\Core\Type;
 use Phpactor\WorseReflection\Reflector;
-use Phpactor\Completion\CouldComplete;
-use Phpactor\Completion\Response;
-use Phpactor\Completion\Suggestions;
-use Phpactor\Completion\Suggestion;
-use Phpactor\Completion\Issues;
+use Phpactor\Completion\Core\CouldComplete;
+use Phpactor\Completion\Core\Response;
+use Phpactor\Completion\Core\Suggestions;
+use Phpactor\Completion\Core\Suggestion;
+use Phpactor\Completion\Core\Issues;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionInterface;
 
-class ClassMemberCompletor implements CouldComplete
+class WorseClassMemberCompletor implements CouldComplete
 {
     /**
      * @var Reflector

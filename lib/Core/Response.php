@@ -1,8 +1,10 @@
 <?php
 
-namespace Phpactor\Completion;
+namespace Phpactor\Completion\Core;
 
 use IteratorAggregate;
+use Phpactor\Completion\Core\Issues;
+use Phpactor\Completion\Core\Response;
 
 class Response implements IteratorAggregate
 {

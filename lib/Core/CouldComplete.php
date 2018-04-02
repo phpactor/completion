@@ -1,6 +1,8 @@
 <?php
 
-namespace Phpactor\Completion;
+namespace Phpactor\Completion\Core;
+
+use Phpactor\Completion\Core\CanComplete;
 
 interface CouldComplete extends CanComplete
 {

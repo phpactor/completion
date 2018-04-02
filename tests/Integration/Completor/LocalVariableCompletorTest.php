@@ -3,9 +3,9 @@
 namespace Phpactor\Completion\Tests\Integration\Completor;
 
 use Phpactor\Completion\Tests\Integration\CouldCompleteTestCase;
-use Phpactor\Completion\CouldComplete;
+use Phpactor\Completion\Core\CouldComplete;
 use Generator;
-use Phpactor\Completion\Completor\LocalVariableCompletor;
+use Phpactor\Completion\Adapter\WorseReflection\Completor\WorseLocalVariableCompletor;
 use Phpactor\WorseReflection\ReflectorBuilder;
 
 class LocalVariableCompletorTest extends CouldCompleteTestCase
@@ -13,7 +13,7 @@ class LocalVariableCompletorTest extends CouldCompleteTestCase
     protected function createCompletor(string $source): CouldComplete
     {
         $reflector = ReflectorBuilder::create()->addSource($source)->build();
-        return new LocalVariableCompletor($reflector);
+        return new WorseLocalVariableCompletor($reflector);
     }
 
     public function provideCouldComplete(): Generator

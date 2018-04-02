@@ -3,12 +3,12 @@
 namespace Phpactor\Completion\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Phpactor\Completion\Completor;
-use Phpactor\Completion\Response;
-use Phpactor\Completion\CouldComplete;
+use Phpactor\Completion\Core\Completor;
+use Phpactor\Completion\Core\Response;
+use Phpactor\Completion\Core\CouldComplete;
 use Prophecy\Prophecy\ObjectProphecy;
-use Phpactor\Completion\Suggestions;
-use Phpactor\Completion\Suggestion;
+use Phpactor\Completion\Core\Suggestions;
+use Phpactor\Completion\Core\Suggestion;
 
 class CompletorTest extends TestCase
 {

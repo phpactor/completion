@@ -1,9 +1,11 @@
 <?php
 
-namespace Phpactor\Completion;
+namespace Phpactor\Completion\Core;
 
 use IteratorAggregate;
 use ArrayIterator;
+use Phpactor\Completion\Core\Suggestion;
+use Phpactor\Completion\Core\Suggestions;
 
 class Suggestions implements IteratorAggregate
 {
