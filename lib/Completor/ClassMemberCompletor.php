@@ -29,23 +29,26 @@ class ClassMemberCompletor implements CouldComplete
 
     public function __construct(Reflector $reflector)
     {
-        $this->reflector = $reflector;
+        $this  ->  reflector = $reflector;
     }
 
     public function couldComplete(string $source, int $offset): bool
     {
         $buffer = [];
         while ($offset) {
-            $index = $offset % 2;
-
-            $buffer[$index] = @$source[$offset];
+            $chars[0] = @$source[$offset];
+            $chars[1] = @$source[$offset-1];
             $offset--;
 
-            if (in_array(join('', $buffer), [ '::', '->' ])) {
+            $chars = join('', [$chars[1], $chars[0]]);
+            if (in_array($chars, [ '::', '->' ])) {
                 return true;
             }
-        }
 
+            if ($chars[0] == '$') {
+                return false;
+            }
+        }
 
         return false;
     }

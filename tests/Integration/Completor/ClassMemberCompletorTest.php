@@ -368,10 +368,14 @@ EOT
     {
         yield 'instance member' => [ '$hello-><>' ];
         yield 'static access' => [ 'Hello::<>' ];
+        yield 'static access with space' => [ 'Hello:: <>' ];
+        yield 'instance access with space' => [ 'Hello -> <>' ];
     }
 
     public function provideCouldNotComplete(): Generator
     {
         yield 'non member access' => [ '$hello<>' ];
+        yield 'variable with previous accessor' => [ '$foobar->hello; $hello<>' ];
+        yield 'variable with previous accessor' => [ '$foobar->hello; $hello<>' ];
     }
 }
