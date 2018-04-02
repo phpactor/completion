@@ -29,7 +29,7 @@ class ClassMemberCompletor implements CouldComplete
 
     public function __construct(Reflector $reflector)
     {
-        $this  ->  reflector = $reflector;
+        $this->reflector = $reflector;
     }
 
     public function couldComplete(string $source, int $offset): bool

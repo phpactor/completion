@@ -18,19 +18,19 @@ class LocalVariableCompletorTest extends CouldCompleteTestCase
 
     public function provideCouldComplete(): Generator
     {
-        yield 'for variable name' => [ 'echo $<>;' ];
-        yield 'for partially complete variable name' => [ 'echo $foo<>;' ];
-        yield 'for assignment' => [ '$foo=$<>;' ];
-        yield 'for array declaration' => [ '$hello  = [$<>' ];
-        yield 'for function call' => [ '$hello  = foobar($<>' ];
+        yield 'for variable name' => [ '<?php echo $<>;' ];
+        yield 'for partially complete variable name' => [ '<?php echo $foo<>;' ];
+        yield 'for assignment' => [ '<?php $foo=$<>;' ];
+        yield 'for array declaration' => [ '<?php $hello  = [$<>' ];
+        yield 'for function call' => [ '<?php $hello  = foobar($<>' ];
     }
 
     public function provideCouldNotComplete(): Generator
     {
-        yield 'empty string' => [ ' <>' ];
-        yield 'function call' => [ 'echo<>' ];
-        yield 'variable with space' => [ '$foo <>' ];
-        yield 'static variable' => ['Foobar::$<>'];
+        yield 'empty string' => [ '<?php  <>' ];
+        yield 'function call' => [ '<?php echo<>' ];
+        yield 'variable with space' => [ '<?php $foo <>' ];
+        yield 'static variable' => ['<?php Foobar::$<>'];
     }
 
     public function provideComplete(): Generator

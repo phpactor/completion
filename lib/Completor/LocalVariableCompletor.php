@@ -26,26 +26,34 @@ class LocalVariableCompletor implements CouldComplete
 
     public function couldComplete(string $source, int $offset): bool
     {
-        $source = mb_substr($source, 0, $offset);
+        $tokens = token_get_all(mb_substr($source, 0, $offset));
+        $tokens = array_reverse($tokens);
 
-        $potentiallyVariable = false;
-        for ($count = 1; $count < mb_strlen($source); $count++) {
-            $char = mb_substr($source, -$count, 1);
-            if ($char === '$') {
-                $potentiallyVariable = true;
+        $potential = false;
+        foreach ($tokens as $token) {
+
+            if (is_string($token) && $token == '$') {
+                $potential = true;
                 continue;
             }
 
-            if ($potentiallyVariable && in_array($char, self::VALID_PRECHARS)) {
+            if (T_VARIABLE === $token[0]) {
+                $potential = true;
+                continue;
+            }
+
+            if ($potential) {
+                if (T_DOUBLE_COLON === $token[0]) {
+                    return false;
+                }
+
                 return true;
             }
 
-            if ($potentiallyVariable && false === in_array($char, self::INVALID_PRECHARS)) {
-                return false;
-            }
+            return false;
         }
 
-        return false;
+        return $potential;
     }
 
     public function complete(string $source, int $offset): Response
