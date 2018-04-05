@@ -66,15 +66,35 @@ class LocalVariableCompletorTest extends CouldCompleteTestCase
             [
                 [
                     'type' => 'v',
-                    'name' => 'barfoo',
-                    'info' => 'int',
+                    'name' => 'foobar',
+                    'info' => 'string',
                 ],
                 [
                     'type' => 'v',
-                    'name' => 'foobar',
-                    'info' => 'string',
-                ]
+                    'name' => 'barfoo',
+                    'info' => 'int',
+                ],
             ]
         ];
+        yield 'Complete previously declared variable which had no type' => [
+            <<<'EOT'
+<?php
+
+$callMe = foobar();
+
+/** @var Barfoo $callMe */
+$callMe = foobar();
+
+$call<>
+
+EOT
+        , [
+            [
+                'type' => 'v',
+                'name' => 'callMe',
+                'info' => 'Barfoo',
+            ],
+        ],
+    ];
     }
 }

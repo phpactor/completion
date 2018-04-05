@@ -8,6 +8,8 @@ use Phpactor\WorseReflection\Reflector;
 use Phpactor\Completion\Core\Suggestions;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\WorseTypeFormatter;
+use Phpactor\WorseReflection\Core\Inference\Variable;
+use Phpactor\WorseReflection\Core\Inference\Frame;
 
 class WorseLocalVariableCompletor implements CouldComplete
 {
@@ -77,8 +79,21 @@ class WorseLocalVariableCompletor implements CouldComplete
         $reflectionOffset = $this->reflector->reflectOffset($source, $offset);
         $frame = $reflectionOffset->frame();
 
+        // Get all declared variables up until the offset. The most
+        // recently declared variables should be first (which is why
+        // we reverse the array).
+        $reversedLocals = $this->orderedVariablesUntilOffset($frame, $offset);
 
-        foreach ($frame->locals() as $local) {
+        // Ignore variables that have already been suggested.
+        $seen = [];
+
+        /** @var Variable $local */
+        foreach ($reversedLocals as $local) {
+
+            if (isset($seen[$local->name()])) {
+                continue;
+            }
+
             $name = ltrim($partialMatch, '$');
             $matchPos = -1;
 
@@ -90,6 +105,8 @@ class WorseLocalVariableCompletor implements CouldComplete
                 continue;
             }
 
+            $seen[$local->name()] = true;
+
             $suggestions->add(
                 Suggestion::create(
                     'v',
@@ -100,5 +117,10 @@ class WorseLocalVariableCompletor implements CouldComplete
         }
 
         return Response::fromSuggestions($suggestions);
+    }
+
+    private function orderedVariablesUntilOffset(Frame $frame, int $offset)
+    {
+        return array_reverse(iterator_to_array($frame->locals()->lessThanOrEqualTo($offset)));
     }
 }

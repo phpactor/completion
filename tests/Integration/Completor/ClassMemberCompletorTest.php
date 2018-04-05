@@ -339,9 +339,8 @@ EOT
 
     public function provideErrors()
     {
-        return [
-            [
-                <<<'EOT'
+        yield [
+            <<<'EOT'
 <?php
 
 $asd = 'asd';
@@ -351,8 +350,9 @@ EOT
             [
                 'Cannot complete members on scalar value (string)',
             ]
-        ],
-        [
+        ];
+
+        yield [
             <<<'EOT'
 <?php
 
@@ -362,8 +362,9 @@ EOT
             [
                 'Variable "asd" is undefined',
             ]
-        ],
-        [
+        ];
+
+        yield [
             <<<'EOT'
 <?php
 
@@ -374,8 +375,9 @@ EOT
             [
                 'Could not find class "BooBar"',
             ]
-        ],
-        [
+        ];
+
+        yield [
             <<<'EOT'
 <?php
 
@@ -391,8 +393,8 @@ EOT
             [
                 'Class "Foobar" has no properties named "barbar"',
             ]
-        ]
-    ];
+        ];
+
     }
 
     public function provideCouldComplete(): Generator
