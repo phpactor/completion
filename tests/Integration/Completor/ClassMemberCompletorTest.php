@@ -294,6 +294,37 @@ EOT
             ],
         ],
     ];
+
+        yield 'Completion on collection' => [
+            <<<'EOT'
+<?php
+
+class Collection
+{
+    public function heyho() {}
+}
+
+class Foobar
+{
+    /**
+     * @return Collection<Foobar>
+     */
+    public function collection() {}
+}
+
+$foobar = new Foobar();
+$collection = $foobar->collection();
+$collection-><>
+
+EOT
+        , [
+            [
+                'type' => 'f',
+                'name' => 'heyho',
+                'info' => 'pub heyho()',
+            ],
+        ],
+    ];
     }
 
     /**

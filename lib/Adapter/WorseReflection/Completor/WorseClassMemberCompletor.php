@@ -205,7 +205,7 @@ class WorseClassMemberCompletor implements CouldComplete
         }
 
         try {
-            $classReflection = $this->reflector->reflectClassLike((string) $type);
+            $classReflection = $this->reflector->reflectClassLike($type->className()->full());
         } catch (NotFound $e) {
             return $symbolContext->withIssue(sprintf('Could not find class "%s"', (string) $type));
         }
