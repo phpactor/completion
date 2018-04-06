@@ -244,6 +244,30 @@ EOT
         ]
     ];
 
+        yield 'Partially completed 2' => [
+            <<<'EOT'
+<?php
+
+class Foobar
+{
+    public function aaa()
+    {
+        $this->bb<>
+    }
+
+    public function bbb() {}
+    public function ccc() {}
+}
+
+EOT
+        , [
+            [
+                'type' => 'f',
+                'name' => 'bbb',
+                'info' => 'pub bbb()',
+            ]
+        ]
+    ];
         yield 'Partially completed' => [
             <<<'EOT'
 <?php

@@ -55,4 +55,14 @@ class Suggestions implements IteratorAggregate
     {
         return new self($suggestions);
     }
+
+    public function startingWith(string $partialMatch): Suggestions
+    {
+        if (empty($partialMatch)) {
+            return $this;
+        }
+        return new self(array_values(array_filter($this->suggestions, function (Suggestion $suggestion) use ($partialMatch) {
+            return 0 === strpos($suggestion->name(), $partialMatch);
+        })));
+    }
 }

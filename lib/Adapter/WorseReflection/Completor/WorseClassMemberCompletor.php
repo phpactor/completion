@@ -104,6 +104,8 @@ class WorseClassMemberCompletor implements CouldComplete
             $symbolContext = $this->populateSuggestions($symbolContext, $type, $suggestions);
         }
 
+        $suggestions = $suggestions->startingWith($partialMatch);
+
 
         return new Response($suggestions, Issues::fromStrings($symbolContext->issues()));
     }
@@ -131,7 +133,7 @@ class WorseClassMemberCompletor implements CouldComplete
         $pos++;
 
         $accessorOffset = ($original - $pos) + 2;
-        $extra = substr($untilCursor, $pos + $accessorOffset, $offset);
+        $extra = trim(substr($untilCursor, $pos + $accessorOffset, $offset));
 
         return [ $pos,  $extra ];
     }
