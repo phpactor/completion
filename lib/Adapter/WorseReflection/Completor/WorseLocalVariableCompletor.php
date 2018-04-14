@@ -10,6 +10,11 @@ use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\WorseTypeFormatter;
 use Phpactor\WorseReflection\Core\Inference\Variable;
 use Phpactor\WorseReflection\Core\Inference\Frame;
+use Microsoft\PhpParser\Parser;
+use Microsoft\PhpParser\Node\Expression\Variable as TolerantVariable;
+use Microsoft\PhpParser\Node\SourceFileNode;
+use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
+use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 
 class WorseLocalVariableCompletor implements CouldComplete
 {
@@ -27,42 +32,37 @@ class WorseLocalVariableCompletor implements CouldComplete
      */
     private $typeFormatter;
 
-    public function __construct(Reflector $reflector, WorseTypeFormatter $typeFormatter = null)
+    /**
+     * @var Parser
+     */
+    private $parser;
+
+    public function __construct(Reflector $reflector, Parser $parser = null, WorseTypeFormatter $typeFormatter = null)
     {
         $this->reflector = $reflector;
         $this->typeFormatter = $typeFormatter ?: new WorseTypeFormatter();
+        $this->parser = $parser ?: new Parser();
     }
 
     public function couldComplete(string $source, int $offset): bool
     {
-        $tokens = token_get_all(mb_substr($source, 0, $offset));
-        $tokens = array_reverse($tokens);
+        $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($offset);
 
-        $potential = false;
-        foreach ($tokens as $token) {
+        $parentNode = $node->parent;
 
-            if (is_string($token) && $token == '$') {
-                $potential = true;
-                continue;
-            }
-
-            if (T_VARIABLE === $token[0]) {
-                $potential = true;
-                continue;
-            }
-
-            if ($potential) {
-                if (T_DOUBLE_COLON === $token[0]) {
-                    return false;
-                }
-
-                return true;
-            }
-
+        if ($parentNode instanceof MemberAccessExpression) {
             return false;
         }
 
-        return $potential;
+        if ($parentNode instanceof ScopedPropertyAccessExpression) {
+            return false;
+        }
+
+        if ($node instanceof TolerantVariable) {
+            return true;
+        }
+
+        return false;
     }
 
     public function complete(string $source, int $offset): Response
