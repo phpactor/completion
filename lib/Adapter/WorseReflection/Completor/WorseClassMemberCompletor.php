@@ -20,6 +20,9 @@ use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Issues;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionInterface;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\WorseTypeFormatter;
+use Microsoft\PhpParser\Parser;
+use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
+use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 
 class WorseClassMemberCompletor implements CouldComplete
 {
@@ -33,54 +36,39 @@ class WorseClassMemberCompletor implements CouldComplete
      */
     private $formatter;
 
-    public function __construct(Reflector $reflector, WorseTypeFormatter $formatter = null)
+    /**
+     * @var Parser
+     */
+    private $parser;
+
+    public function __construct(Reflector $reflector, Parser $parser = null, WorseTypeFormatter $formatter = null)
     {
         $this->reflector = $reflector;
         $this->formatter = $formatter ?: new WorseTypeFormatter();
+        $this->parser = $parser ?: new Parser();
     }
 
     public function couldComplete(string $source, int $offset): bool
     {
-        $tokens = token_get_all(trim(mb_substr($source, 0, $offset)));
-        $tokens = array_reverse($tokens);
+        while (!isset($source[$offset]) || $source[$offset] == ' ' || $source[$offset] == PHP_EOL) {
+            $offset--;
+        }
 
-        foreach ($tokens as $token) {
+        $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($offset);
 
-            if (T_WHITESPACE === $token[0]) {
-                return false;
-            }
-
-            // Instance access
-            //     $foobar->
-            if (T_OBJECT_OPERATOR === $token[0]) {
-                return true;
-            }
-
-            // Static member access
-            //     Foobar::
-            if (T_DOUBLE_COLON === $token[0]) {
-                return true;
-            }
-
-            // Static and instance member access
-            if (T_STRING === $token[0] || T_VARIABLE === $token[0]) {
-                $next = next($tokens);
-
-                // $hello->foo
-                if (T_OBJECT_OPERATOR === $next[0] && T_STRING === $token[0]) {
-                    return true;
-                }
-
-                if (T_DOUBLE_COLON != $next[0]) {
-                    return false;
-                }
-
-                // Hello::foo
-                // Hello::$foo
-                return true;
-            }
-
+        if (null === $node) {
             return false;
+        }
+
+        $parentNode = $node->parent;
+
+        if (
+            $node instanceof MemberAccessExpression ||
+            $node instanceof ScopedPropertyAccessExpression ||
+            $parentNode instanceof MemberAccessExpression ||
+            $parentNode instanceof ScopedPropertyAccessExpression
+        ) {
+            return true;
         }
 
         return false;
