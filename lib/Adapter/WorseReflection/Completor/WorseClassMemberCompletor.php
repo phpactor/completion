@@ -50,9 +50,7 @@ class WorseClassMemberCompletor implements CouldComplete
 
     public function couldComplete(string $source, int $offset): bool
     {
-        while (!isset($source[$offset]) || $source[$offset] == ' ' || $source[$offset] == PHP_EOL) {
-            $offset--;
-        }
+        $offset = $this->rewindToLastNonWhitespaceChar($source, $offset);
 
         $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($offset);
 
@@ -233,5 +231,14 @@ class WorseClassMemberCompletor implements CouldComplete
         }
 
         return $symbolContext;
+    }
+
+    private function rewindToLastNonWhitespaceChar(string $source, int $offset)
+    {
+        while (!isset($source[$offset]) || $source[$offset] == ' ' || $source[$offset] == PHP_EOL) {
+            $offset--;
+        }
+
+        return $offset;
     }
 }

@@ -136,6 +136,13 @@ class WorseLocalVariableCompletor implements CouldComplete
         $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($offset);
         $parentNode = $node->parent;
         
+        // If the parent is an assignment expression, then only parse
+        // until the start of the expression, not the start of the variable
+        // under completion:
+        //
+        //     $left = $lef<>
+        //
+        // Otherwise $left will be evaluated to <unknown>.
         if ($parentNode instanceof AssignmentExpression) {
             $offset = $parentNode->getFullStart();
         }
