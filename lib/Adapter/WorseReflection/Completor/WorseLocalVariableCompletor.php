@@ -15,6 +15,7 @@ use Microsoft\PhpParser\Node\Expression\Variable as TolerantVariable;
 use Microsoft\PhpParser\Node\SourceFileNode;
 use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
+use Microsoft\PhpParser\Node\Expression\AssignmentExpression;
 
 class WorseLocalVariableCompletor implements CouldComplete
 {
@@ -48,6 +49,10 @@ class WorseLocalVariableCompletor implements CouldComplete
     {
         $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($offset);
 
+        if (null === $node) {
+            return false;
+        }
+
         $parentNode = $node->parent;
 
         if ($parentNode instanceof MemberAccessExpression) {
@@ -76,6 +81,8 @@ class WorseLocalVariableCompletor implements CouldComplete
 
         $partialMatch = mb_substr($partialSource, $dollarPosition);
         $suggestions = Suggestions::new();
+
+        $offset = $this->offsetToReflect($source, $offset);
         $reflectionOffset = $this->reflector->reflectOffset($source, $offset);
         $frame = $reflectionOffset->frame();
 
@@ -122,5 +129,16 @@ class WorseLocalVariableCompletor implements CouldComplete
     private function orderedVariablesUntilOffset(Frame $frame, int $offset)
     {
         return array_reverse(iterator_to_array($frame->locals()->lessThanOrEqualTo($offset)));
+    }
+
+    private function offsetToReflect(string $source, int $offset)
+    {
+        $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($offset);
+        $parentNode = $node->parent;
+        
+        if ($parentNode instanceof AssignmentExpression) {
+            $offset = $parentNode->getFullStart();
+        }
+        return $offset;
     }
 }

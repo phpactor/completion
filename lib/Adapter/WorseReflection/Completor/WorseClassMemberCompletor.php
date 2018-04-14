@@ -201,6 +201,7 @@ class WorseClassMemberCompletor implements CouldComplete
         }
 
         $publicOnly = !in_array($symbolContext->symbol()->name(), ['this', 'self'], true);
+
         /** @var ReflectionMethod $method */
         foreach ($classReflection->methods() as $method) {
             if ($method->name() === '__construct') {
