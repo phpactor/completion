@@ -28,8 +28,9 @@ abstract class CouldCompleteBenchCase
     /**
      * @ParamProviders({"provideCouldComplete"})
      * @BeforeMethods({"setUp"})
-     * @Revs(1000)
+     * @Revs(100)
      * @Iterations(10)
+     * @OutputTimeUnit("milliseconds")
      */
     public function benchCouldComplete($params)
     {
