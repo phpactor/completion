@@ -76,6 +76,7 @@ class LocalVariableCompletorTest extends CouldCompleteTestCase
                 ],
             ]
         ];
+
         yield 'Complete previously declared variable which had no type' => [
             <<<'EOT'
 <?php
@@ -88,13 +89,30 @@ $callMe = foobar();
 $call<>
 
 EOT
-        , [
-            [
-                'type' => 'v',
-                'name' => 'callMe',
-                'info' => 'Barfoo',
+            , [
+                [
+                    'type' => 'v',
+                    'name' => 'callMe',
+                    'info' => 'Barfoo',
+                ],
             ],
-        ],
-    ];
+        ];
+
+        yield 'Does not assign offer suggestion for incomplete assignment' => [
+            <<<'EOT'
+<?php
+
+$std = new \stdClass();
+$std = $st<>
+
+EOT
+            , [
+                [
+                    'type' => 'v',
+                    'name' => 'std',
+                    'info' => 'stdClass',
+                ],
+            ],
+        ];
     }
 }

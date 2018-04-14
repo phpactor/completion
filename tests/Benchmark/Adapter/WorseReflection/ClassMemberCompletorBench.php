@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpactor\Completion\Tests\Benchmark\Completor;
+namespace Phpactor\Completion\Tests\Benchmark\Adapter\WorseReflection;
 
 use Phpactor\Completion\Tests\Benchmark\CouldCompleteBenchCase;
 use Phpactor\Completion\Core\CouldComplete;
