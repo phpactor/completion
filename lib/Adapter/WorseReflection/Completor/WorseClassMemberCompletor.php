@@ -153,7 +153,7 @@ class WorseClassMemberCompletor implements CouldComplete
         }
         $info[] = '(' . implode(', ', $paramInfos) . ')';
 
-        $returnTypes = $method->inferredReturnTypes();
+        $returnTypes = $method->inferredTypes();
 
         if ($returnTypes->count() > 0) {
             $info[] = ': ' . $this->formatter->formatTypes($returnTypes);
