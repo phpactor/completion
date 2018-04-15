@@ -23,6 +23,7 @@ use Phpactor\Completion\Adapter\WorseReflection\Formatter\WorseTypeFormatter;
 use Microsoft\PhpParser\Parser;
 use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
+use Phpactor\WorseReflection\Core\Inference\Symbol;
 
 class WorseClassMemberCompletor implements CouldComplete
 {
@@ -76,12 +77,8 @@ class WorseClassMemberCompletor implements CouldComplete
     {
         list($offset, $partialMatch) = $this->getOffetToReflect($source, $offset);
 
-        $reflectionOffset = $this->reflector->reflectOffset(
-            SourceCode::fromString($source),
-            Offset::fromint($offset)
-        );
+        $symbolContext = $this->resolveSymbolContext($source, $offset);
 
-        $symbolContext = $reflectionOffset->symbolContext();
         $types = $symbolContext->types();
 
         $suggestions = new Suggestions();
@@ -240,5 +237,34 @@ class WorseClassMemberCompletor implements CouldComplete
         }
 
         return $offset;
+    }
+
+    private function resolveSymbolContext(string $source, $offset)
+    {
+        $reflectionOffset = $this->reflector->reflectOffset(
+            SourceCode::fromString($source),
+            Offset::fromint($offset)
+        );
+        
+        $locals = $reflectionOffset->frame()->locals();
+        $symbolContext = $reflectionOffset->symbolContext();
+
+        // if the context is a variable, then the frame builder will have
+        // included it in the frame, AND if this was an assignment and the
+        // assigned to variable had the same name as the context variable, then
+        // the type will have been unassigned.
+        //
+        // so in the following code we take the previously defined context for
+        // the variable when it has been set.
+        if ($reflectionOffset->symbolContext()->symbol()->symbolType() !== Symbol::VARIABLE) {
+            return $symbolContext;
+        }
+
+        if ($locals->byName($reflectionOffset->symbolContext()->symbol()->name())->count() <= 1) {
+            return $symbolContext;
+        }
+
+        $previous = $locals->byName($reflectionOffset->symbolContext()->symbol()->name());
+        return $previous->atIndex($previous->count() - 2)->symbolContext();
     }
 }
