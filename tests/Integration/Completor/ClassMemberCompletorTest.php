@@ -349,6 +349,28 @@ EOT
             ],
         ],
     ];
+
+        yield 'Completion on assignment' => [
+            <<<'EOT'
+<?php
+
+class Foobar
+{
+    public function method1() {}
+}
+
+$foobar = new Foobar();
+$foobar = $foobar->meth<>
+
+EOT
+        , [
+            [
+                'type' => 'f',
+                'name' => 'method1',
+                'info' => 'pub method1()',
+            ],
+        ],
+    ];
     }
 
     /**
