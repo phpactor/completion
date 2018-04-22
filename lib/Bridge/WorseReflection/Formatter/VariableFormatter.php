@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpactor\Completion\Adapter\WorseReflection\Formatter;
+namespace Phpactor\Completion\Bridge\WorseReflection\Formatter;
 
 use Phpactor\WorseReflection\Core\Inference\Variable;
 use Phpactor\Completion\Core\Formatter\Formatter;

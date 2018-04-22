@@ -5,7 +5,7 @@ namespace Phpactor\Completion\Tests\Integration\Completor;
 use Phpactor\Completion\Tests\Integration\CompletorTestCase;
 use Phpactor\Completion\Core\Completor;
 use Generator;
-use Phpactor\Completion\Adapter\WorseReflection\Completor\WorseLocalVariableCompletor;
+use Phpactor\Completion\Bridge\WorseReflection\Completor\WorseLocalVariableCompletor;
 use Phpactor\WorseReflection\ReflectorBuilder;
 
 class LocalVariableCompletorTest extends CompletorTestCase

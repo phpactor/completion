@@ -1,9 +1,9 @@
 <?php
 
-namespace Phpactor\Completion\Adapter\WorseReflection\Completor;
+namespace Phpactor\Completion\Bridge\WorseReflection\Completor;
 
 use Phpactor\Completion\Core\Formatter\Formatter;
-use Phpactor\Completion\Adapter\WorseReflection\Formatter\MethodFormatter;
+use Phpactor\Completion\Bridge\WorseReflection\Formatter\MethodFormatter;
 use Phpactor\WorseReflection\Core\ClassName;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Inference\SymbolContext;

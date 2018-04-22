@@ -5,8 +5,8 @@ namespace Phpactor\Completion\Tests\Benchmark\Adapter\WorseReflection;
 use Phpactor\Completion\Tests\Benchmark\CouldCompleteBenchCase;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\WorseReflection\ReflectorBuilder;
-use Phpactor\Completion\Adapter\WorseReflection\Completor\WorseClassMemberCompletor;
-use Phpactor\Completion\Adapter\WorseReflection\Completor\WorseLocalVariableCompletor;
+use Phpactor\Completion\Bridge\WorseReflection\Completor\WorseClassMemberCompletor;
+use Phpactor\Completion\Bridge\WorseReflection\Completor\WorseLocalVariableCompletor;
 
 class WorseLocalVariableCompletorBench extends CouldCompleteBenchCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpactor\Completion\Adapter\WorseReflection\Completor;
+namespace Phpactor\Completion\Bridge\WorseReflection\Completor;
 
 use Microsoft\PhpParser\Node;
 use Phpactor\Completion\Adapter\WorseReflection\Completor\LocalVariable\VariableWithNode;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpactor\Completion\Adapter\WorseReflection\Formatter;
+namespace Phpactor\Completion\Bridge\WorseReflection\Formatter;
 
 use Phpactor\WorseReflection\Core\Types;
 use Phpactor\WorseReflection\Core\Type;

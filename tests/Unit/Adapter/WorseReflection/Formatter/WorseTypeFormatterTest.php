@@ -3,8 +3,8 @@
 namespace Phpactor\Completion\Tests\Unit\Adapter\WorseReflection\Formatter;
 
 use PHPUnit\Framework\TestCase;
-use Phpactor\Completion\Adapter\WorseReflection\Formatter\TypeFormatter;
-use Phpactor\Completion\Adapter\WorseReflection\Formatter\TypesFormatter;
+use Phpactor\Completion\Bridge\WorseReflection\Formatter\TypeFormatter;
+use Phpactor\Completion\Bridge\WorseReflection\Formatter\TypesFormatter;
 use Phpactor\WorseReflection\Core\Types;
 use Phpactor\WorseReflection\Core\Type;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;

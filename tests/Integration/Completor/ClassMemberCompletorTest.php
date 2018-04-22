@@ -9,7 +9,7 @@ use Phpactor\WorseReflection\Core\SourceCode;
 use Phpactor\WorseReflection\ReflectorBuilder;
 use Phpactor\Completion\Core\ChainCompletor;
 use Phpactor\Completion\Core\Response;
-use Phpactor\Completion\Adapter\WorseReflection\Completor\WorseClassMemberCompletor;
+use Phpactor\Completion\Bridge\WorseReflection\Completor\WorseClassMemberCompletor;
 use Phpactor\Completion\Tests\Integration\CompletorTestCase;
 use Generator;
 use Phpactor\Completion\Core\Completor;
