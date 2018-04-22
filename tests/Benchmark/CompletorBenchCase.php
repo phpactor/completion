@@ -5,7 +5,7 @@ namespace Phpactor\Completion\Tests\Benchmark;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\TestUtils\ExtractOffset;
 
-abstract class CouldCompleteBenchCase
+abstract class CompletorBenchCase
 {
     private $source;
     private $offset;
