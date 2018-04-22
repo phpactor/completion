@@ -3,6 +3,7 @@
 namespace Phpactor\Completion\Adapter\WorseReflection\Completor;
 
 use Microsoft\PhpParser\Node;
+use Phpactor\Completion\Adapter\WorseReflection\Completor\LocalVariable\VariableWithNode;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\Formatter;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Response;
@@ -101,7 +102,7 @@ class WorseLocalVariableCompletor implements Completor
                 Suggestion::create(
                     'v',
                     $local->name(),
-                    $this->informationFormatter->format($node, $local->symbolContext())
+                    $this->informationFormatter->format(new VariableWithNode($local, $node))
                 )
             );
         }

@@ -129,13 +129,8 @@ EOT
             , [
                 [
                     'type' => 'v',
-                    'name' => 'foo',
-                    'info' => 'Foobar',
-                ],
-                [
-                    'type' => 'v',
                     'name' => 'hello',
-                    'info' => 'string - bar(string >$foo<, $bar)',
+                    'info' => 'string#(>>string $foo<<, $bar)',
                 ],
             ],
         ];

@@ -6,12 +6,15 @@ use Generator;
 use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\MethodFormatter;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\ObjectFormatter;
+use Phpactor\Completion\Adapter\WorseReflection\Formatter\ParameterFormatter;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\PropertyFormatter;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\TypeFormatter;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\TypesFormatter;
+use Phpactor\Completion\Adapter\WorseReflection\Formatter\VariableWithNodeFormatter;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Response;
 use Phpactor\TestUtils\ExtractOffset;
+use Phpactor\WorseReflection\ReflectorBuilder;
 
 abstract class CompletorTestCase extends TestCase
 {
@@ -27,7 +30,9 @@ abstract class CompletorTestCase extends TestCase
             new TypeFormatter(),
             new TypesFormatter(),
             new MethodFormatter(),
+            new ParameterFormatter(),
             new PropertyFormatter(),
+            new VariableWithNodeFormatter(ReflectorBuilder::create()->enableContextualSourceLocation()->build()),
         ]);
     }
 
