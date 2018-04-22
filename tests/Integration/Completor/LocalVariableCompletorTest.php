@@ -16,15 +16,6 @@ class LocalVariableCompletorTest extends CompletorTestCase
         return new WorseLocalVariableCompletor($reflector);
     }
 
-    public function provideCouldComplete(): Generator
-    {
-        yield 'for variable name' => [ '<?php echo $<>;' ];
-        yield 'for partially complete variable name' => [ '<?php echo $foo<>;' ];
-        yield 'for assignment' => [ '<?php $foo=$<>;' ];
-        yield 'for array declaration' => [ '<?php $hello  = [$<>' ];
-        yield 'for function call' => [ '<?php $hello  = foobar($<>' ];
-    }
-
     public function provideCouldNotComplete(): Generator
     {
         yield 'empty string' => [ '<?php  <>' ];

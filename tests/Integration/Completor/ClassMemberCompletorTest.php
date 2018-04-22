@@ -443,17 +443,6 @@ EOT
 
     }
 
-    public function provideCouldComplete(): Generator
-    {
-        yield 'instance member' => [ '<?php $hello-><>' ];
-        yield 'static access' => [ '<?php Hello::<>' ];
-        yield 'static access with space' => [ '<?php Hello:: <>' ];
-        yield 'instance access with space' => [ '<?php Hello -> <>' ];
-        yield 'static property' => [ '<?php Hello::$foo<>' ];
-        yield 'partial static member access' => [ '<?php Hello::foo<>' ];
-        yield 'partial instance access' => [ '<?php $foobar->foo<>' ];
-    }
-
     public function provideCouldNotComplete(): Generator
     {
         yield 'non member access' => [ '<?php $hello<>' ];
