@@ -11,7 +11,9 @@
     ],
     "require": {
         "phpactor/worse-reflection": "^1.0@dev",
-        "phpbench/phpbench": "^1.0@dev"
+        "phpbench/phpbench": "^1.0@dev",
+        "phpactor/source-code-filesystem": "^1.0@dev",
+        "phpactor/class-to-file": "^1.0@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.0",
