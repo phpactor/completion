@@ -78,12 +78,12 @@ class WorseClassMemberCompletor implements TolerantCompletor
     {
         /** @var string $source */
         $source = str_replace(PHP_EOL, ' ', $source);
-        $untilCursor = substr($source, 0, $offset);
+        $untilCursor = mb_substr($source, 0, $offset);
 
-        $pos = strlen($untilCursor) - 1;
+        $pos = mb_strlen($untilCursor) - 1;
         $original = null;
         while ($pos) {
-            if (in_array(substr($untilCursor, $pos, 2), [ '->', '::' ])) {
+            if (in_array(mb_substr($untilCursor, $pos, 2), [ '->', '::' ])) {
                 $original = $pos;
                 break;
             }
@@ -97,7 +97,7 @@ class WorseClassMemberCompletor implements TolerantCompletor
         $pos++;
 
         $accessorOffset = ($original - $pos) + 2;
-        $extra = trim(substr($untilCursor, $pos + $accessorOffset, $offset));
+        $extra = trim(mb_substr($untilCursor, $pos + $accessorOffset, $offset));
 
         return [ $pos,  $extra ];
     }
