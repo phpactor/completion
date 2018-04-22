@@ -16,4 +16,4 @@ before_script:
 script:
     - ./vendor/bin/phpunit
     - ./vendor/bin/phpbench run
-    - ./vendor/bin/phpstan analyse --level=3 lib
+    - ./vendor/bin/phpstan analyse --level=7 lib
