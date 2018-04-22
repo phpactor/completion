@@ -13,7 +13,7 @@ class LocalVariableCompletorTest extends CompletorTestCase
     protected function createCompletor(string $source): Completor
     {
         $reflector = ReflectorBuilder::create()->addSource($source)->build();
-        return new WorseLocalVariableCompletor($reflector);
+        return new WorseLocalVariableCompletor($reflector, null, $this->formatter());
     }
 
     public function provideCouldComplete(): Generator

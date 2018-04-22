@@ -2,6 +2,8 @@
 
 namespace Phpactor\Completion\Adapter\WorseReflection\Completor;
 
+use Phpactor\Completion\Adapter\WorseReflection\Formatter\Formatter;
+use Phpactor\Completion\Adapter\WorseReflection\Formatter\MethodFormatter;
 use Phpactor\WorseReflection\Core\ClassName;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Inference\SymbolContext;
@@ -19,7 +21,7 @@ use Phpactor\Completion\Core\Suggestions;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Issues;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionInterface;
-use Phpactor\Completion\Adapter\WorseReflection\Formatter\WorseTypeFormatter;
+use Phpactor\Completion\Adapter\WorseReflection\Formatter\ObjectFormatter;
 use Microsoft\PhpParser\Parser;
 use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
@@ -32,7 +34,7 @@ class WorseClassMemberCompletor implements Completor
     private $reflector;
 
     /**
-     * @var WorseTypeFormatter
+     * @var ObjectFormatter
      */
     private $formatter;
 
@@ -41,10 +43,10 @@ class WorseClassMemberCompletor implements Completor
      */
     private $parser;
 
-    public function __construct(Reflector $reflector, Parser $parser = null, WorseTypeFormatter $formatter = null)
+    public function __construct(Reflector $reflector, Parser $parser = null, ObjectFormatter $formatter = null)
     {
         $this->reflector = $reflector;
-        $this->formatter = $formatter ?: new WorseTypeFormatter();
+        $this->formatter = $formatter ?: new ObjectFormatter();
         $this->parser = $parser ?: new Parser();
     }
 
@@ -104,64 +106,6 @@ class WorseClassMemberCompletor implements Completor
         return [ $pos,  $extra ];
     }
 
-    private function getMethodInfo(ReflectionMethod $method)
-    {
-        $info = [
-            substr((string) $method->visibility(), 0, 3),
-            ' ',
-            $method->name()
-        ];
-
-        if ($method->isAbstract()) {
-            array_unshift($info, 'abstract ');
-        }
-
-        $paramInfos = [];
-
-        /** @var ReflectionParameter $parameter */
-        foreach ($method->parameters() as $parameter) {
-            $paramInfo = [];
-            if ($parameter->inferredTypes()->count()) {
-                $paramInfo[] = $this->formatter->formatTypes($parameter->inferredTypes());
-            }
-            $paramInfo[] = '$' . $parameter->name();
-
-            if ($parameter->default()->isDefined()) {
-                $paramInfo[] = '= '. str_replace(PHP_EOL, '', var_export($parameter->default()->value(), true));
-            }
-            $paramInfos[] = implode(' ', $paramInfo);
-        }
-        $info[] = '(' . implode(', ', $paramInfos) . ')';
-
-        $returnTypes = $method->inferredTypes();
-
-        if ($returnTypes->count() > 0) {
-            $info[] = ': ' . $this->formatter->formatTypes($returnTypes);
-        }
-
-        return implode('', $info);
-    }
-
-    private function getPropertyInfo(ReflectionProperty $property)
-    {
-        $info = [
-            substr((string) $property->visibility(), 0, 3),
-        ];
-
-        if ($property->isStatic()) {
-            $info[] = ' static';
-        }
-
-        $info[] = ' ';
-        $info[] = '$' . $property->name();
-
-        if ($property->inferredTypes()->best()->isDefined()) {
-            $info[] = ': ' . $property->inferredTypes()->best()->short();
-        }
-
-        return implode('', $info);
-    }
-
     private function populateSuggestions(SymbolContext $symbolContext, Type $type, Suggestions $suggestions): SymbolContext
     {
         if (false === $type->isDefined()) {
@@ -188,7 +132,7 @@ class WorseClassMemberCompletor implements Completor
             if ($publicOnly && false === $method->visibility()->isPublic()) {
                 continue;
             }
-            $info = $this->getMethodInfo($method);
+            $info = $this->formatter->format($method);
             $suggestions->add(Suggestion::create('f', $method->name(), $info));
         }
 
@@ -197,7 +141,7 @@ class WorseClassMemberCompletor implements Completor
                 if ($publicOnly && false === $property->visibility()->isPublic()) {
                     continue;
                 }
-                $suggestions->add(Suggestion::create('m', $property->name(), $this->getPropertyInfo($property)));
+                $suggestions->add(Suggestion::create('m', $property->name(), $this->formatter->format($property)));
             }
         }
 

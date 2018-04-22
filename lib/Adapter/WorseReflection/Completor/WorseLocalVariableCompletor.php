@@ -2,12 +2,14 @@
 
 namespace Phpactor\Completion\Adapter\WorseReflection\Completor;
 
+use Microsoft\PhpParser\Node;
+use Phpactor\Completion\Adapter\WorseReflection\Formatter\Formatter;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Response;
 use Phpactor\WorseReflection\Reflector;
 use Phpactor\Completion\Core\Suggestions;
 use Phpactor\Completion\Core\Suggestion;
-use Phpactor\Completion\Adapter\WorseReflection\Formatter\WorseTypeFormatter;
+use Phpactor\Completion\Adapter\WorseReflection\Formatter\ObjectFormatter;
 use Phpactor\WorseReflection\Core\Inference\Variable;
 use Phpactor\WorseReflection\Core\Inference\Frame;
 use Microsoft\PhpParser\Parser;
@@ -29,25 +31,27 @@ class WorseLocalVariableCompletor implements Completor
     private $reflector;
 
     /**
-     * @var WorseTypeFormatter
+     * @var Formatter
      */
-    private $typeFormatter;
+    private $informationFormatter;
 
     /**
      * @var Parser
      */
     private $parser;
 
-    public function __construct(Reflector $reflector, Parser $parser = null, WorseTypeFormatter $typeFormatter = null)
+    public function __construct(Reflector $reflector, Parser $parser = null, ObjectFormatter $typeFormatter = null)
     {
         $this->reflector = $reflector;
-        $this->typeFormatter = $typeFormatter ?: new WorseTypeFormatter();
+        $this->informationFormatter = $typeFormatter ?: new ObjectFormatter();
         $this->parser = $parser ?: new Parser();
     }
 
     public function complete(string $source, int $offset): Response
     {
-        if (false === $this->couldComplete($source, $offset)) {
+        $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($offset);
+
+        if (false === $this->couldComplete($node, $source, $offset)) {
             return Response::new();
         }
 
@@ -97,7 +101,7 @@ class WorseLocalVariableCompletor implements Completor
                 Suggestion::create(
                     'v',
                     $local->name(),
-                    $this->typeFormatter->formatTypes($local->symbolContext()->types())
+                    $this->informationFormatter->format($node, $local->symbolContext())
                 )
             );
         }
@@ -128,10 +132,8 @@ class WorseLocalVariableCompletor implements Completor
         return $offset;
     }
 
-    private function couldComplete(string $source, int $offset): bool
+    private function couldComplete(Node $node, string $source, int $offset): bool
     {
-        $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($offset);
-
         if (null === $node) {
             return false;
         }

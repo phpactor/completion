@@ -23,7 +23,7 @@ class ClassMemberCompletorTest extends CompletorTestCase
     protected function createCompletor(string $source): Completor
     {
         $reflector = ReflectorBuilder::create()->addSource($source)->build();
-        return new WorseClassMemberCompletor($reflector);
+        return new WorseClassMemberCompletor($reflector, null, $this->formatter());
     }
 
     public function provideComplete(): Generator

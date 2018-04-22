@@ -5,7 +5,7 @@ namespace Phpactor\Completion\Tests\Unit\Adapter\WorseReflection\Formatter;
 use PHPUnit\Framework\TestCase;
 use Phpactor\WorseReflection\Core\Types;
 use Phpactor\WorseReflection\Core\Type;
-use Phpactor\Completion\Adapter\WorseReflection\Formatter\WorseTypeFormatter;
+use Phpactor\Completion\Adapter\WorseReflection\Formatter\ObjectFormatter;
 
 class WorseTypeFormatterTest extends TestCase
 {
@@ -14,7 +14,7 @@ class WorseTypeFormatterTest extends TestCase
      */
     public function testFormat(Types $types, string $expected)
     {
-        $formatter = new WorseTypeFormatter();
+        $formatter = new ObjectFormatter();
         $this->assertEquals($expected, $formatter->formatTypes($types));
     }
 

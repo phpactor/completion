@@ -25,6 +25,7 @@ abstract class CouldCompleteBenchCase
         $this->offset = $offset;
         $this->completor = $this->create($source);
     }
+
     /**
      * @ParamProviders({"provideCouldComplete"})
      * @BeforeMethods({"setUp"})
