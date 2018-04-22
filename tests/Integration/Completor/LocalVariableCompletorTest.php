@@ -16,6 +16,15 @@ class LocalVariableCompletorTest extends CompletorTestCase
         return new WorseLocalVariableCompletor($reflector);
     }
 
+    public function provideCouldComplete(): Generator
+    {
+        yield 'for variable name' => [ '<?php echo $<>;' ];
+        yield 'for partially complete variable name' => [ '<?php echo $foo<>;' ];
+        yield 'for assignment' => [ '<?php $foo=$<>;' ];
+        yield 'for array declaration' => [ '<?php $hello  = [$<>' ];
+        yield 'for function call' => [ '<?php $hello  = foobar($<>' ];
+    }
+
     public function provideCouldNotComplete(): Generator
     {
         yield 'empty string' => [ '<?php  <>' ];
@@ -102,6 +111,31 @@ EOT
                     'type' => 'v',
                     'name' => 'std',
                     'info' => 'stdClass',
+                ],
+            ],
+        ];
+
+        yield 'Provides contextual information when completing a method call' => [
+            <<<'EOT'
+<?php
+
+class Foobar { public function bar(string $foo, $bar) {} }
+
+$hello = 'hello';
+$foo = new Foobar();
+$foo->bar($<>
+
+EOT
+            , [
+                [
+                    'type' => 'v',
+                    'name' => 'foo',
+                    'info' => 'Foobar',
+                ],
+                [
+                    'type' => 'v',
+                    'name' => 'hello',
+                    'info' => 'string - bar(string >$foo<, $bar)',
                 ],
             ],
         ];

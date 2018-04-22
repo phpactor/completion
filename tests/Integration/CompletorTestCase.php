@@ -14,8 +14,6 @@ abstract class CompletorTestCase extends TestCase
 
     abstract public function provideComplete(): Generator;
 
-    abstract public function provideCouldComplete(): Generator;
-
     abstract public function provideCouldNotComplete(): Generator;
 
     /**
@@ -29,6 +27,18 @@ abstract class CompletorTestCase extends TestCase
 
         $this->assertEquals($expected, $result->suggestions()->toArray());
         $this->assertEquals(json_encode($expected, true), json_encode($result->suggestions()->toArray(), true));
+    }
+
+    /**
+     * @dataProvider provideCouldNotComplete
+     */
+    public function testCouldNotComplete(string $source)
+    {
+        list($source, $offset) = ExtractOffset::fromSource($source);
+        $completor = $this->createCompletor($source);
+        $result = $completor->complete($source, $offset);
+
+        $this->assertEquals(Response::new(), $result);
     }
 
 }
