@@ -10,6 +10,7 @@ use Phpactor\Completion\Adapter\WorseReflection\Formatter\ParameterFormatter;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\PropertyFormatter;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\TypeFormatter;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\TypesFormatter;
+use Phpactor\Completion\Adapter\WorseReflection\Formatter\VariableFormatter;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\VariableWithNodeFormatter;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Response;
@@ -32,7 +33,7 @@ abstract class CompletorTestCase extends TestCase
             new MethodFormatter(),
             new ParameterFormatter(),
             new PropertyFormatter(),
-            new VariableWithNodeFormatter(ReflectorBuilder::create()->enableContextualSourceLocation()->build()),
+            new VariableFormatter(),
         ]);
     }
 

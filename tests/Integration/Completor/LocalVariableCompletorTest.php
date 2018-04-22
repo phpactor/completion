@@ -114,25 +114,5 @@ EOT
                 ],
             ],
         ];
-
-        yield 'Provides contextual information when completing a method call' => [
-            <<<'EOT'
-<?php
-
-class Foobar { public function bar(string $foo, $bar) {} }
-
-$hello = 'hello';
-$foo = new Foobar();
-$foo->bar($<>
-
-EOT
-            , [
-                [
-                    'type' => 'v',
-                    'name' => 'hello',
-                    'info' => 'string#(>>string $foo<<, $bar)',
-                ],
-            ],
-        ];
     }
 }

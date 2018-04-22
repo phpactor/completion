@@ -102,7 +102,7 @@ class WorseLocalVariableCompletor implements Completor
                 Suggestion::create(
                     'v',
                     $local->name(),
-                    $this->informationFormatter->format(new VariableWithNode($local, $node))
+                    $this->informationFormatter->format($local)
                 )
             );
         }
