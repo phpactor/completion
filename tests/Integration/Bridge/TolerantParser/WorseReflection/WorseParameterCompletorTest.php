@@ -19,6 +19,18 @@ class WorseParameterCompletorTest extends TolerantCompletorTestCase
 
     public function provideComplete(): Generator
     {
+        yield 'no parameters' => [
+            <<<'EOT'
+<?php 
+class Foobar { public function barbar() {} }
+
+$foobar = new Foobar();
+$foobar->barbar($<>
+EOT
+            , [
+            ]
+        ];
+
         yield 'parameter' => [
             <<<'EOT'
 <?php 
@@ -27,13 +39,30 @@ class Foobar { public function barbar(string $foo) {} }
 $foobar = new Foobar();
 $foobar->barbar($<>
 EOT
-        , [
-            [
-                'type' => 'v',
-                'name' => 'foobar',
-                'info' => 'Foobar # (string $foo)',
+            , [
+                [
+                    'type' => 'v',
+                    'name' => 'foobar',
+                    'info' => 'Foobar to parameter string $foo',
+                ]
             ]
-        ]
+        ];
+
+        yield 'parameter, 2nd pos' => [
+            <<<'EOT'
+<?php 
+class Foobar { public function barbar(string $foo, Foobar $bar) {} }
+
+$foobar = new Foobar();
+$foobar->barbar($foo, $<>
+EOT
+            , [
+                [
+                    'type' => 'v',
+                    'name' => 'foobar',
+                    'info' => 'Foobar to parameter Foobar $bar',
+                ]
+            ]
         ];
     }
 
