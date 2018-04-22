@@ -27,9 +27,9 @@ abstract class CouldCompleteBenchCase
     }
 
     /**
-     * @ParamProviders({"provideCouldComplete"})
+     * @ParamProviders({"provideComplete"})
      * @BeforeMethods({"setUp"})
-     * @Revs(100)
+     * @Revs(1)
      * @Iterations(10)
      * @OutputTimeUnit("milliseconds")
      */
@@ -38,7 +38,7 @@ abstract class CouldCompleteBenchCase
         $this->completor->complete($this->source, $this->offset);
     }
 
-    public function provideCouldComplete()
+    public function provideComplete()
     {
         return [
             'short' => [
