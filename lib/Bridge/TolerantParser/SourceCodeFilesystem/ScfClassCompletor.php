@@ -7,6 +7,7 @@ use Microsoft\PhpParser\Node\ClassBaseClause;
 use Microsoft\PhpParser\Node\Expression\ObjectCreationExpression;
 use Microsoft\PhpParser\Node\NamespaceUseClause;
 use Microsoft\PhpParser\Node\QualifiedName;
+use Microsoft\PhpParser\Node\Statement\NamespaceUseDeclaration;
 use Phpactor\ClassFileConverter\Domain\FilePath;
 use Phpactor\ClassFileConverter\Domain\FileToClass;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
@@ -94,6 +95,10 @@ class ScfClassCompletor implements TolerantCompletor
         }
 
         if ($node instanceof NamespaceUseClause) {
+            return true;
+        }
+
+        if ($node instanceof NamespaceUseDeclaration) {
             return true;
         }
 

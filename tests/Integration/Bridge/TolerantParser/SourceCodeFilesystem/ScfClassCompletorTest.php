@@ -96,19 +96,29 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             ],
         ];
 
-        yield 'use keyword with partial' => [
-            '<?php use Cla<>',
+        yield 'use keyword' => [
+            '<?php use <>',
             [
                 [
                     'type' => 't',
                     'name' => ' Clapping',
                     'info' => 'Test\Name\Clapping',
                 ],
+                [
+                    'type' => 't',
+                    'name' => ' Backwards',
+                    'info' => 'Test\Name\Backwards',
+                ],
+                [
+                    'type' => 't',
+                    'name' => ' Alphabet',
+                    'info' => 'Test\Name\Alphabet',
+                ],
             ],
         ];
 
-        yield 'implements keyword with partial' => [
-            '<?php class Foobar implements Cla<>',
+        yield 'use keyword with partial' => [
+            '<?php use Cla<>',
             [
                 [
                     'type' => 't',
