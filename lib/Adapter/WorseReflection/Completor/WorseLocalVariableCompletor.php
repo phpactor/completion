@@ -2,7 +2,7 @@
 
 namespace Phpactor\Completion\Adapter\WorseReflection\Completor;
 
-use Phpactor\Completion\Core\CouldComplete;
+use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Response;
 use Phpactor\WorseReflection\Reflector;
 use Phpactor\Completion\Core\Suggestions;
@@ -17,7 +17,7 @@ use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 use Microsoft\PhpParser\Node\Expression\AssignmentExpression;
 
-class WorseLocalVariableCompletor implements CouldComplete
+class WorseLocalVariableCompletor implements Completor
 {
     const NAME_REGEX = '{[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]}';
     const VALID_PRECHARS = [' ', '=', '[', '('];
@@ -45,33 +45,12 @@ class WorseLocalVariableCompletor implements CouldComplete
         $this->parser = $parser ?: new Parser();
     }
 
-    public function couldComplete(string $source, int $offset): bool
-    {
-        $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($offset);
-
-        if (null === $node) {
-            return false;
-        }
-
-        $parentNode = $node->parent;
-
-        if ($parentNode instanceof MemberAccessExpression) {
-            return false;
-        }
-
-        if ($parentNode instanceof ScopedPropertyAccessExpression) {
-            return false;
-        }
-
-        if ($node instanceof TolerantVariable) {
-            return true;
-        }
-
-        return false;
-    }
-
     public function complete(string $source, int $offset): Response
     {
+        if (false === $this->couldComplete($source, $offset)) {
+            return Response::new();
+        }
+
         $partialSource = mb_substr($source, 0, $offset);
 
         $dollarPosition = strrpos($partialSource, '$');
@@ -147,5 +126,30 @@ class WorseLocalVariableCompletor implements CouldComplete
             $offset = $parentNode->getFullStart();
         }
         return $offset;
+    }
+
+    private function couldComplete(string $source, int $offset): bool
+    {
+        $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($offset);
+
+        if (null === $node) {
+            return false;
+        }
+
+        $parentNode = $node->parent;
+
+        if ($parentNode instanceof MemberAccessExpression) {
+            return false;
+        }
+
+        if ($parentNode instanceof ScopedPropertyAccessExpression) {
+            return false;
+        }
+
+        if ($node instanceof TolerantVariable) {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Phpactor\Completion\Tests\Benchmark;
 
-use Phpactor\Completion\Core\CouldComplete;
+use Phpactor\Completion\Core\Completor;
 use Phpactor\TestUtils\ExtractOffset;
 
 abstract class CouldCompleteBenchCase
@@ -15,7 +15,7 @@ abstract class CouldCompleteBenchCase
      */
     private $completor;
 
-    protected abstract function create(string $source): CouldComplete;
+    protected abstract function create(string $source): Completor;
 
     public function setUp($params)
     {
@@ -32,9 +32,9 @@ abstract class CouldCompleteBenchCase
      * @Iterations(10)
      * @OutputTimeUnit("milliseconds")
      */
-    public function benchCouldComplete($params)
+    public function benchComplete($params)
     {
-        $this->completor->couldComplete($this->source, $this->offset);
+        $this->completor->complete($this->source, $this->offset);
     }
 
     public function provideCouldComplete()

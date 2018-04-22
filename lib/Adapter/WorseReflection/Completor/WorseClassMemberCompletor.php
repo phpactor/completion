@@ -13,7 +13,7 @@ use Phpactor\WorseReflection\Core\Reflection\ReflectionProperty;
 use Phpactor\WorseReflection\Core\SourceCode;
 use Phpactor\WorseReflection\Core\Type;
 use Phpactor\WorseReflection\Reflector;
-use Phpactor\Completion\Core\CouldComplete;
+use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestions;
 use Phpactor\Completion\Core\Suggestion;
@@ -24,7 +24,7 @@ use Microsoft\PhpParser\Parser;
 use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 
-class WorseClassMemberCompletor implements CouldComplete
+class WorseClassMemberCompletor implements Completor
 {
     /**
      * @var Reflector
@@ -48,32 +48,12 @@ class WorseClassMemberCompletor implements CouldComplete
         $this->parser = $parser ?: new Parser();
     }
 
-    public function couldComplete(string $source, int $offset): bool
-    {
-        $offset = $this->rewindToLastNonWhitespaceChar($source, $offset);
-
-        $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($offset);
-
-        if (null === $node) {
-            return false;
-        }
-
-        $parentNode = $node->parent;
-
-        if (
-            $node instanceof MemberAccessExpression ||
-            $node instanceof ScopedPropertyAccessExpression ||
-            $parentNode instanceof MemberAccessExpression ||
-            $parentNode instanceof ScopedPropertyAccessExpression
-        ) {
-            return true;
-        }
-
-        return false;
-    }
-
     public function complete(string $source, int $offset): Response
     {
+        if (false === $this->couldComplete($source, $offset)) {
+            return Response::new();
+        }
+
         list($offset, $partialMatch) = $this->getOffetToReflect($source, $offset);
 
         $reflectionOffset = $this->reflector->reflectOffset(
@@ -240,5 +220,29 @@ class WorseClassMemberCompletor implements CouldComplete
         }
 
         return $offset;
+    }
+
+    private function couldComplete(string $source, int $offset): bool
+    {
+        $offset = $this->rewindToLastNonWhitespaceChar($source, $offset);
+
+        $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($offset);
+
+        if (null === $node) {
+            return false;
+        }
+
+        $parentNode = $node->parent;
+
+        if (
+            $node instanceof MemberAccessExpression ||
+            $node instanceof ScopedPropertyAccessExpression ||
+            $parentNode instanceof MemberAccessExpression ||
+            $parentNode instanceof ScopedPropertyAccessExpression
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }

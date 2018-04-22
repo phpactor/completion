@@ -7,20 +7,20 @@ use Phpactor\WorseReflection\Core\Logger\ArrayLogger;
 use Phpactor\WorseReflection\Core\SourceCodeLocator\StringSourceLocator;
 use Phpactor\WorseReflection\Core\SourceCode;
 use Phpactor\WorseReflection\ReflectorBuilder;
-use Phpactor\Completion\Core\Completor;
+use Phpactor\Completion\Core\ChainCompletor;
 use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Adapter\WorseReflection\Completor\WorseClassMemberCompletor;
-use Phpactor\Completion\Tests\Integration\CouldCompleteTestCase;
+use Phpactor\Completion\Tests\Integration\CompletorTestCase;
 use Generator;
-use Phpactor\Completion\Core\CouldComplete;
+use Phpactor\Completion\Core\Completor;
 use Phpactor\TestUtils\ExtractOffset;
 use PhpBench\Benchmark\Metadata\Annotations\Subject;
 use PhpBench\Benchmark\Metadata\Annotations\Iterations;
 use PhpBench\Benchmark\Metadata\Annotations\Revs;
 
-class ClassMemberCompletorTest extends CouldCompleteTestCase
+class ClassMemberCompletorTest extends CompletorTestCase
 {
-    protected function createCompletor(string $source): CouldComplete
+    protected function createCompletor(string $source): Completor
     {
         $reflector = ReflectorBuilder::create()->addSource($source)->build();
         return new WorseClassMemberCompletor($reflector);

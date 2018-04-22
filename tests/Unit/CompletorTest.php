@@ -3,9 +3,9 @@
 namespace Phpactor\Completion\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Phpactor\Completion\Core\Completor;
+use Phpactor\Completion\Core\ChainCompletor;
 use Phpactor\Completion\Core\Response;
-use Phpactor\Completion\Core\CouldComplete;
+use Phpactor\Completion\Core\Completor;
 use Prophecy\Prophecy\ObjectProphecy;
 use Phpactor\Completion\Core\Suggestions;
 use Phpactor\Completion\Core\Suggestion;
@@ -22,7 +22,7 @@ class CompletorTest extends TestCase
 
     public function setUp()
     {
-        $this->completor1 = $this->prophesize(CouldComplete::class);
+        $this->completor1 = $this->prophesize(Completor::class);
     }
 
     public function testReturnsEmptyResponseWithNoCompletors()
@@ -39,9 +39,9 @@ class CompletorTest extends TestCase
             $this->completor1->reveal()
         ]);
 
-        $this->completor1->couldComplete(self::TEST_SOURCE, self::TEST_OFFSET)
+        $this->completor1->complete(self::TEST_SOURCE, self::TEST_OFFSET)
             ->shouldBeCalled()
-            ->willReturn(false);
+            ->willReturn(Response::new());
 
         $response = $completor->complete(self::TEST_SOURCE, self::TEST_OFFSET);
 
@@ -59,10 +59,8 @@ class CompletorTest extends TestCase
             $this->completor1->reveal()
         ]);
 
-        $this->completor1->couldComplete(self::TEST_SOURCE, self::TEST_OFFSET)
-            ->shouldBeCalled()
-            ->willReturn(true);
         $this->completor1->complete(self::TEST_SOURCE, self::TEST_OFFSET)
+            ->shouldBeCalled()
             ->willReturn($expected);
 
         $response = $completor->complete(self::TEST_SOURCE, self::TEST_OFFSET);
@@ -73,8 +71,8 @@ class CompletorTest extends TestCase
     /**
      * @var CouldComplete[] $completors
      */
-    public function create(array $completors): Completor
+    public function create(array $completors): ChainCompletor
     {
-        return new Completor($completors);
+        return new ChainCompletor($completors);
     }
 }
