@@ -1,19 +1,21 @@
 <?php
 
-namespace Phpactor\Completion\Tests\Integration\Completor;
+namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseReflection;
 
+use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
+use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
 use Phpactor\Completion\Tests\Integration\CompletorTestCase;
 use Phpactor\Completion\Core\Completor;
 use Generator;
-use Phpactor\Completion\Bridge\WorseReflection\Completor\WorseLocalVariableCompletor;
+use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseLocalVariableCompletor;
 use Phpactor\WorseReflection\ReflectorBuilder;
 
-class LocalVariableCompletorTest extends CompletorTestCase
+class LocalVariableCompletorTest extends TolerantCompletorTestCase
 {
-    protected function createCompletor(string $source): Completor
+    protected function createTolerantCompletor(string $source): TolerantCompletor
     {
         $reflector = ReflectorBuilder::create()->addSource($source)->build();
-        return new WorseLocalVariableCompletor($reflector, null, $this->formatter());
+        return new WorseLocalVariableCompletor($reflector, $this->formatter());
     }
 
     public function provideCouldComplete(): Generator

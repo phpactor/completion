@@ -37,7 +37,7 @@ class ChainTolerantCompletor implements Completor
         // the docblock says it will, see
         // https://github.com/Microsoft/tolerant-php-parser/pull/242/files
         if (null === $node) {
-            return $suggestions;
+            return $response;
         }
 
         foreach ($this->tolerantCompletors as $tolerantCompletor) {
