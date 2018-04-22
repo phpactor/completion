@@ -4,6 +4,8 @@ namespace Phpactor\Completion\Bridge\TolerantParser\SourceCodeFilesystem;
 
 use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Node\ClassBaseClause;
+use Microsoft\PhpParser\Node\Expression\ObjectCreationExpression;
+use Microsoft\PhpParser\Node\NamespaceUseClause;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Phpactor\ClassFileConverter\Domain\FilePath;
 use Phpactor\ClassFileConverter\Domain\FileToClass;
@@ -50,7 +52,7 @@ class ScfClassCompletor implements TolerantCompletor
 
         $partial = '';
         if ($node instanceof QualifiedName) {
-            $partial = mb_substr($source, $node->getStart(), $offset);
+            $partial = mb_substr($source, $node->getStart(), $node->getWidth());
             $files = $files->filter(function (SplFileInfo $file) use ($partial) {
                 return 0 === strpos($file->getFilename(), $partial);
             });
@@ -69,7 +71,7 @@ class ScfClassCompletor implements TolerantCompletor
             $best = $candidates->best();
             $suggestions[] = Suggestion::create(
                 't',
-                $best->name(),
+                ' ' . $best->name(), // always add a space before a qualified name
                 $best->__toString()
             );
 
@@ -84,7 +86,15 @@ class ScfClassCompletor implements TolerantCompletor
     private function couldComplete(Node $node): bool
     {
         if ($node instanceof QualifiedName) {
-            $node = $node->parent;
+            return true;
+        }
+
+        if ($node instanceof ObjectCreationExpression) {
+            return true;
+        }
+
+        if ($node instanceof NamespaceUseClause) {
+            return true;
         }
 
         if ($node instanceof ClassBaseClause) {
