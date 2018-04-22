@@ -1,15 +1,17 @@
 <?php
 
-namespace Phpactor\Completion\Tests\Integration\Completor;
+namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseReflection;
 
 use PHPUnit\Framework\TestCase;
+use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
+use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
 use Phpactor\WorseReflection\Core\Logger\ArrayLogger;
 use Phpactor\WorseReflection\Core\SourceCodeLocator\StringSourceLocator;
 use Phpactor\WorseReflection\Core\SourceCode;
 use Phpactor\WorseReflection\ReflectorBuilder;
 use Phpactor\Completion\Core\ChainCompletor;
 use Phpactor\Completion\Core\Response;
-use Phpactor\Completion\Bridge\WorseReflection\Completor\WorseClassMemberCompletor;
+use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseClassMemberCompletor;
 use Phpactor\Completion\Tests\Integration\CompletorTestCase;
 use Generator;
 use Phpactor\Completion\Core\Completor;
@@ -18,12 +20,13 @@ use PhpBench\Benchmark\Metadata\Annotations\Subject;
 use PhpBench\Benchmark\Metadata\Annotations\Iterations;
 use PhpBench\Benchmark\Metadata\Annotations\Revs;
 
-class ClassMemberCompletorTest extends CompletorTestCase
+class ClassMemberCompletorTest extends TolerantCompletorTestCase
 {
-    protected function createCompletor(string $source): Completor
+    protected function createTolerantCompletor(string $source): TolerantCompletor
     {
         $reflector = ReflectorBuilder::create()->addSource($source)->build();
-        return new WorseClassMemberCompletor($reflector, null, $this->formatter());
+
+        return new WorseClassMemberCompletor($reflector, $this->formatter());
     }
 
     public function provideComplete(): Generator

@@ -30,7 +30,7 @@ class ChainTolerantCompletor implements Completor
 
     public function complete(string $source, int $offset): Response
     {
-        $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($offset);
+        $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($this->rewindToLastNonWhitespaceChar($source, $offset));
         $response = Response::new();
 
         // it isn't possible that getDescendantNodeAtPosition returns null, but
@@ -45,5 +45,14 @@ class ChainTolerantCompletor implements Completor
         }
 
         return $response;
+    }
+
+    private function rewindToLastNonWhitespaceChar(string $source, int $offset)
+    {
+        while (!isset($source[$offset]) || $source[$offset] == ' ' || $source[$offset] == PHP_EOL) {
+            $offset--;
+        }
+
+        return $offset;
     }
 }

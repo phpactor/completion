@@ -1,7 +1,9 @@
 <?php
 
-namespace Phpactor\Completion\Bridge\WorseReflection\Completor;
+namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
+use Microsoft\PhpParser\Node;
+use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Core\Formatter\Formatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\MethodFormatter;
 use Phpactor\WorseReflection\Core\ClassName;
@@ -26,7 +28,7 @@ use Microsoft\PhpParser\Parser;
 use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 
-class WorseClassMemberCompletor implements Completor
+class WorseClassMemberCompletor implements TolerantCompletor
 {
     /**
      * @var Reflector
@@ -38,21 +40,15 @@ class WorseClassMemberCompletor implements Completor
      */
     private $formatter;
 
-    /**
-     * @var Parser
-     */
-    private $parser;
-
-    public function __construct(Reflector $reflector, Parser $parser = null, ObjectFormatter $formatter = null)
+    public function __construct(Reflector $reflector, ObjectFormatter $formatter)
     {
         $this->reflector = $reflector;
-        $this->formatter = $formatter ?: new ObjectFormatter();
-        $this->parser = $parser ?: new Parser();
+        $this->formatter = $formatter;
     }
 
-    public function complete(string $source, int $offset): Response
+    public function complete(Node $node, string $source, int $offset): Response
     {
-        if (false === $this->couldComplete($source, $offset)) {
+        if (false === $this->couldComplete($node, $source, $offset)) {
             return Response::new();
         }
 
@@ -157,25 +153,8 @@ class WorseClassMemberCompletor implements Completor
         return $symbolContext;
     }
 
-    private function rewindToLastNonWhitespaceChar(string $source, int $offset)
+    private function couldComplete(Node $node, string $source, int $offset): bool
     {
-        while (!isset($source[$offset]) || $source[$offset] == ' ' || $source[$offset] == PHP_EOL) {
-            $offset--;
-        }
-
-        return $offset;
-    }
-
-    private function couldComplete(string $source, int $offset): bool
-    {
-        $offset = $this->rewindToLastNonWhitespaceChar($source, $offset);
-
-        $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($offset);
-
-        if (null === $node) {
-            return false;
-        }
-
         $parentNode = $node->parent;
 
         if (
