@@ -27,11 +27,18 @@ class ScfClassCompletor implements TolerantCompletor
      */
     private $fileToClass;
 
-    public function __construct(Filesystem $filesystem, FileToClass $fileToClass)
+    /**
+     * @var int
+     */
+    private $limit;
+
+    public function __construct(Filesystem $filesystem, FileToClass $fileToClass, int $limit = 100)
     {
         $this->filesystem = $filesystem;
         $this->fileToClass = $fileToClass;
+        $this->limit = $limit;
     }
+
     public function complete(Node $node, string $source, int $offset): Response
     {
         if (false === $this->couldComplete($node)) {
@@ -50,6 +57,7 @@ class ScfClassCompletor implements TolerantCompletor
         }
 
         $suggestions = [];
+        $count = 0;
         /** @var ScfFilePath $file */
         foreach ($files as $file) {
             $candidates = $this->fileToClass->fileToClassCandidates(FilePath::fromString($file->path()));
@@ -64,6 +72,10 @@ class ScfClassCompletor implements TolerantCompletor
                 $best->name(),
                 $best->__toString()
             );
+
+            if (++$count >= $this->limit) {
+                break;
+            }
         }
 
         return Response::fromSuggestions(Suggestions::fromSuggestions($suggestions));
