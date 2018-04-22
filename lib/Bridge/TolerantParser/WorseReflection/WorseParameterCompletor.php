@@ -56,6 +56,7 @@ class WorseParameterCompletor implements TolerantCompletor
 
         $variableSuggestions = $this->localVariableCompletor->complete($node, $source, $offset)->suggestions();
 
+        $suggestions = [];
         $call = $this->reflector->reflectMethodCall($source, $callableExpression->getEndPosition());
         foreach ($variableSuggestions as $variableSuggestion) {
             $method = $call->class()->methods()->get($call->name());
@@ -63,9 +64,9 @@ class WorseParameterCompletor implements TolerantCompletor
                 'v',
                 $variableSuggestion->name(),
                 sprintf(
-                    '%s # %s',
+                    '%s # (%s)',
                     $variableSuggestion->info(),
-                    $this->formatter->format($method)
+                    $this->formatter->format($method->parameters())
                 )
             );
         }

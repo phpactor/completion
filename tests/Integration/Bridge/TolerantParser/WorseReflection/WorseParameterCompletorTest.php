@@ -31,7 +31,7 @@ EOT
             [
                 'type' => 'v',
                 'name' => 'foobar',
-                'info' => 'Foobar # pub barbar(string $foo)',
+                'info' => 'Foobar # (string $foo)',
             ]
         ]
         ];
