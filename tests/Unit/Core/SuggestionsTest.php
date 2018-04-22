@@ -31,4 +31,20 @@ class SuggestionsTest extends TestCase
             Suggestion::create('Foo', 'aaa', 'v'),
         ]), $suggestions);
     }
+
+    public function testSortSuggestions()
+    {
+        $suggestions = new Suggestions([
+            Suggestion::create('Foo', 'aaa', 'v'),
+            Suggestion::create('Foo', 'cc', 'v'),
+            Suggestion::create('Foo', 'bbb', 'v'),
+        ]);
+
+        $suggestions = $suggestions->sorted();
+        $this->assertEquals(new Suggestions([
+            Suggestion::create('Foo', 'aaa', 'v'),
+            Suggestion::create('Foo', 'bbb', 'v'),
+            Suggestion::create('Foo', 'cc', 'v'),
+        ]), $suggestions);
+    }
 }

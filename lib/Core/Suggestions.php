@@ -51,8 +51,18 @@ class Suggestions implements IteratorAggregate
         return new self([]);
     }
 
-    public static function fromSuggestions(array $suggestions)
+    public static function fromSuggestions(array $suggestions): Suggestions
     {
+        return new self($suggestions);
+    }
+
+    public function sorted(): Suggestions
+    {
+        $suggestions = $this->suggestions;
+        usort($suggestions, function (Suggestion $a, Suggestion $b) {
+            return $a->name() <=> $b->name();
+        });
+
         return new self($suggestions);
     }
 

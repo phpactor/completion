@@ -81,7 +81,9 @@ class ScfClassCompletor implements TolerantCompletor
             }
         }
 
-        return Response::fromSuggestions(Suggestions::fromSuggestions($suggestions));
+        $suggestions = Suggestions::fromSuggestions($suggestions);
+
+        return Response::fromSuggestions($suggestions->sorted());
     }
 
     private function couldComplete(Node $node): bool
