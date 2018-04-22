@@ -2,7 +2,7 @@
 
 namespace Phpactor\Completion\Adapter\WorseReflection\Completor;
 
-use Phpactor\Completion\Adapter\WorseReflection\Formatter\Formatter;
+use Phpactor\Completion\Core\Formatter\Formatter;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\MethodFormatter;
 use Phpactor\WorseReflection\Core\ClassName;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
@@ -21,7 +21,7 @@ use Phpactor\Completion\Core\Suggestions;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Issues;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionInterface;
-use Phpactor\Completion\Adapter\WorseReflection\Formatter\ObjectFormatter;
+use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Microsoft\PhpParser\Parser;
 use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
@@ -112,7 +112,7 @@ class WorseClassMemberCompletor implements Completor
             return $symbolContext;
         }
 
-        if ($type->isPrimitive()) {
+        if (null === $type->className()) {
             return $symbolContext->withIssue(sprintf('Cannot complete members on scalar value (%s)', (string) $type));
         }
 

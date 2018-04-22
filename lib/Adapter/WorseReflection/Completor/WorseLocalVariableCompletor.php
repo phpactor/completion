@@ -4,13 +4,13 @@ namespace Phpactor\Completion\Adapter\WorseReflection\Completor;
 
 use Microsoft\PhpParser\Node;
 use Phpactor\Completion\Adapter\WorseReflection\Completor\LocalVariable\VariableWithNode;
-use Phpactor\Completion\Adapter\WorseReflection\Formatter\Formatter;
+use Phpactor\Completion\Core\Formatter\Formatter;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Response;
 use Phpactor\WorseReflection\Reflector;
 use Phpactor\Completion\Core\Suggestions;
 use Phpactor\Completion\Core\Suggestion;
-use Phpactor\Completion\Adapter\WorseReflection\Formatter\ObjectFormatter;
+use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\WorseReflection\Core\Inference\Variable;
 use Phpactor\WorseReflection\Core\Inference\Frame;
 use Microsoft\PhpParser\Parser;
@@ -32,7 +32,7 @@ class WorseLocalVariableCompletor implements Completor
     private $reflector;
 
     /**
-     * @var Formatter
+     * @var ObjectFormatter
      */
     private $informationFormatter;
 
@@ -118,6 +118,8 @@ class WorseLocalVariableCompletor implements Completor
     private function offsetToReflect(string $source, int $offset)
     {
         $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($offset);
+        assert($node instanceof Node);
+
         $parentNode = $node->parent;
         
         // If the parent is an assignment expression, then only parse
@@ -133,7 +135,7 @@ class WorseLocalVariableCompletor implements Completor
         return $offset;
     }
 
-    private function couldComplete(Node $node, string $source, int $offset): bool
+    private function couldComplete(Node $node = null, string $source, int $offset): bool
     {
         if (null === $node) {
             return false;

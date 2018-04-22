@@ -5,7 +5,7 @@ namespace Phpactor\Completion\Tests\Integration;
 use Generator;
 use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\MethodFormatter;
-use Phpactor\Completion\Adapter\WorseReflection\Formatter\ObjectFormatter;
+use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\ParameterFormatter;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\PropertyFormatter;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\TypeFormatter;

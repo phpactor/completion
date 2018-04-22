@@ -4,6 +4,8 @@ namespace Phpactor\Completion\Adapter\WorseReflection\Formatter;
 
 use Phpactor\WorseReflection\Core\Types;
 use Phpactor\WorseReflection\Core\Type;
+use Phpactor\Completion\Core\Formatter\Formatter;
+use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 
 class TypeFormatter implements Formatter
 {

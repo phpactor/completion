@@ -7,7 +7,7 @@ use Phpactor\Completion\Adapter\WorseReflection\Formatter\TypeFormatter;
 use Phpactor\Completion\Adapter\WorseReflection\Formatter\TypesFormatter;
 use Phpactor\WorseReflection\Core\Types;
 use Phpactor\WorseReflection\Core\Type;
-use Phpactor\Completion\Adapter\WorseReflection\Formatter\ObjectFormatter;
+use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 
 class WorseTypeFormatterTest extends TestCase
 {

@@ -13,17 +13,16 @@ use Phpactor\WorseReflection\Core\Reflection\ReflectionProperty;
 use Phpactor\WorseReflection\Core\SourceCode;
 use Phpactor\WorseReflection\Core\Type;
 use Phpactor\WorseReflection\Reflector;
-use Phpactor\Completion\Core\CanComplete;
 
 class ChainCompletor implements Completor
 {
     /**
-     * @var CouldComplete[]
+     * @var Completor[]
      */
     private $completors;
 
     /**
-     * @param CouldComplete[] $completors
+     * @param Completor[] $completors
      */
     public function __construct(array $completors)
     {

@@ -3,6 +3,8 @@
 namespace Phpactor\Completion\Adapter\WorseReflection\Formatter;
 
 use Phpactor\WorseReflection\Core\Reflection\ReflectionProperty;
+use Phpactor\Completion\Core\Formatter\Formatter;
+use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 
 class PropertyFormatter implements Formatter
 {
