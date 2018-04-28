@@ -46,7 +46,7 @@ class LocalVariableCompletorTest extends TolerantCompletorTestCase
             [
                 [
                     'type' => 'v',
-                    'name' => 'foobar',
+                    'name' => '$foobar',
                     'info' => 'string',
                 ]
             ]
@@ -57,7 +57,7 @@ class LocalVariableCompletorTest extends TolerantCompletorTestCase
             [
                 [
                     'type' => 'v',
-                    'name' => 'foobar',
+                    'name' => '$foobar',
                     'info' => 'string',
                 ]
             ]
@@ -68,12 +68,12 @@ class LocalVariableCompletorTest extends TolerantCompletorTestCase
             [
                 [
                     'type' => 'v',
-                    'name' => 'foobar',
+                    'name' => '$foobar',
                     'info' => 'string',
                 ],
                 [
                     'type' => 'v',
-                    'name' => 'barfoo',
+                    'name' => '$barfoo',
                     'info' => 'int',
                 ],
             ]
@@ -94,7 +94,7 @@ EOT
             , [
                 [
                     'type' => 'v',
-                    'name' => 'callMe',
+                    'name' => '$callMe',
                     'info' => 'Barfoo',
                 ],
             ],
@@ -111,7 +111,7 @@ EOT
             , [
                 [
                     'type' => 'v',
-                    'name' => 'std',
+                    'name' => '$std',
                     'info' => 'stdClass',
                 ],
             ],

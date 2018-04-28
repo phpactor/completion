@@ -93,7 +93,7 @@ class WorseLocalVariableCompletor implements TolerantCompletor
             $suggestions->add(
                 Suggestion::create(
                     'v',
-                    $local->name(),
+                    '$' . $local->name(),
                     $this->informationFormatter->format($local)
                 )
             );
