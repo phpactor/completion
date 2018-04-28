@@ -33,13 +33,6 @@ class ChainTolerantCompletor implements Completor
         $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($this->rewindToLastNonWhitespaceChar($source, $offset));
         $response = Response::new();
 
-        // it isn't possible that getDescendantNodeAtPosition returns null, but
-        // the docblock says it will, see
-        // https://github.com/Microsoft/tolerant-php-parser/pull/242/files
-        if (null === $node) {
-            return $response;
-        }
-
         foreach ($this->tolerantCompletors as $tolerantCompletor) {
             $response->merge($tolerantCompletor->complete($node, $source, $offset));
         }
