@@ -26,17 +26,17 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             [
                 [
                     'type' => 't',
-                    'name' => ' Alphabet',
+                    'name' => 'Alphabet',
                     'info' => 'Test\Name\Alphabet',
                 ],
                 [
                     'type' => 't',
-                    'name' => ' Backwards',
+                    'name' => 'Backwards',
                     'info' => 'Test\Name\Backwards',
                 ],
                 [
                     'type' => 't',
-                    'name' => ' Clapping',
+                    'name' => 'Clapping',
                     'info' => 'Test\Name\Clapping',
                 ],
             ],
@@ -47,7 +47,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             [
                 [
                     'type' => 't',
-                    'name' => ' Clapping',
+                    'name' => 'Clapping',
                     'info' => 'Test\Name\Clapping',
                 ],
             ],
@@ -58,7 +58,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             [
                 [
                     'type' => 't',
-                    'name' => ' Clapping',
+                    'name' => 'Clapping',
                     'info' => 'Test\Name\Clapping',
                 ],
             ],
@@ -69,17 +69,17 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             [
                 [
                     'type' => 't',
-                    'name' => ' Alphabet',
+                    'name' => 'Alphabet',
                     'info' => 'Test\Name\Alphabet',
                 ],
                 [
                     'type' => 't',
-                    'name' => ' Backwards',
+                    'name' => 'Backwards',
                     'info' => 'Test\Name\Backwards',
                 ],
                 [
                     'type' => 't',
-                    'name' => ' Clapping',
+                    'name' => 'Clapping',
                     'info' => 'Test\Name\Clapping',
                 ],
             ],
@@ -90,7 +90,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             [
                 [
                     'type' => 't',
-                    'name' => ' Clapping',
+                    'name' => 'Clapping',
                     'info' => 'Test\Name\Clapping',
                 ],
             ],
@@ -101,17 +101,17 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             [
                 [
                     'type' => 't',
-                    'name' => ' Alphabet',
+                    'name' => 'Alphabet',
                     'info' => 'Test\Name\Alphabet',
                 ],
                 [
                     'type' => 't',
-                    'name' => ' Backwards',
+                    'name' => 'Backwards',
                     'info' => 'Test\Name\Backwards',
                 ],
                 [
                     'type' => 't',
-                    'name' => ' Clapping',
+                    'name' => 'Clapping',
                     'info' => 'Test\Name\Clapping',
                 ],
             ],
@@ -122,7 +122,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             [
                 [
                     'type' => 't',
-                    'name' => ' Clapping',
+                    'name' => 'Clapping',
                     'info' => 'Test\Name\Clapping',
                 ],
             ],

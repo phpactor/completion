@@ -72,7 +72,7 @@ class ScfClassCompletor implements TolerantCompletor
             $best = $candidates->best();
             $suggestions[] = Suggestion::create(
                 't',
-                ' ' . $best->name(), // always add a space before a qualified name
+                $best->name(),
                 $best->__toString()
             );
 
