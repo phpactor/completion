@@ -36,7 +36,7 @@ class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
                 [
                     'type' => 'f',
                     'name' => 'strpos',
-                    'info' => 'fun strpos($haystack, $needle, $offset = 0): int',
+                    'info' => 'strpos($haystack, $needle, $offset = 0): int',
                 ]
             ]
         ];
