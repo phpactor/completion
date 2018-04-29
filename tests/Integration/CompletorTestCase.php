@@ -4,6 +4,7 @@ namespace Phpactor\Completion\Tests\Integration;
 
 use Generator;
 use PHPUnit\Framework\TestCase;
+use Phpactor\Completion\Bridge\WorseReflection\Formatter\FunctionFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\MethodFormatter;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\ParameterFormatter;
@@ -30,6 +31,7 @@ abstract class CompletorTestCase extends TestCase
         return new ObjectFormatter([
             new TypeFormatter(),
             new TypesFormatter(),
+            new FunctionFormatter(),
             new MethodFormatter(),
             new ParameterFormatter(),
             new PropertyFormatter(),

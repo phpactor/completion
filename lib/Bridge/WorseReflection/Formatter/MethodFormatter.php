@@ -32,16 +32,7 @@ class MethodFormatter implements Formatter
 
         /** @var ReflectionParameter $parameter */
         foreach ($method->parameters() as $parameter) {
-            $paramInfo = [];
-            if ($parameter->inferredTypes()->count()) {
-                $paramInfo[] = $formatter->format($parameter->inferredTypes());
-            }
-            $paramInfo[] = '$' . $parameter->name();
-
-            if ($parameter->default()->isDefined()) {
-                $paramInfo[] = '= '. str_replace(PHP_EOL, '', var_export($parameter->default()->value(), true));
-            }
-            $paramInfos[] = implode(' ', $paramInfo);
+            $paramInfos[] = $formatter->format($parameter);
         }
         $info[] = '(' . implode(', ', $paramInfos) . ')';
 
