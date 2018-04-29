@@ -14,24 +14,24 @@ class TypeFormatter implements Formatter
         return $object instanceof Type;
     }
 
-    public function format(ObjectFormatter $formatter, $object): string
+    public function format(ObjectFormatter $formatter, $type): string
     {
-        assert($object instanceof Type);
+        assert($type instanceof Type);
 
-        if (false === $object->isDefined()) {
+        if (false === $type->isDefined()) {
             return '<unknown>';
         }
 
-        $shortName = $object->short();
+        $shortName = $type->short();
 
-        if ($object->arrayType()->isDefined()) {
+        if ($type->arrayType()->isDefined()) {
             // generic
-            if ($object->isClass()) {
-                return sprintf('%s<%s>', $shortName, $object->arrayType()->short());
+            if ($type->isClass()) {
+                return sprintf('%s<%s>', $shortName, $type->arrayType()->short());
             }
 
             // array
-            return sprintf('%s[]', $object->arrayType()->short());
+            return sprintf('%s[]', $type->arrayType()->short());
         }
 
         return $shortName;
