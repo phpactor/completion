@@ -39,5 +39,4 @@ class ParameterFormatter implements Formatter
         }
         return implode(' ', $paramInfo);
     }
-
 }

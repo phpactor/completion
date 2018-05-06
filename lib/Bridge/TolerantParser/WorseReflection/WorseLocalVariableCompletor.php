@@ -22,10 +22,6 @@ use Microsoft\PhpParser\Node\Expression\AssignmentExpression;
 
 class WorseLocalVariableCompletor extends AbstractVariableCompletor implements TolerantCompletor
 {
-    const NAME_REGEX = '{[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]}';
-    const VALID_PRECHARS = [' ', '=', '[', '('];
-    const INVALID_PRECHARS = [ ':' ];
-
     /**
      * @var Reflector
      */

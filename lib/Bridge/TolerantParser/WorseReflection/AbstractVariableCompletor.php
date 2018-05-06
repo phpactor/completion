@@ -3,6 +3,7 @@
 namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
 use Microsoft\PhpParser\Node;
+use Microsoft\PhpParser\Node\Expression\AssignmentExpression;
 use Phpactor\WorseReflection\Core\Inference\Frame;
 use Phpactor\WorseReflection\Core\Inference\Variable;
 use Phpactor\WorseReflection\Reflector;
@@ -48,7 +49,6 @@ abstract class AbstractVariableCompletor
 
         /** @var Variable $local */
         foreach ($reversedLocals as $local) {
-
             if (isset($seen[$local->name()])) {
                 continue;
             }
@@ -69,7 +69,6 @@ abstract class AbstractVariableCompletor
         }
 
         return $variables;
-
     }
 
     private function offsetToReflect(Node $node, int $offset)

@@ -43,8 +43,8 @@ EOT
             , [
                 [
                     'type' => 'v',
-                    'name' => 'param',
-                    'info' => 'string => param #0 string $foo',
+                    'name' => '$param',
+                    'info' => 'string => param #1 string $foo',
                 ]
             ]
         ];
@@ -61,8 +61,8 @@ EOT
             , [
                 [
                     'type' => 'v',
-                    'name' => 'foobar',
-                    'info' => 'Foobar => param #1 Foobar $bar',
+                    'name' => '$foobar',
+                    'info' => 'Foobar => param #2 Foobar $bar',
                 ]
             ]
         ];
@@ -79,15 +79,27 @@ EOT
             , [
                 [
                     'type' => 'v',
-                    'name' => 'foobar',
-                    'info' => 'Foobar => param #2 $mixed',
+                    'name' => '$foobar',
+                    'info' => 'Foobar => param #3 $mixed',
                 ],
                 [
                     'type' => 'v',
-                    'name' => 'param',
-                    'info' => 'string => param #2 $mixed',
+                    'name' => '$param',
+                    'info' => 'string => param #3 $mixed',
                 ],
             ]
+        ];
+
+        yield 'no suggestions when exceeding parameter arity' => [
+            <<<'EOT'
+<?php 
+class Foobar { public function barbar(string $foo) {} }
+
+$param = 'string';
+$foobar = new Foobar();
+$foobar->barbar($param, $<>);
+EOT
+            , []
         ];
     }
 

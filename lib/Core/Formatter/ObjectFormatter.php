@@ -36,7 +36,8 @@ class ObjectFormatter
         }
 
         throw new RuntimeException(sprintf(
-            'Do not know how to format "%s"', get_class($object)
+            'Do not know how to format "%s"',
+            get_class($object)
         ));
     }
 

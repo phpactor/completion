@@ -2,6 +2,7 @@
 
 namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
+use LogicException;
 use Microsoft\PhpParser\MissingToken;
 use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Node\DelimitedList\ArgumentExpressionList;
@@ -15,6 +16,7 @@ use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Suggestions;
 use Phpactor\WorseReflection\Core\Inference\Variable as WorseVariable;
+use Phpactor\WorseReflection\Core\Reflection\ReflectionMethod;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
 use Phpactor\WorseReflection\Core\Type;
 use Phpactor\WorseReflection\Reflector;
@@ -67,22 +69,19 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
         }
 
         $paramIndex = $this->paramIndex($callableExpression);
+
+        if ($this->numberOfArgumentsExceedParameterArity($method, $paramIndex)) {
+            return Response::new();
+        }
+
+        $parameter = $this->reflectedParameter($method, $paramIndex);
+
         foreach ($variables as $variable) {
-
-            $reflectedIndex = 0;
-
-            /** @var ReflectionParameter $parameter */
-            foreach ($method->parameters() as $parameter) {
-                if ($reflectedIndex == $paramIndex) {
-                    break;
-                }
-                $reflectedIndex++;
-            }
-
-            $valid = $this->isVariableValidForParameter($variable, $parameter);
-
-            // variable is not typed or is not a valid type
-            if ($variable->symbolContext()->types()->count() && false === $valid) {
+            if (
+                $variable->symbolContext()->types()->count() && 
+                false === $this->isVariableValidForParameter($variable, $parameter)
+            ) {
+                // parameter has no types and is not valid for this position, ignore it
                 continue;
             }
 
@@ -103,10 +102,11 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
 
     private function paramIndex(MemberAccessExpression $exp)
     {
+        assert(null !== $exp->parent);
         $node = $exp->parent->getFirstDescendantNode(ArgumentExpressionList::class);
         assert($node instanceof ArgumentExpressionList);
 
-        $index = -1;
+        $index = 0;
         /** @var ArgumentExpression $element */
         foreach ($node->getElements() as $element) {
             $index++;
@@ -151,5 +151,25 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
             }
         }
         return false;
+    }
+
+    private function reflectedParameter(ReflectionMethod $method, $paramIndex)
+    {
+        $reflectedIndex = 1;
+        /** @var ReflectionParameter $parameter */
+        foreach ($method->parameters() as $parameter) {
+            if ($reflectedIndex == $paramIndex) {
+                return $parameter;
+                break;
+            }
+            $reflectedIndex++;
+        }
+
+        throw new LogicException(sprintf('Could not find parameter for index "%s"', $paramIndex));
+    }
+
+    private function numberOfArgumentsExceedParameterArity(ReflectionMethod $method, $paramIndex)
+    {
+        return $method->parameters()->count() < $paramIndex;
     }
 }
