@@ -34,5 +34,4 @@ class PropertyFormatter implements Formatter
 
         return implode('', $info);
     }
-
 }

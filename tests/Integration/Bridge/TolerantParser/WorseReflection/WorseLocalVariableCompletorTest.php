@@ -10,7 +10,7 @@ use Generator;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseLocalVariableCompletor;
 use Phpactor\WorseReflection\ReflectorBuilder;
 
-class LocalVariableCompletorTest extends TolerantCompletorTestCase
+class WorseLocalVariableCompletorTest extends TolerantCompletorTestCase
 {
     protected function createTolerantCompletor(string $source): TolerantCompletor
     {

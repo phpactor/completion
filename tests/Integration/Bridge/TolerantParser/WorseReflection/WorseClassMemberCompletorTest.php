@@ -20,7 +20,7 @@ use PhpBench\Benchmark\Metadata\Annotations\Subject;
 use PhpBench\Benchmark\Metadata\Annotations\Iterations;
 use PhpBench\Benchmark\Metadata\Annotations\Revs;
 
-class ClassMemberCompletorTest extends TolerantCompletorTestCase
+class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
 {
     protected function createTolerantCompletor(string $source): TolerantCompletor
     {

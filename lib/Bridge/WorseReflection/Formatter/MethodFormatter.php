@@ -44,5 +44,4 @@ class MethodFormatter implements Formatter
 
         return implode('', $info);
     }
-
 }

@@ -48,7 +48,9 @@ class WorseBuiltInFunctionCompletor implements TolerantCompletor
         /** @var ReflectionFunction $functionReflection */
         foreach ($functions as $functionReflection) {
             $suggestions->add(Suggestion::create(
-                'f', $functionReflection->name(), $this->formatter->format($functionReflection)
+                'f',
+                $functionReflection->name(),
+                $this->formatter->format($functionReflection)
             ));
         }
 

@@ -6,6 +6,7 @@ use Generator;
 use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\FunctionFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\MethodFormatter;
+use Phpactor\Completion\Bridge\WorseReflection\Formatter\ParametersFormatter;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\ParameterFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\PropertyFormatter;
@@ -34,6 +35,7 @@ abstract class CompletorTestCase extends TestCase
             new FunctionFormatter(),
             new MethodFormatter(),
             new ParameterFormatter(),
+            new ParametersFormatter(),
             new PropertyFormatter(),
             new VariableFormatter(),
         ]);

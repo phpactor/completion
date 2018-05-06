@@ -20,12 +20,8 @@ use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 use Microsoft\PhpParser\Node\Expression\AssignmentExpression;
 
-class WorseLocalVariableCompletor implements TolerantCompletor
+class WorseLocalVariableCompletor extends AbstractVariableCompletor implements TolerantCompletor
 {
-    const NAME_REGEX = '{[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]}';
-    const VALID_PRECHARS = [' ', '=', '[', '('];
-    const INVALID_PRECHARS = [ ':' ];
-
     /**
      * @var Reflector
      */
@@ -38,6 +34,7 @@ class WorseLocalVariableCompletor implements TolerantCompletor
 
     public function __construct(Reflector $reflector, ObjectFormatter $typeFormatter = null)
     {
+        parent::__construct($reflector);
         $this->reflector = $reflector;
         $this->informationFormatter = $typeFormatter ?: new ObjectFormatter();
     }
@@ -48,48 +45,8 @@ class WorseLocalVariableCompletor implements TolerantCompletor
             return Response::new();
         }
 
-        $partialSource = mb_substr($source, 0, $offset);
-
-        $dollarPosition = strrpos($partialSource, '$');
-        if (false === $dollarPosition) {
-            return Response::new();
-        }
-
-        $partialMatch = mb_substr($partialSource, $dollarPosition);
         $suggestions = Suggestions::new();
-
-        $offset = $this->offsetToReflect($node, $offset);
-        $reflectionOffset = $this->reflector->reflectOffset($source, $offset);
-        $frame = $reflectionOffset->frame();
-
-        // Get all declared variables up until the offset. The most
-        // recently declared variables should be first (which is why
-        // we reverse the array).
-        $reversedLocals = $this->orderedVariablesUntilOffset($frame, $offset);
-
-        // Ignore variables that have already been suggested.
-        $seen = [];
-
-        /** @var Variable $local */
-        foreach ($reversedLocals as $local) {
-
-            if (isset($seen[$local->name()])) {
-                continue;
-            }
-
-            $name = ltrim($partialMatch, '$');
-            $matchPos = -1;
-
-            if ($name) {
-                $matchPos = mb_strpos($local->name(), $name);
-            }
-
-            if ('$' !== $partialMatch && 0 !== $matchPos) {
-                continue;
-            }
-
-            $seen[$local->name()] = true;
-
+        foreach ($this->variableCompletions($node, $source, $offset) as $local) {
             $suggestions->add(
                 Suggestion::create(
                     'v',
@@ -100,28 +57,6 @@ class WorseLocalVariableCompletor implements TolerantCompletor
         }
 
         return Response::fromSuggestions($suggestions);
-    }
-
-    private function orderedVariablesUntilOffset(Frame $frame, int $offset)
-    {
-        return array_reverse(iterator_to_array($frame->locals()->lessThanOrEqualTo($offset)));
-    }
-
-    private function offsetToReflect(Node $node, int $offset)
-    {
-        $parentNode = $node->parent;
-        
-        // If the parent is an assignment expression, then only parse
-        // until the start of the expression, not the start of the variable
-        // under completion:
-        //
-        //     $left = $lef<>
-        //
-        // Otherwise $left will be evaluated to <unknown>.
-        if ($parentNode instanceof AssignmentExpression) {
-            $offset = $parentNode->getFullStart();
-        }
-        return $offset;
     }
 
     private function couldComplete(Node $node = null, string $source, int $offset): bool
