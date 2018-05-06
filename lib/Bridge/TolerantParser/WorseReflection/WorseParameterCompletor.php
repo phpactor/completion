@@ -60,22 +60,23 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
 
         $suggestions = [];
         $call = $this->reflector->reflectMethodCall($source, $callableExpression->getEndPosition());
+        $method = $call->class()->methods()->get($call->name());
+
+        if ($method->parameters()->count() === 0) {
+            return Response::new();
+        }
 
         $paramIndex = $this->paramIndex($callableExpression);
         foreach ($variables as $variable) {
-            $method = $call->class()->methods()->get($call->name());
-
-            if ($method->parameters()->count() === 0) {
-                return Response::new();
-            }
 
             $reflectedIndex = 0;
 
             /** @var ReflectionParameter $parameter */
             foreach ($method->parameters() as $parameter) {
-                if ($reflectedIndex === $paramIndex) {
+                if ($reflectedIndex == $paramIndex) {
                     break;
                 }
+                $reflectedIndex++;
             }
 
             $valid = $this->isVariableValidForParameter($variable, $parameter);
@@ -87,11 +88,11 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
 
             $suggestions[] = Suggestion::create(
                 'v',
-                $variable->name(),
+                '$' . $variable->name(),
                 sprintf(
                     '%s => param #%d %s',
                     $this->formatter->format($variable->symbolContext()->types()),
-                    $paramIndex - 1,
+                    $paramIndex,
                     $this->formatter->format($parameter)
                 )
             );
@@ -105,9 +106,10 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
         $node = $exp->parent->getFirstDescendantNode(ArgumentExpressionList::class);
         assert($node instanceof ArgumentExpressionList);
 
-        $index = 0;
+        $index = -1;
         /** @var ArgumentExpression $element */
         foreach ($node->getElements() as $element) {
+            $index++;
             if (!$element->expression instanceof Variable) {
                 continue;
             }
@@ -117,8 +119,6 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
             if ($name instanceof MissingToken) {
                 continue;
             }
-
-            $index++;
         }
 
         return $index;
@@ -131,13 +131,25 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
         }
 
         $valid = false;
+
+        /** @var Type $variableType */
         foreach ($variable->symbolContext()->types() as $variableType) {
+
+            if ($variableType->isClass() ) {
+                $variableTypeClass = $this->reflector->reflectClassLike($variableType->className());
+            }
+
             foreach ($parameter->inferredTypes() as $parameterType) {
+                if ($variableType->isClass() && $parameterType->isClass() && $variableTypeClass->isInstanceOf($parameterType->className())) {
+                    return true;
+                    
+                }
+
                 if ($variableType == $parameterType) {
-                    $valid = true;
+                    return true;
                 }
             }
         }
-        return $valid;
+        return false;
     }
 }
