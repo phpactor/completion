@@ -36,14 +36,15 @@ EOT
 <?php 
 class Foobar { public function barbar(string $foo) {} }
 
+$param = 'string';
 $foobar = new Foobar();
 $foobar->barbar($<>
 EOT
             , [
                 [
                     'type' => 'v',
-                    'name' => 'foobar',
-                    'info' => 'Foobar to parameter string $foo',
+                    'name' => 'param',
+                    'info' => 'string => param #0 string $foo',
                 ]
             ]
         ];
@@ -53,6 +54,7 @@ EOT
 <?php 
 class Foobar { public function barbar(string $foo, Foobar $bar) {} }
 
+$param = 'string';
 $foobar = new Foobar();
 $foobar->barbar($foo, $<>
 EOT
@@ -60,8 +62,31 @@ EOT
                 [
                     'type' => 'v',
                     'name' => 'foobar',
-                    'info' => 'Foobar to parameter Foobar $bar',
+                    'info' => 'Foobar => param #1 Foobar $bar',
                 ]
+            ]
+        ];
+
+        yield 'parameter, 3rd pos' => [
+            <<<'EOT'
+<?php 
+class Foobar { public function barbar(string $foo, Foobar $bar, $mixed) {} }
+
+$param = 'string';
+$foobar = new Foobar();
+$foobar->barbar($param, $foobar, $<>);
+EOT
+            , [
+                [
+                    'type' => 'v',
+                    'name' => 'foobar',
+                    'info' => 'Foobar => param #2 $mixed',
+                ],
+                [
+                    'type' => 'v',
+                    'name' => 'param',
+                    'info' => 'string => param #2 $mixed',
+                ],
             ]
         ];
     }

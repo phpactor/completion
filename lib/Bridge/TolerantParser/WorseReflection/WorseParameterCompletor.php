@@ -14,9 +14,12 @@ use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Suggestions;
+use Phpactor\WorseReflection\Core\Inference\Variable as WorseVariable;
+use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
+use Phpactor\WorseReflection\Core\Type;
 use Phpactor\WorseReflection\Reflector;
 
-class WorseParameterCompletor implements TolerantCompletor
+class WorseParameterCompletor extends AbstractVariableCompletor implements TolerantCompletor
 {
     /**
      * @var Reflector
@@ -24,19 +27,14 @@ class WorseParameterCompletor implements TolerantCompletor
     private $reflector;
 
     /**
-     * @var WorseLocalVariableCompletor
-     */
-    private $localVariableCompletor;
-
-    /**
      * @var ObjectFormatter
      */
     private $formatter;
 
-    public function __construct(Reflector $reflector, ObjectFormatter $formatter, WorseLocalVariableCompletor $localVariableCompletor = null)
+    public function __construct(Reflector $reflector, ObjectFormatter $formatter)
     {
+        parent::__construct($reflector);
         $this->reflector = $reflector;
-        $this->localVariableCompletor = $localVariableCompletor ?: new WorseLocalVariableCompletor($reflector, $formatter);
         $this->formatter = $formatter;
     }
 
@@ -50,6 +48,7 @@ class WorseParameterCompletor implements TolerantCompletor
         if (!$callExpression) {
             return Response::new();
         }
+
         assert($callExpression instanceof CallExpression);
         $callableExpression = $callExpression->callableExpression;
 
@@ -57,34 +56,42 @@ class WorseParameterCompletor implements TolerantCompletor
             return Response::new();
         }
 
-        $variableSuggestions = $this->localVariableCompletor->complete($node, $source, $offset)->suggestions();
+        $variables = $this->variableCompletions($node, $source, $offset);
 
         $suggestions = [];
         $call = $this->reflector->reflectMethodCall($source, $callableExpression->getEndPosition());
 
         $paramIndex = $this->paramIndex($callableExpression);
-        foreach ($variableSuggestions as $variableSuggestion) {
+        foreach ($variables as $variable) {
             $method = $call->class()->methods()->get($call->name());
 
-            // TODO: Add issue?
             if ($method->parameters()->count() === 0) {
                 return Response::new();
             }
 
             $reflectedIndex = 0;
-            // TODO: Add atIndex method
+
+            /** @var ReflectionParameter $parameter */
             foreach ($method->parameters() as $parameter) {
                 if ($reflectedIndex === $paramIndex) {
                     break;
                 }
             }
 
+            $valid = $this->isVariableValidForParameter($variable, $parameter);
+
+            // variable is not typed or is not a valid type
+            if ($variable->symbolContext()->types()->count() && false === $valid) {
+                continue;
+            }
+
             $suggestions[] = Suggestion::create(
                 'v',
-                $variableSuggestion->name(),
+                $variable->name(),
                 sprintf(
-                    '%s to parameter %s',
-                    $variableSuggestion->info(),
+                    '%s => param #%d %s',
+                    $this->formatter->format($variable->symbolContext()->types()),
+                    $paramIndex - 1,
                     $this->formatter->format($parameter)
                 )
             );
@@ -115,5 +122,22 @@ class WorseParameterCompletor implements TolerantCompletor
         }
 
         return $index;
+    }
+
+    private function isVariableValidForParameter(WorseVariable $variable, ReflectionParameter $parameter)
+    {
+        if ($parameter->inferredTypes()->best() == Type::undefined()) {
+            return true;
+        }
+
+        $valid = false;
+        foreach ($variable->symbolContext()->types() as $variableType) {
+            foreach ($parameter->inferredTypes() as $parameterType) {
+                if ($variableType == $parameterType) {
+                    $valid = true;
+                }
+            }
+        }
+        return $valid;
     }
 }
