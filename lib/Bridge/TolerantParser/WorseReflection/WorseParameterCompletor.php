@@ -17,6 +17,7 @@ use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Suggestions;
 use Phpactor\WorseReflection\Core\Exception\CouldNotResolveNode;
+use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Inference\Variable as WorseVariable;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionFunctionLike;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionMethod;
@@ -62,10 +63,26 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
 
         $variables = $this->variableCompletions($node, $source, $offset);
 
-        $reflectionFunctionLike = $this->reflectFunctionLike($source, $callableExpression);
+        if (empty($variables)) {
+            $response->issues()->add('No variables available');
+            return $response;
+        }
+
+        try {
+            $reflectionFunctionLike = $this->reflectFunctionLike($source, $callableExpression);
+        } catch (NotFound $exception) {
+            $response->issues()->add($exception->getMessage());
+            return $response;
+        }
+
+        if (null === $reflectionFunctionLike) {
+            $response->issues()->add('Could not reflect function / method');
+            return $response;
+        }
 
         if ($reflectionFunctionLike->parameters()->count() === 0) {
-            return Response::new();
+            $response->issues()->add('Function has no parameters');
+            return $response;
         }
 
         $paramIndex = $this->paramIndex($callableExpression);
@@ -87,7 +104,7 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
                 continue;
             }
 
-            $suggestions[] = Suggestion::create(
+            $response->suggestions()->add(Suggestion::create(
                 'v',
                 '$' . $variable->name(),
                 sprintf(
@@ -96,10 +113,10 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
                     $paramIndex,
                     $this->formatter->format($parameter)
                 )
-            );
+            ));
         }
 
-        return Response::fromSuggestions(Suggestions::fromSuggestions($suggestions));
+        return $response;
     }
 
     private function paramIndex(Node $node)
@@ -179,7 +196,7 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
         return $reflectionFunctionLike->parameters()->count() < $paramIndex;
     }
 
-    private function reflectFunctionLike(string $source, Node $callableExpression): ReflectionFunctionLike
+    private function reflectFunctionLike(string $source, Node $callableExpression): ?ReflectionFunctionLike
     {
         $offset = $this->reflector->reflectOffset($source, $callableExpression->getEndPosition());
 
@@ -188,8 +205,13 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
             return $containerClass->methods()->get($offset->symbolContext()->symbol()->name());
         }
 
-        assert($callableExpression instanceof QualifiedName);
-        return $this->reflector->reflectFunction((string) $callableExpression->getResolvedName());
+        if (!$callableExpression instanceof QualifiedName) {
+            return null;
+        }
+
+        $name = $callableExpression->getResolvedName() ?? $callableExpression->getText();
+
+        return $this->reflector->reflectFunction((string) $name);
     }
 
     private function argumentListFromNode(Node $node): ?ArgumentExpressionList
