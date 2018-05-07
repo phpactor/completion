@@ -152,6 +152,40 @@ EOT
                 ],
             ],
         ];
+
+        yield 'complete after comma' => [
+            <<<'EOT'
+<?php 
+function foobar($bar, string $barbar) {}
+
+$hello = 'string';
+foobar($hello, <>);
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$hello',
+                    'info' => 'string => param #1 $bar',
+                ],
+            ],
+        ];
+
+        yield 'complete static method parameter' => [
+            <<<'EOT'
+<?php 
+class Foobar { public static function barbar(string $foo, Foobar $bar, $mixed) {} }
+
+$param = 'string';
+Foobar::barbar($param, $foobar, $<>);
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$param',
+                    'info' => 'string => param #3 $mixed',
+                ],
+            ],
+        ];
     }
 
     public function provideCouldNotComplete(): Generator

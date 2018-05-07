@@ -9,6 +9,7 @@ use Microsoft\PhpParser\Node\DelimitedList\ArgumentExpressionList;
 use Microsoft\PhpParser\Node\Expression\ArgumentExpression;
 use Microsoft\PhpParser\Node\Expression\CallExpression;
 use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
+use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 use Microsoft\PhpParser\Node\Expression\Variable;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
@@ -77,6 +78,11 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
 
         if (null === $reflectionFunctionLike) {
             $response->issues()->add('Could not reflect function / method');
+            return $response;
+        }
+
+        if (null === $reflectionFunctionLike) {
+            $response->issues()->add('Could not determine containing class of call');
             return $response;
         }
 
@@ -222,7 +228,7 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
             return $callExpression->argumentExpressionList;
         }
         
-        assert($node instanceof MemberAccessExpression);
+        assert($node instanceof MemberAccessExpression || $node instanceof ScopedPropertyAccessExpression);
         assert(null !== $node->parent);
 
         $list = $node->parent->getFirstDescendantNode(ArgumentExpressionList::class);
