@@ -101,6 +101,57 @@ $foobar->barbar($param, $<>);
 EOT
             , []
         ];
+
+        yield 'function parameter completion' => [
+            <<<'EOT'
+<?php 
+function foobar($bar, string $barbar) {}
+
+$hello = 'string';
+foobar($param, $<>);
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$hello',
+                    'info' => 'string => param #2 string $barbar',
+                ],
+            ],
+        ];
+
+        yield 'function parameter completion, single parameters' => [
+            <<<'EOT'
+<?php 
+function foobar($bar, string $barbar) {}
+
+$hello = 'string';
+foobar($<>);
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$hello',
+                    'info' => 'string => param #1 $bar',
+                ],
+            ],
+        ];
+
+        yield 'complete on open braclet' => [
+            <<<'EOT'
+<?php 
+function foobar($bar, string $barbar) {}
+
+$hello = 'string';
+foobar(<>);
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$hello',
+                    'info' => 'string => param #1 $bar',
+                ],
+            ],
+        ];
     }
 
     public function provideCouldNotComplete(): Generator

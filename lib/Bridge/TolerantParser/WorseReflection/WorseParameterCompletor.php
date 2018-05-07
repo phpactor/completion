@@ -10,6 +10,7 @@ use Microsoft\PhpParser\Node\Expression\ArgumentExpression;
 use Microsoft\PhpParser\Node\Expression\CallExpression;
 use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
 use Microsoft\PhpParser\Node\Expression\Variable;
+use Microsoft\PhpParser\Node\QualifiedName;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\Completion\Core\Response;
@@ -17,6 +18,7 @@ use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Suggestions;
 use Phpactor\WorseReflection\Core\Exception\CouldNotResolveNode;
 use Phpactor\WorseReflection\Core\Inference\Variable as WorseVariable;
+use Phpactor\WorseReflection\Core\Reflection\ReflectionFunctionLike;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionMethod;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
 use Phpactor\WorseReflection\Core\Type;
@@ -44,11 +46,13 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
     public function complete(Node $node, string $source, int $offset): Response
     {
         $response = Response::new();
-        if (!$node instanceof Variable) {
+
+        if (!$node instanceof Variable && !$node instanceof CallExpression) {
             return $response;
         }
 
-        $callExpression = $node->getFirstAncestor(CallExpression::class);
+        $callExpression = $node instanceof CallExpression ? $node : $node->getFirstAncestor(CallExpression::class);
+
         if (!$callExpression) {
             return $response;
         }
@@ -56,35 +60,24 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
         assert($callExpression instanceof CallExpression);
         $callableExpression = $callExpression->callableExpression;
 
-        if (!$callableExpression instanceof MemberAccessExpression) {
-            return $response;
-        }
-
         $variables = $this->variableCompletions($node, $source, $offset);
 
-        $suggestions = [];
-        $call = $this->reflector->reflectMethodCall($source, $callableExpression->getEndPosition());
+        $reflectionFunctionLike = $this->reflectFunctionLike($source, $callableExpression);
 
-        try {
-            $method = $call->class()->methods()->get($call->name());
-        } catch (CouldNotResolveNode $exception) {
-            $response->issues()->add($exception->getMessage());
-            return $response;
-        }
-
-        if ($method->parameters()->count() === 0) {
+        if ($reflectionFunctionLike->parameters()->count() === 0) {
             return Response::new();
         }
 
-        $paramIndex = $this->paramIndex($callableExpression);
+        $paramIndex = $this->paramIndex($callableExpression, $offset);
 
-        if ($this->numberOfArgumentsExceedParameterArity($method, $paramIndex)) {
+        if ($this->numberOfArgumentsExceedParameterArity($reflectionFunctionLike, $paramIndex)) {
             $response->issues()->add('Parameter index exceeds parameter arity');
             return $response;
         }
 
-        $parameter = $this->reflectedParameter($method, $paramIndex);
+        $parameter = $this->reflectedParameter($reflectionFunctionLike, $paramIndex);
 
+        $suggestions = [];
         foreach ($variables as $variable) {
             if (
                 $variable->symbolContext()->types()->count() && 
@@ -109,15 +102,17 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
         return Response::fromSuggestions(Suggestions::fromSuggestions($suggestions));
     }
 
-    private function paramIndex(MemberAccessExpression $exp)
+    private function paramIndex(Node $exp)
     {
-        assert(null !== $exp->parent);
-        $node = $exp->parent->getFirstDescendantNode(ArgumentExpressionList::class);
-        assert($node instanceof ArgumentExpressionList);
+        $argumentList = $this->argumentListFromNode($exp);
+
+        if (null === $argumentList) {
+            return 1;
+        }
 
         $index = 0;
         /** @var ArgumentExpression $element */
-        foreach ($node->getElements() as $element) {
+        foreach ($argumentList->getElements() as $element) {
             $index++;
             if (!$element->expression instanceof Variable) {
                 continue;
@@ -162,11 +157,11 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
         return false;
     }
 
-    private function reflectedParameter(ReflectionMethod $method, $paramIndex)
+    private function reflectedParameter(ReflectionFunctionLike $reflectionFunctionLike, $paramIndex)
     {
         $reflectedIndex = 1;
         /** @var ReflectionParameter $parameter */
-        foreach ($method->parameters() as $parameter) {
+        foreach ($reflectionFunctionLike->parameters() as $parameter) {
             if ($reflectedIndex == $paramIndex) {
                 return $parameter;
                 break;
@@ -177,8 +172,35 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
         throw new LogicException(sprintf('Could not find parameter for index "%s"', $paramIndex));
     }
 
-    private function numberOfArgumentsExceedParameterArity(ReflectionMethod $method, $paramIndex)
+    private function numberOfArgumentsExceedParameterArity(ReflectionFunctionLike $reflectionFunctionLike, $paramIndex)
     {
-        return $method->parameters()->count() < $paramIndex;
+        return $reflectionFunctionLike->parameters()->count() < $paramIndex;
+    }
+
+    private function reflectFunctionLike(string $source, Node $callableExpression): ReflectionFunctionLike
+    {
+        $offset = $this->reflector->reflectOffset($source, $callableExpression->getEndPosition());
+
+        if ($containerType = $offset->symbolContext()->containerType()) {
+            $containerClass = $this->reflector->reflectClassLike($containerType->className());
+            return $containerClass->methods()->get($offset->symbolContext()->symbol()->name());
+        }
+
+        assert($callableExpression instanceof QualifiedName);
+        return $this->reflector->reflectFunction((string) $callableExpression->getResolvedName());
+    }
+
+    private function argumentListFromNode(Node $node): ?ArgumentExpressionList
+    {
+        if ($node instanceof QualifiedName) {
+            $callExpression = $node->parent;
+            assert($callExpression instanceof CallExpression);
+            return $callExpression->argumentExpressionList;
+        }
+        
+        assert($node instanceof MemberAccessExpression);
+        assert(null !== $node->parent);
+
+        return $node->parent->getFirstDescendantNode(ArgumentExpressionList::class);
     }
 }

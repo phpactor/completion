@@ -4,6 +4,8 @@ namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
 use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Node\Expression\AssignmentExpression;
+use Microsoft\PhpParser\Node\Expression\CallExpression;
+use Microsoft\PhpParser\Node\Expression\Variable as ParserVariable;
 use Phpactor\WorseReflection\Core\Inference\Frame;
 use Phpactor\WorseReflection\Core\Inference\Variable;
 use Phpactor\WorseReflection\Reflector;
@@ -25,14 +27,13 @@ abstract class AbstractVariableCompletor
      */
     protected function variableCompletions(Node $node, string $source, int $offset): array
     {
-        $partialSource = mb_substr($source, 0, $offset);
-
-        $dollarPosition = strrpos($partialSource, '$');
-        if (false === $dollarPosition) {
-            return [];
+        if ($node instanceof ParserVariable) {
+            $partialMatch = $node->getText();
         }
 
-        $partialMatch = mb_substr($partialSource, $dollarPosition);
+        if ($node instanceof CallExpression) {
+            $partialMatch = '';
+        }
 
         $offset = $this->offsetToReflect($node, $offset);
         $reflectionOffset = $this->reflector->reflectOffset($source, $offset);
@@ -53,6 +54,7 @@ abstract class AbstractVariableCompletor
                 continue;
             }
 
+
             $name = ltrim($partialMatch, '$');
             $matchPos = -1;
 
@@ -60,7 +62,7 @@ abstract class AbstractVariableCompletor
                 $matchPos = mb_strpos($local->name(), $name);
             }
 
-            if ('$' !== $partialMatch && 0 !== $matchPos) {
+            if ($partialMatch && ('$' !== $partialMatch && 0 !== $matchPos)) {
                 continue;
             }
 
