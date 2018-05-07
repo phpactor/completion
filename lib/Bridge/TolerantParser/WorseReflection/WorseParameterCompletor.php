@@ -15,6 +15,7 @@ use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Suggestions;
+use Phpactor\WorseReflection\Core\Exception\CouldNotResolveNode;
 use Phpactor\WorseReflection\Core\Inference\Variable as WorseVariable;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionMethod;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
@@ -42,27 +43,34 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
 
     public function complete(Node $node, string $source, int $offset): Response
     {
+        $response = Response::new();
         if (!$node instanceof Variable) {
-            return Response::new();
+            return $response;
         }
 
         $callExpression = $node->getFirstAncestor(CallExpression::class);
         if (!$callExpression) {
-            return Response::new();
+            return $response;
         }
 
         assert($callExpression instanceof CallExpression);
         $callableExpression = $callExpression->callableExpression;
 
         if (!$callableExpression instanceof MemberAccessExpression) {
-            return Response::new();
+            return $response;
         }
 
         $variables = $this->variableCompletions($node, $source, $offset);
 
         $suggestions = [];
         $call = $this->reflector->reflectMethodCall($source, $callableExpression->getEndPosition());
-        $method = $call->class()->methods()->get($call->name());
+
+        try {
+            $method = $call->class()->methods()->get($call->name());
+        } catch (CouldNotResolveNode $exception) {
+            $response->issues()->add($exception->getMessage());
+            return $response;
+        }
 
         if ($method->parameters()->count() === 0) {
             return Response::new();
@@ -71,7 +79,8 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
         $paramIndex = $this->paramIndex($callableExpression);
 
         if ($this->numberOfArgumentsExceedParameterArity($method, $paramIndex)) {
-            return Response::new();
+            $response->issues()->add('Parameter index exceeds parameter arity');
+            return $response;
         }
 
         $parameter = $this->reflectedParameter($method, $paramIndex);
