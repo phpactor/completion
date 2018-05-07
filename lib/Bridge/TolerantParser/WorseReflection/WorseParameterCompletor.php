@@ -49,6 +49,13 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
     {
         $response = Response::new();
 
+        // Tolerant parser _seems_ to resolve f.e. offset 74 as the qualified
+        // name of the node, when it is actually the open bracket. If it is a qualified
+        // name, we take our chances on the parent.
+        if ($node instanceof QualifiedName) {
+            $node = $node->parent;
+        }
+
         if (!$node instanceof Variable && !$node instanceof CallExpression) {
             return $response;
         }

@@ -6,8 +6,8 @@ use Generator;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseParameterCompletor;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
-use Phpactor\WorseReflection\ReflectorBuilder;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseReflection\WorseParameterCompletorTest;
+use Phpactor\WorseReflection\ReflectorBuilder;
 
 class WorseParameterCompletorTest extends TolerantCompletorTestCase
 {
@@ -17,7 +17,15 @@ class WorseParameterCompletorTest extends TolerantCompletorTestCase
         return new WorseParameterCompletor($reflector, $this->formatter());
     }
 
-    public function provideComplete(): Generator
+    /**
+     * @dataProvider provideCompleteMethodParameter
+     */
+    public function testCompleteMethodParameter(string $source, array $expected)
+    {
+        $this->assertComplete($source, $expected);
+    }
+
+    public function provideCompleteMethodParameter(): Generator
     {
         yield 'no parameters' => [
             <<<'EOT'
@@ -142,7 +150,7 @@ EOT
 function foobar($bar, string $barbar) {}
 
 $hello = 'string';
-foobar(<>);
+foobar(<>
 EOT
             ,[
                 [
@@ -153,6 +161,41 @@ EOT
             ],
         ];
 
+        yield 'does not use variables declared after offset' => [
+            <<<'EOT'
+<?php 
+function foobar($bar, string $barbar) {}
+
+class Hello
+{
+    public functoin goodbye()
+    {
+        $hello = 'string';
+        foobar(<>
+        $hello = 1234;
+    }
+}
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$hello',
+                    'info' => 'string => param #1 $bar',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideCompleteFunctionParameter
+     */
+    public function testCompleteFunctionParameter(string $source, array $expected)
+    {
+        $this->assertComplete($source, $expected);
+    }
+
+    public function provideCompleteFunctionParameter()
+    {
         yield 'complete after comma' => [
             <<<'EOT'
 <?php 
@@ -169,6 +212,18 @@ EOT
                 ],
             ],
         ];
+    }
+
+    /**
+     * @dataProvider provideCompleteStaticClassParameter
+     */
+    public function testCompleteStaticClassParameter(string $source, array $expected)
+    {
+        $this->assertComplete($source, $expected);
+    }
+
+    public function provideCompleteStaticClassParameter()
+    {
 
         yield 'complete static method parameter' => [
             <<<'EOT'
@@ -187,6 +242,15 @@ EOT
             ],
         ];
     }
+
+    /**
+     * @dataProvider provideCouldNotComplete
+     */
+    public function testCouldNotComplete(string $source)
+    {
+        $this->assertCouldNotComplete($source);
+    }
+
 
     public function provideCouldNotComplete(): Generator
     {

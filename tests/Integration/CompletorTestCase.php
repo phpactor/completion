@@ -23,10 +23,6 @@ abstract class CompletorTestCase extends TestCase
 {
     abstract protected function createCompletor(string $source): Completor;
 
-    abstract public function provideComplete(): Generator;
-
-    abstract public function provideCouldNotComplete(): Generator;
-
     protected function formatter(): ObjectFormatter
     {
         return new ObjectFormatter([
@@ -41,10 +37,7 @@ abstract class CompletorTestCase extends TestCase
         ]);
     }
 
-    /**
-     * @dataProvider provideComplete
-     */
-    public function testComplete(string $source, array $expected)
+    protected function assertComplete(string $source, array $expected)
     {
         list($source, $offset) = ExtractOffset::fromSource($source);
         $completor = $this->createCompletor($source);
@@ -54,10 +47,15 @@ abstract class CompletorTestCase extends TestCase
         $this->assertEquals(json_encode($expected, true), json_encode($result->suggestions()->toArray(), true));
     }
 
-    /**
-     * @dataProvider provideCouldNotComplete
-     */
-    public function testCouldNotComplete(string $source)
+    protected function assertCompletionErrors(string $source, array $expected)
+    {
+        list($source, $offset) = ExtractOffset::fromSource($source);
+        $completor = $this->createCompletor($source);
+        $results = $completor->complete($source, $offset);
+        $this->assertEquals($expected, $results->issues()->toArray());
+    }
+
+    public function assertCouldNotComplete(string $source)
     {
         list($source, $offset) = ExtractOffset::fromSource($source);
         $completor = $this->createCompletor($source);

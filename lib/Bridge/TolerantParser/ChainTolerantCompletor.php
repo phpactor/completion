@@ -30,7 +30,8 @@ class ChainTolerantCompletor implements Completor
 
     public function complete(string $source, int $offset): Response
     {
-        $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($this->rewindToLastNonWhitespaceChar($source, $offset));
+        $nonWhitespaceOffset = $this->rewindToLastNonWhitespaceChar($source, $offset);
+        $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($nonWhitespaceOffset);
         $response = Response::new();
 
         foreach ($this->tolerantCompletors as $tolerantCompletor) {

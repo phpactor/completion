@@ -29,6 +29,14 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
         return new WorseClassMemberCompletor($reflector, $this->formatter());
     }
 
+    /**
+     * @dataProvider provideComplete
+     */
+    public function testComplete(string $source, array $expected)
+    {
+        $this->assertComplete($source, $expected);
+    }
+
     public function provideComplete(): Generator
     {
         yield 'Public property' => [
@@ -379,11 +387,9 @@ EOT
     /**
      * @dataProvider provideErrors
      */
-    public function testErrors(string $source, int $offset, array $expected)
+    public function testErrors(string $source, array $expected)
     {
-        $completor = $this->createCompletor($source);
-        $results = $completor->complete($source, $offset);
-        $this->assertEquals($expected, $results->issues()->toArray());
+        $this->assertCompletionErrors($source, $expected);
     }
 
     public function provideErrors()
@@ -393,10 +399,9 @@ EOT
 <?php
 
 $asd = 'asd';
-$asd->
+$asd-><>
 EOT
-        ,27,
-            [
+        ,[
                 'Cannot complete members on scalar value (string)',
             ]
         ];
@@ -405,9 +410,9 @@ EOT
             <<<'EOT'
 <?php
 
-$asd->
+$asd-><>
 EOT
-        ,13,
+        ,
             [
                 'Variable "asd" is undefined',
             ]
@@ -418,15 +423,15 @@ EOT
 <?php
 
 $asd = new BooBar();
-$asd->
+$asd-><>
 EOT
-        ,34,
+        ,
             [
                 'Could not find class "BooBar"',
             ]
         ];
 
-        yield [
+        yield 'non existing property' => [
             <<<'EOT'
 <?php
 
@@ -436,14 +441,22 @@ class Foobar
 }
 
 $foobar = new Foobar();
-$foobar->barbar->;
+$foobar->barbar-><>;
 EOT
-        ,86,
+        ,
             [
                 'Class "Foobar" has no properties named "barbar"',
             ]
         ];
 
+    }
+
+    /**
+     * @dataProvider provideCouldNotComplete
+     */
+    public function testCouldNotComplete(string $source)
+    {
+        $this->assertCouldNotComplete($source);
     }
 
     public function provideCouldNotComplete(): Generator

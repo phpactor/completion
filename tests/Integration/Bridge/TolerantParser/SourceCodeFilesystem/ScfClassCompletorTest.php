@@ -19,6 +19,14 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
         return new ScfClassCompletor($filesystem, $fileToClass);
     }
 
+    /**
+     * @dataProvider provideComplete
+     */
+    public function testComplete(string $source, array $expected)
+    {
+        $this->assertComplete($source, $expected);
+    }
+
     public function provideComplete(): Generator
     {
         yield 'extends' => [
