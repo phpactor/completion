@@ -171,6 +171,30 @@ class Hello
     public functoin goodbye()
     {
         $hello = 'string';
+        foobar($<>
+        $hello = 1234;
+    }
+}
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$hello',
+                    'info' => 'string => param #1 $bar',
+                ],
+            ],
+        ];
+
+        yield 'does not use variables declared after offset with bracket' => [
+            <<<'EOT'
+<?php 
+function foobar($bar, string $barbar) {}
+
+class Hello
+{
+    public functoin goodbye()
+    {
+        $hello = 'string';
         foobar(<>
         $hello = 1234;
     }

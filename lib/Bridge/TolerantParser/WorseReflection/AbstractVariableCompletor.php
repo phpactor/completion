@@ -90,6 +90,6 @@ abstract class AbstractVariableCompletor
 
     private function orderedVariablesUntilOffset(Frame $frame, int $offset)
     {
-        return array_reverse(iterator_to_array($frame->locals()->lessThanOrEqualTo($offset)));
+        return array_reverse(iterator_to_array($frame->locals()->lessThan($offset)));
     }
 }
