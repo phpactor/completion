@@ -27,12 +27,9 @@ abstract class AbstractVariableCompletor
      */
     protected function variableCompletions(Node $node, string $source, int $offset): array
     {
+        $partialMatch = '';
         if ($node instanceof ParserVariable) {
             $partialMatch = $node->getText();
-        }
-
-        if ($node instanceof CallExpression) {
-            $partialMatch = '';
         }
 
         $offset = $this->offsetToReflect($node, $offset);

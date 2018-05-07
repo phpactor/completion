@@ -68,7 +68,7 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
             return Response::new();
         }
 
-        $paramIndex = $this->paramIndex($callableExpression, $offset);
+        $paramIndex = $this->paramIndex($callableExpression);
 
         if ($this->numberOfArgumentsExceedParameterArity($reflectionFunctionLike, $paramIndex)) {
             $response->issues()->add('Parameter index exceeds parameter arity');
@@ -102,9 +102,9 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
         return Response::fromSuggestions(Suggestions::fromSuggestions($suggestions));
     }
 
-    private function paramIndex(Node $exp)
+    private function paramIndex(Node $node)
     {
-        $argumentList = $this->argumentListFromNode($exp);
+        $argumentList = $this->argumentListFromNode($node);
 
         if (null === $argumentList) {
             return 1;
@@ -139,19 +139,21 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
         /** @var Type $variableType */
         foreach ($variable->symbolContext()->types() as $variableType) {
 
+            $variableTypeClass = null;
             if ($variableType->isClass() ) {
                 $variableTypeClass = $this->reflector->reflectClassLike($variableType->className());
             }
 
             foreach ($parameter->inferredTypes() as $parameterType) {
-                if ($variableType->isClass() && $parameterType->isClass() && $variableTypeClass->isInstanceOf($parameterType->className())) {
+                if ($variableType == $parameterType) {
+                    return true;
+                }
+
+                if ($variableTypeClass && $parameterType->isClass() && $variableTypeClass->isInstanceOf($parameterType->className())) {
                     return true;
                     
                 }
 
-                if ($variableType == $parameterType) {
-                    return true;
-                }
             }
         }
         return false;
@@ -201,6 +203,9 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
         assert($node instanceof MemberAccessExpression);
         assert(null !== $node->parent);
 
-        return $node->parent->getFirstDescendantNode(ArgumentExpressionList::class);
+        $list = $node->parent->getFirstDescendantNode(ArgumentExpressionList::class);
+        assert($list instanceof ArgumentExpressionList || is_null($list));
+
+        return $list;
     }
 }
