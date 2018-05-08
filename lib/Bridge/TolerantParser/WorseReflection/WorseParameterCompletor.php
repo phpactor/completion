@@ -84,11 +84,6 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
         }
 
         if (null === $reflectionFunctionLike) {
-            $response->issues()->add('Could not reflect function / method');
-            return $response;
-        }
-
-        if (null === $reflectionFunctionLike) {
             $response->issues()->add('Could not determine containing class of call');
             return $response;
         }
