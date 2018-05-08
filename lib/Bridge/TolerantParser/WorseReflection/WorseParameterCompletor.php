@@ -220,7 +220,10 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
         return $reflectionFunctionLike->parameters()->count() < $paramIndex;
     }
 
-    private function reflectFunctionLike(string $source, Node $callableExpression): ?ReflectionFunctionLike
+    /**
+     * @return ReflectionFunctionLike|null
+     */
+    private function reflectFunctionLike(string $source, Node $callableExpression)
     {
         $offset = $this->reflector->reflectOffset($source, $callableExpression->getEndPosition());
 
@@ -238,7 +241,10 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
         return $this->reflector->reflectFunction((string) $name);
     }
 
-    private function argumentListFromNode(Node $node): ?ArgumentExpressionList
+    /**
+     * @return ArgumentExpressionList|null
+     */
+    private function argumentListFromNode(Node $node)
     {
         if ($node instanceof QualifiedName) {
             $callExpression = $node->parent;
