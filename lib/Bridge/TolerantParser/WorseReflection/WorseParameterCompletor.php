@@ -56,6 +56,10 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
             $node = $node->parent;
         }
 
+        if ($node instanceof ArgumentExpressionList) {
+            $node = $node->parent;
+        }
+
         if (!$node instanceof Variable && !$node instanceof CallExpression) {
             return $response;
         }
@@ -153,6 +157,13 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
             if ($name instanceof MissingToken) {
                 continue;
             }
+        }
+
+        // if we have a trailing comma, e.g. the argument list is `$foobar, `
+        // then the above elements will contain only `$foobar` but the param
+        // index should be incremented.
+        if (substr(trim($argumentList->getText()), -1, 1) === ',') {
+            return $index + 1;
         }
 
         return $index;

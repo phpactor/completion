@@ -53,6 +53,7 @@ class ChainTolerantCompletor implements Completor
             $offset--;
         }
 
-        return $offset;
+        // include the offset in the result
+        return $offset + 1;
     }
 }

@@ -144,22 +144,6 @@ EOT
             ],
         ];
 
-        yield 'complete on open braclet' => [
-            <<<'EOT'
-<?php 
-function foobar($bar, string $barbar) {}
-
-$hello = 'string';
-foobar(<>
-EOT
-            ,[
-                [
-                    'type' => 'v',
-                    'name' => '$hello',
-                    'info' => 'string => param #1 $bar',
-                ],
-            ],
-        ];
 
         yield 'does not use variables declared after offset a' => [
             <<<'EOT'
@@ -237,6 +221,30 @@ EOT
                 ],
             ],
         ];
+
+        yield 'complete on open braclet' => [
+            <<<'EOT'
+<?php 
+class Hello
+{
+    public function goodbye()
+    {
+        $this->bonjour($<>
+    }
+
+    public function bonjour($bar)
+    {
+    }
+}
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$this',
+                    'info' => 'Hello => param #1 $bar',
+                ],
+            ],
+        ];
     }
 
     /**
@@ -256,6 +264,23 @@ function foobar($bar, string $barbar) {}
 
 $hello = 'string';
 foobar($hello, <>);
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$hello',
+                    'info' => 'string => param #2 string $barbar',
+                ],
+            ],
+        ];
+
+        yield 'complete on open braclet' => [
+            <<<'EOT'
+<?php 
+function foobar($bar, string $barbar) {}
+
+$hello = 'string';
+foobar(<>
 EOT
             ,[
                 [
