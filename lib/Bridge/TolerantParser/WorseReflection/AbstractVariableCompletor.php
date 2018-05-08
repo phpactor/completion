@@ -30,7 +30,6 @@ abstract class AbstractVariableCompletor
         $partialMatch = '';
         if ($node instanceof ParserVariable) {
             $partialMatch = $node->getText();
-            $partialMatch = preg_replace('{(.*)(\s*)(.*)}', '$1', $partialMatch);
         }
 
         $offset = $this->offsetToReflect($node, $offset);
