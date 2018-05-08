@@ -41,7 +41,8 @@ class Suggestions implements IteratorAggregate
             return [
                 'type' => $suggestion->type(),
                 'name' => $suggestion->name(),
-                'info' => $suggestion->info()
+                'info' => $suggestion->info(),
+                'prose' => $suggestion->prose(),
             ];
         }, $this->suggestions);
     }
