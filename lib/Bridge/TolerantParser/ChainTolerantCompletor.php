@@ -34,9 +34,9 @@ class ChainTolerantCompletor implements Completor
         // file contaminating the completion (for example `$foo($<>\n    $bar =
         // ` will evaluate the Variable node as an expression node with a
         // double variable `$\n    $bar = `
-        $source = mb_substr($source, 0, $offset);
+        $truncatedSource = mb_substr($source, 0, $offset);
 
-        $nonWhitespaceOffset = $this->rewindToLastNonWhitespaceChar($source, $offset);
+        $nonWhitespaceOffset = $this->rewindToLastNonWhitespaceChar($truncatedSource, $offset);
         $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($nonWhitespaceOffset);
         $response = Response::new();
 
