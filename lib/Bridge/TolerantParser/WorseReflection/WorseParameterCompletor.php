@@ -77,7 +77,7 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
         }
 
         try {
-            $reflectionFunctionLike = $this->reflectFunctionLike($source, $callableExpression);
+            $reflectionFunctionLike = $this->reflectFunctionLike($callableExpression);
         } catch (NotFound $exception) {
             $response->issues()->add($exception->getMessage());
             return $response;
@@ -204,9 +204,9 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
         return $reflectionFunctionLike->parameters()->count() < $paramIndex;
     }
 
-    private function reflectFunctionLike(string $source, Node $callableExpression): ?ReflectionFunctionLike
+    private function reflectFunctionLike(Node $callableExpression): ?ReflectionFunctionLike
     {
-        $offset = $this->reflector->reflectOffset($source, $callableExpression->getEndPosition());
+        $offset = $this->reflector->reflectOffset($callableExpression->getFileContents(), $callableExpression->getEndPosition());
 
         if ($containerType = $offset->symbolContext()->containerType()) {
             $containerClass = $this->reflector->reflectClassLike($containerType->className());

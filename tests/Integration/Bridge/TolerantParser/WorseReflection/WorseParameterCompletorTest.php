@@ -208,6 +208,31 @@ EOT
                 ],
             ],
         ];
+
+        yield 'can complete methods declared after the offset' => [
+            <<<'EOT'
+<?php 
+class Hello
+{
+    public functoin goodbye()
+    {
+        $bar = 'hello';
+        $this>bonjour(<>
+    }
+
+    public function bonjour($bar)
+    {
+    }
+}
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$bar',
+                    'info' => 'string => param #1 $bar',
+                ],
+            ],
+        ];
     }
 
     /**
