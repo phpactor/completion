@@ -129,7 +129,8 @@ class WorseClassMemberCompletor implements TolerantCompletor
                 continue;
             }
             $info = $this->formatter->format($method);
-            $suggestions->add(Suggestion::create('f', $method->name(), $info));
+            $prose = $method->docblock()->formatted();
+            $suggestions->add(Suggestion::create('f', $method->name(), $info, $prose));
         }
 
         if ($classReflection instanceof ReflectionClass) {
@@ -137,7 +138,8 @@ class WorseClassMemberCompletor implements TolerantCompletor
                 if ($publicOnly && false === $property->visibility()->isPublic()) {
                     continue;
                 }
-                $suggestions->add(Suggestion::create('m', $property->name(), $this->formatter->format($property)));
+                $prose = $property->docblock()->formatted();
+                $suggestions->add(Suggestion::create('m', $property->name(), $this->formatter->format($property), $prose));
             }
         }
 
