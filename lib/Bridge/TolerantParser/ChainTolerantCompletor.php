@@ -30,6 +30,12 @@ class ChainTolerantCompletor implements Completor
 
     public function complete(string $source, int $offset): Response
     {
+        // truncate source at offset - we don't want the rest of the source
+        // file contaminating the completion (for example `$foo($<>\n    $bar =
+        // ` will evaluate the Variable node as an expression node with a
+        // double variable `$\n    $bar = `
+        $source = mb_substr($source, 0, $offset);
+
         $nonWhitespaceOffset = $this->rewindToLastNonWhitespaceChar($source, $offset);
         $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($nonWhitespaceOffset);
         $response = Response::new();

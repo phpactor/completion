@@ -34,8 +34,8 @@ class ChainTolerantCompletorTest extends TestCase
 
         $this->completor1->complete(
             Argument::type(Node::class),
-            '<?php ',
-            1
+            '<?php',
+            5
         )->willReturn(
             Response::fromSuggestions(
                 Suggestions::fromSuggestions([
@@ -44,7 +44,7 @@ class ChainTolerantCompletorTest extends TestCase
             )
         );
 
-        $result = $completor->complete('<?php ', 1);
+        $result = $completor->complete('<?php ', 5);
         $this->assertCount(1, $result->suggestions());
     }
 
