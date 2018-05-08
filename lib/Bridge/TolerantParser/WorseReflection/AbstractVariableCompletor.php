@@ -30,17 +30,16 @@ abstract class AbstractVariableCompletor
         $partialMatch = '';
         if ($node instanceof ParserVariable) {
             $partialMatch = $node->getText();
-            $partialMatch = preg_replace('{(.*)(\s*)(.*)}', '$1', $partialMatch);
         }
 
         $offset = $this->offsetToReflect($node, $offset);
         $reflectionOffset = $this->reflector->reflectOffset($source, $offset);
         $frame = $reflectionOffset->frame();
 
-        // Get all declared variables up until the offset. The most
-        // recently declared variables should be first (which is why
-        // we reverse the array).
-        $reversedLocals = $this->orderedVariablesUntilOffset($frame, $offset);
+        // Get all declared variables up until the start of the current
+        // expression. The most recently declared variables should be first
+        // (which is why we reverse the array).
+        $reversedLocals = $this->orderedVariablesUntilOffset($frame, $node->getStart());
 
         // Ignore variables that have already been suggested.
         $seen = [];
@@ -60,6 +59,8 @@ abstract class AbstractVariableCompletor
                 $matchPos = mb_strpos($local->name(), $name);
             }
 
+            // if there is a partial match and the variable does not start with
+            // it, skip the variable.
             if ($partialMatch && ('$' !== $partialMatch && 0 !== $matchPos)) {
                 continue;
             }

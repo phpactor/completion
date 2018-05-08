@@ -161,7 +161,7 @@ EOT
             ],
         ];
 
-        yield 'does not use variables declared after offset' => [
+        yield 'does not use variables declared after offset a' => [
             <<<'EOT'
 <?php 
 function foobar($bar, string $barbar) {}

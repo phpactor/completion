@@ -71,8 +71,8 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
 
         $variables = $this->variableCompletions($node, $source, $offset);
 
+        // no variables available for completion, return empty handed
         if (empty($variables)) {
-            $response->issues()->add('No variables available');
             return $response;
         }
 
@@ -93,8 +93,8 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
             return $response;
         }
 
+        // function has no parameters, return empty handed
         if ($reflectionFunctionLike->parameters()->count() === 0) {
-            $response->issues()->add('Function has no parameters');
             return $response;
         }
 

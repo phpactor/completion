@@ -37,7 +37,7 @@ class ChainTolerantCompletor implements Completor
         $truncatedSource = mb_substr($source, 0, $offset);
 
         $nonWhitespaceOffset = $this->rewindToLastNonWhitespaceChar($truncatedSource, $offset);
-        $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($nonWhitespaceOffset);
+        $node = $this->parser->parseSourceFile($truncatedSource)->getDescendantNodeAtPosition($nonWhitespaceOffset);
         $response = Response::new();
 
         foreach ($this->tolerantCompletors as $tolerantCompletor) {
