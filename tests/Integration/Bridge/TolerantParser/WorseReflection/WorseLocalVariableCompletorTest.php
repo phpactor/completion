@@ -18,13 +18,20 @@ class WorseLocalVariableCompletorTest extends TolerantCompletorTestCase
         return new WorseLocalVariableCompletor($reflector, $this->formatter());
     }
 
-    public function provideCouldComplete(): Generator
+    /**
+     * @dataProvider provideComplete
+     */
+    public function testComplete(string $source, array $expected)
     {
-        yield 'for variable name' => [ '<?php echo $<>;' ];
-        yield 'for partially complete variable name' => [ '<?php echo $foo<>;' ];
-        yield 'for assignment' => [ '<?php $foo=$<>;' ];
-        yield 'for array declaration' => [ '<?php $hello  = [$<>' ];
-        yield 'for function call' => [ '<?php $hello  = foobar($<>' ];
+        $this->assertComplete($source, $expected);
+    }
+
+    /**
+     * @dataProvider provideCouldNotComplete
+     */
+    public function testCouldNotComplete(string $source)
+    {
+        $this->assertCouldNotComplete($source);
     }
 
     public function provideCouldNotComplete(): Generator

@@ -29,6 +29,22 @@ class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
         return new WorseBuiltInFunctionCompletor($reflector, $this->formatter());
     }
 
+    /**
+     * @dataProvider provideComplete
+     */
+    public function testComplete(string $source, array $expected)
+    {
+        $this->assertComplete($source, $expected);
+    }
+
+    /**
+     * @dataProvider provideCouldNotComplete
+     */
+    public function testCouldNotComplete(string $source)
+    {
+        $this->assertCouldNotComplete($source);
+    }
+
     public function provideComplete(): Generator
     {
         yield 'function name' => [ 

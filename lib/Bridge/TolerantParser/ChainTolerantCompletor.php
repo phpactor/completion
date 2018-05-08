@@ -30,7 +30,14 @@ class ChainTolerantCompletor implements Completor
 
     public function complete(string $source, int $offset): Response
     {
-        $node = $this->parser->parseSourceFile($source)->getDescendantNodeAtPosition($this->rewindToLastNonWhitespaceChar($source, $offset));
+        // truncate source at offset - we don't want the rest of the source
+        // file contaminating the completion (for example `$foo($<>\n    $bar =
+        // ` will evaluate the Variable node as an expression node with a
+        // double variable `$\n    $bar = `
+        $truncatedSource = mb_substr($source, 0, $offset);
+
+        $nonWhitespaceOffset = $this->rewindToLastNonWhitespaceChar($truncatedSource, $offset);
+        $node = $this->parser->parseSourceFile($truncatedSource)->getDescendantNodeAtPosition($nonWhitespaceOffset);
         $response = Response::new();
 
         foreach ($this->tolerantCompletors as $tolerantCompletor) {
@@ -46,6 +53,7 @@ class ChainTolerantCompletor implements Completor
             $offset--;
         }
 
-        return $offset;
+        // include the offset in the result
+        return $offset + 1;
     }
 }

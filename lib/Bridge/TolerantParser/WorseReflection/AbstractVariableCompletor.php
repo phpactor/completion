@@ -4,6 +4,8 @@ namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
 use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Node\Expression\AssignmentExpression;
+use Microsoft\PhpParser\Node\Expression\CallExpression;
+use Microsoft\PhpParser\Node\Expression\Variable as ParserVariable;
 use Phpactor\WorseReflection\Core\Inference\Frame;
 use Phpactor\WorseReflection\Core\Inference\Variable;
 use Phpactor\WorseReflection\Reflector;
@@ -25,23 +27,19 @@ abstract class AbstractVariableCompletor
      */
     protected function variableCompletions(Node $node, string $source, int $offset): array
     {
-        $partialSource = mb_substr($source, 0, $offset);
-
-        $dollarPosition = strrpos($partialSource, '$');
-        if (false === $dollarPosition) {
-            return [];
+        $partialMatch = '';
+        if ($node instanceof ParserVariable) {
+            $partialMatch = $node->getText();
         }
-
-        $partialMatch = mb_substr($partialSource, $dollarPosition);
 
         $offset = $this->offsetToReflect($node, $offset);
         $reflectionOffset = $this->reflector->reflectOffset($source, $offset);
         $frame = $reflectionOffset->frame();
 
-        // Get all declared variables up until the offset. The most
-        // recently declared variables should be first (which is why
-        // we reverse the array).
-        $reversedLocals = $this->orderedVariablesUntilOffset($frame, $offset);
+        // Get all declared variables up until the start of the current
+        // expression. The most recently declared variables should be first
+        // (which is why we reverse the array).
+        $reversedLocals = $this->orderedVariablesUntilOffset($frame, $node->getStart());
 
         // Ignore variables that have already been suggested.
         $seen = [];
@@ -53,6 +51,7 @@ abstract class AbstractVariableCompletor
                 continue;
             }
 
+
             $name = ltrim($partialMatch, '$');
             $matchPos = -1;
 
@@ -60,7 +59,9 @@ abstract class AbstractVariableCompletor
                 $matchPos = mb_strpos($local->name(), $name);
             }
 
-            if ('$' !== $partialMatch && 0 !== $matchPos) {
+            // if there is a partial match and the variable does not start with
+            // it, skip the variable.
+            if ($partialMatch && ('$' !== $partialMatch && 0 !== $matchPos)) {
                 continue;
             }
 
@@ -90,6 +91,6 @@ abstract class AbstractVariableCompletor
 
     private function orderedVariablesUntilOffset(Frame $frame, int $offset)
     {
-        return array_reverse(iterator_to_array($frame->locals()->lessThanOrEqualTo($offset)));
+        return array_reverse(iterator_to_array($frame->locals()->lessThan($offset)));
     }
 }

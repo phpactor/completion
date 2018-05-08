@@ -6,8 +6,8 @@ use Generator;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseParameterCompletor;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
-use Phpactor\WorseReflection\ReflectorBuilder;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseReflection\WorseParameterCompletorTest;
+use Phpactor\WorseReflection\ReflectorBuilder;
 
 class WorseParameterCompletorTest extends TolerantCompletorTestCase
 {
@@ -17,7 +17,15 @@ class WorseParameterCompletorTest extends TolerantCompletorTestCase
         return new WorseParameterCompletor($reflector, $this->formatter());
     }
 
-    public function provideComplete(): Generator
+    /**
+     * @dataProvider provideCompleteMethodParameter
+     */
+    public function testCompleteMethodParameter(string $source, array $expected)
+    {
+        $this->assertComplete($source, $expected);
+    }
+
+    public function provideCompleteMethodParameter(): Generator
     {
         yield 'no parameters' => [
             <<<'EOT'
@@ -101,7 +109,226 @@ $foobar->barbar($param, $<>);
 EOT
             , []
         ];
+
+        yield 'function parameter completion' => [
+            <<<'EOT'
+<?php 
+function foobar($bar, string $barbar) {}
+
+$hello = 'string';
+foobar($param, $<>);
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$hello',
+                    'info' => 'string => param #2 string $barbar',
+                ],
+            ],
+        ];
+
+        yield 'function parameter completion, single parameters' => [
+            <<<'EOT'
+<?php 
+function foobar($bar, string $barbar) {}
+
+$hello = 'string';
+foobar($<>);
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$hello',
+                    'info' => 'string => param #1 $bar',
+                ],
+            ],
+        ];
+
+
+        yield 'does not use variables declared after offset a' => [
+            <<<'EOT'
+<?php 
+function foobar($bar, string $barbar) {}
+
+class Hello
+{
+    public functoin goodbye()
+    {
+        $hello = 'string';
+        foobar($<>
+        $hello = 1234;
     }
+}
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$hello',
+                    'info' => 'string => param #1 $bar',
+                ],
+            ],
+        ];
+
+        yield 'does not use variables declared after offset with bracket' => [
+            <<<'EOT'
+<?php 
+function foobar($bar, string $barbar) {}
+
+class Hello
+{
+    public function goodbye()
+    {
+        $hello = 'string';
+        foobar(<>
+        $hello = 1234;
+    }
+}
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$hello',
+                    'info' => 'string => param #1 $bar',
+                ],
+                [
+                    'type' => 'v',
+                    'name' => '$this',
+                    'info' => 'Hello => param #1 $bar',
+                ],
+            ],
+        ];
+
+        yield 'can complete methods declared after the offset' => [
+            <<<'EOT'
+<?php 
+class Hello
+{
+    public function goodbye()
+    {
+        $this->bonjour($<>
+    }
+
+    public function bonjour($bar)
+    {
+    }
+}
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$this',
+                    'info' => 'Hello => param #1 $bar',
+                ],
+            ],
+        ];
+
+        yield 'complete on open braclet' => [
+            <<<'EOT'
+<?php 
+class Hello
+{
+    public function goodbye()
+    {
+        $this->bonjour($<>
+    }
+
+    public function bonjour($bar)
+    {
+    }
+}
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$this',
+                    'info' => 'Hello => param #1 $bar',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideCompleteFunctionParameter
+     */
+    public function testCompleteFunctionParameter(string $source, array $expected)
+    {
+        $this->assertComplete($source, $expected);
+    }
+
+    public function provideCompleteFunctionParameter()
+    {
+        yield 'complete after comma' => [
+            <<<'EOT'
+<?php 
+function foobar($bar, string $barbar) {}
+
+$hello = 'string';
+foobar($hello, <>);
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$hello',
+                    'info' => 'string => param #2 string $barbar',
+                ],
+            ],
+        ];
+
+        yield 'complete on open braclet' => [
+            <<<'EOT'
+<?php 
+function foobar($bar, string $barbar) {}
+
+$hello = 'string';
+foobar(<>
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$hello',
+                    'info' => 'string => param #1 $bar',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideCompleteStaticClassParameter
+     */
+    public function testCompleteStaticClassParameter(string $source, array $expected)
+    {
+        $this->assertComplete($source, $expected);
+    }
+
+    public function provideCompleteStaticClassParameter()
+    {
+
+        yield 'complete static method parameter' => [
+            <<<'EOT'
+<?php 
+class Foobar { public static function barbar(string $foo, Foobar $bar, $mixed) {} }
+
+$param = 'string';
+Foobar::barbar($param, $foobar, $<>);
+EOT
+            ,[
+                [
+                    'type' => 'v',
+                    'name' => '$param',
+                    'info' => 'string => param #3 $mixed',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideCouldNotComplete
+     */
+    public function testCouldNotComplete(string $source)
+    {
+        $this->assertCouldNotComplete($source);
+    }
+
 
     public function provideCouldNotComplete(): Generator
     {
