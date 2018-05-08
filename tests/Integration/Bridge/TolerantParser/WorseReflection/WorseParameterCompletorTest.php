@@ -192,7 +192,7 @@ function foobar($bar, string $barbar) {}
 
 class Hello
 {
-    public functoin goodbye()
+    public function goodbye()
     {
         $hello = 'string';
         foobar(<>
@@ -206,6 +206,11 @@ EOT
                     'name' => '$hello',
                     'info' => 'string => param #1 $bar',
                 ],
+                [
+                    'type' => 'v',
+                    'name' => '$this',
+                    'info' => 'Hello => param #1 $bar',
+                ],
             ],
         ];
 
@@ -214,10 +219,9 @@ EOT
 <?php 
 class Hello
 {
-    public functoin goodbye()
+    public function goodbye()
     {
-        $bar = 'hello';
-        $this>bonjour(<>
+        $this->bonjour($<>
     }
 
     public function bonjour($bar)
@@ -228,8 +232,8 @@ EOT
             ,[
                 [
                     'type' => 'v',
-                    'name' => '$bar',
-                    'info' => 'string => param #1 $bar',
+                    'name' => '$this',
+                    'info' => 'Hello => param #1 $bar',
                 ],
             ],
         ];
