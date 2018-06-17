@@ -19,7 +19,7 @@ use Phpactor\WorseReflection\Core\Reflector\FunctionReflector;
 use Phpactor\WorseReflection\Core\Reflector\SourceCodeReflector;
 use Phpactor\WorseReflection\Reflector;
 
-class WorseBuiltInFunctionCompletor implements TolerantCompletor
+class WorseFunctionCompletor implements TolerantCompletor
 {
     /**
      * @var Reflector

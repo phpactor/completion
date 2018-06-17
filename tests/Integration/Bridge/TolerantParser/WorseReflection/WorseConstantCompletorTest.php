@@ -4,6 +4,7 @@ namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseRefle
 
 use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
+use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseConstantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseFunctionCompletor;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
 use Phpactor\WorseReflection\Core\Logger\ArrayLogger;
@@ -20,13 +21,11 @@ use PhpBench\Benchmark\Metadata\Annotations\Subject;
 use PhpBench\Benchmark\Metadata\Annotations\Iterations;
 use PhpBench\Benchmark\Metadata\Annotations\Revs;
 
-class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
+class WorseConstantCompletorTest extends TolerantCompletorTestCase
 {
     protected function createTolerantCompletor(string $source): TolerantCompletor
     {
-        $reflector = ReflectorBuilder::create()->addSource($source)->build();
-
-        return new WorseFunctionCompletor($reflector, $this->formatter());
+        return new WorseConstantCompletor($this->formatter());
     }
 
     /**
@@ -47,22 +46,24 @@ class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
 
     public function provideComplete(): Generator
     {
-        yield 'function with parameters' => [ 
-            '<?php function mystrpos ($haystack, $needle, $offset = 0):int {}; mystrpos<>', [
+        define('PHPACTOR_TEST_FOO', 'Hello');
+        yield 'constant' => [ 
+            '<?php PHPACTOR_TEST_<>', [
                 [
-                    'type' => 'f',
-                    'name' => 'mystrpos',
-                    'info' => 'mystrpos($haystack, $needle, $offset = 0): int',
+                    'type' => 'm',
+                    'name' => 'PHPACTOR_TEST_FOO',
+                    'info' => "PHPACTOR_TEST_FOO = 'Hello'",
                 ]
             ]
         ];
 
-        yield 'namespaced function name' => [ 
-            '<?php namespace foobar; function barfoo ():int {}; bar<> }', [
+        define('namespaced\PHPACTOR_NAMESPACED', 'Hello');
+        yield 'namespaced constant' => [ 
+            '<?php PHPACTOR_NAME<>', [
                 [
-                    'type' => 'f',
-                    'name' => 'barfoo',
-                    'info' => 'foobar\barfoo(): int',
+                    'type' => 'm',
+                    'name' => 'PHPACTOR_NAMESPACED',
+                    'info' => "namespaced\PHPACTOR_NAMESPACED = 'Hello'",
                 ]
             ]
         ];
