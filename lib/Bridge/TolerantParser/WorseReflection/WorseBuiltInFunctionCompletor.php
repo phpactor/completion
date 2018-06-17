@@ -13,25 +13,27 @@ use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Suggestions;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
+use Phpactor\WorseReflection\Core\Name;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionFunction;
 use Phpactor\WorseReflection\Core\Reflector\FunctionReflector;
+use Phpactor\WorseReflection\Core\Reflector\SourceCodeReflector;
+use Phpactor\WorseReflection\Reflector;
 
 class WorseBuiltInFunctionCompletor implements TolerantCompletor
 {
     /**
-     * @var FunctionReflector
+     * @var Reflector
      */
-    private $functionReflector;
+    private $reflector;
 
     /**
      * @var ObjectFormatter
      */
     private $formatter;
 
-
-    public function __construct(FunctionReflector $functionReflector, ObjectFormatter $formatter)
+    public function __construct(Reflector $reflector, ObjectFormatter $formatter)
     {
-        $this->functionReflector = $functionReflector;
+        $this->reflector = $reflector;
         $this->formatter = $formatter;
     }
 
@@ -41,7 +43,8 @@ class WorseBuiltInFunctionCompletor implements TolerantCompletor
             return Response::new();
         }
 
-        $functionNames = $this->allFunctionNamesFor($node->getText());
+        $functionNames = $this->reflectedFunctions($source);
+        $functionNames = $this->definedNamesFor($functionNames, $node->getText());
         $functions = $this->functionReflections($functionNames);
 
         $suggestions = Suggestions::new();
@@ -49,7 +52,7 @@ class WorseBuiltInFunctionCompletor implements TolerantCompletor
         foreach ($functions as $functionReflection) {
             $suggestions->add(Suggestion::create(
                 'f',
-                $functionReflection->name(),
+                $functionReflection->name()->short(),
                 $this->formatter->format($functionReflection)
             ));
         }
@@ -58,13 +61,30 @@ class WorseBuiltInFunctionCompletor implements TolerantCompletor
         return Response::fromSuggestions($suggestions);
     }
 
-    private function allFunctionNamesFor(string $partialName): Generator
+    private function definedNamesFor(array $reflectedFunctions, string $partialName): Generator
     {
         $functions = get_defined_functions();
+        $functions['reflected'] = $reflectedFunctions;
         
+        return $this->filterFunctions($functions, $partialName);
+    }
+
+    private function reflectedFunctions(string $source)
+    {
+        $functionNames = [];
+        foreach ($this->reflector->reflectFunctionsIn($source) as $function) {
+            $functionNames[] = $function->name()->full();
+        }
+
+        return $functionNames;
+    }
+
+    private function filterFunctions(array $functions, string $partialName): Generator
+    {
         foreach ($functions as $type => $functionNames) {
             foreach ($functionNames as $functionName) {
-                if (0 === strpos($functionName, $partialName)) {
+                $functionName = Name::fromString($functionName);
+                if (0 === strpos($functionName->short(), $partialName)) {
                     yield $functionName;
                 }
             }
@@ -75,7 +95,7 @@ class WorseBuiltInFunctionCompletor implements TolerantCompletor
     {
         foreach ($functionNames as $functionName) {
             try {
-                yield $this->functionReflector->reflectFunction($functionName);
+                yield $this->reflector->reflectFunction($functionName);
             } catch (NotFound $e) {
             }
         }

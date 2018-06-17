@@ -47,12 +47,22 @@ class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
 
     public function provideComplete(): Generator
     {
-        yield 'function name' => [ 
-            '<?php function strpos ($haystack, $needle, $offset = 0):int {}; str<>', [
+        yield 'function with parameters' => [ 
+            '<?php function mystrpos ($haystack, $needle, $offset = 0):int {}; mystrpos<>', [
                 [
                     'type' => 'f',
-                    'name' => 'strpos',
-                    'info' => 'strpos($haystack, $needle, $offset = 0): int',
+                    'name' => 'mystrpos',
+                    'info' => 'mystrpos($haystack, $needle, $offset = 0): int',
+                ]
+            ]
+        ];
+
+        yield 'namespaced function name' => [ 
+            '<?php namespace foobar; function barfoo ():int {}; bar<> }', [
+                [
+                    'type' => 'f',
+                    'name' => 'barfoo',
+                    'info' => 'foobar\barfoo(): int',
                 ]
             ]
         ];
