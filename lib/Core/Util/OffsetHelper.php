@@ -31,11 +31,6 @@ class OffsetHelper
 
         // determine the offset based on the multi-byte length of
         // the remaining elements
-        $offset = 0;
-        foreach ($chars as $char) {
-            $offset += mb_strlen($char);
-        }
-
-        return $offset;
+        return mb_strlen(implode('', $chars));
     }
 }
