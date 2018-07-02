@@ -6,6 +6,7 @@ use Microsoft\PhpParser\Parser;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestions;
+use Phpactor\Completion\Core\Util\OffsetHelper;
 
 class ChainTolerantCompletor implements Completor
 {
@@ -36,7 +37,7 @@ class ChainTolerantCompletor implements Completor
         // double variable `$\n    $bar = `
         $truncatedSource = mb_substr($source, 0, $offset);
 
-        $nonWhitespaceOffset = $this->rewindToLastNonWhitespaceChar($truncatedSource, $offset);
+        $nonWhitespaceOffset = OffsetHelper::lastNonWhitespaceOffset($truncatedSource);
         $node = $this->parser->parseSourceFile($truncatedSource)->getDescendantNodeAtPosition($nonWhitespaceOffset);
         $response = Response::new();
 
@@ -45,15 +46,5 @@ class ChainTolerantCompletor implements Completor
         }
 
         return $response;
-    }
-
-    private function rewindToLastNonWhitespaceChar(string $source, int $offset)
-    {
-        while (!isset($source[$offset]) || $source[$offset] == ' ' || $source[$offset] == PHP_EOL) {
-            $offset--;
-        }
-
-        // include the offset in the result
-        return $offset + 1;
     }
 }
