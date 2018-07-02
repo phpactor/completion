@@ -22,12 +22,11 @@ class OffsetHelper
         $index = count($chars) - 1;
         while($chars) {
             $char = $chars[$index--];
-            if (0 === mb_strlen($char) || ctype_space($char)) {
-                array_pop($chars);
-                continue;
+            if (0 !== mb_strlen($char) && false === ctype_space($char)) {
+                break;
             }
 
-            break;
+            array_pop($chars);
         }
 
         // determine the offset based on the multi-byte length of
