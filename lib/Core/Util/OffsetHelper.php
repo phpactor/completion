@@ -4,7 +4,7 @@ namespace Phpactor\Completion\Core\Util;
 
 class OffsetHelper
 {
-    public function lastNonWhitespaceOffset(string $source): int
+    public static function lastNonWhitespaceOffset(string $source): int
     {
         // break the string into an array of single (possibly
         // multi-byte) characters
