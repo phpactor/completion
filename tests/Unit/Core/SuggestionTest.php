@@ -21,10 +21,10 @@ class SuggestionTest extends TestCase
         $suggestion = Suggestion::createWithOptions('hello', [
             'type' => 'c',
             'short_description' => 'Foobar',
-            'import_class' => 'Namespace\\Foobar',
+            'class_import' => 'Namespace\\Foobar',
         ]);
 
-        $this->assertEquals('m', $suggestion->type());
+        $this->assertEquals('c', $suggestion->type());
         $this->assertEquals('hello', $suggestion->name());
         $this->assertEquals('Foobar', $suggestion->info());
         $this->assertEquals('Namespace\\Foobar', $suggestion->classImport());

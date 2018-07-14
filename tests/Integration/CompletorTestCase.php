@@ -43,8 +43,13 @@ abstract class CompletorTestCase extends TestCase
         $completor = $this->createCompletor($source);
         $result = $completor->complete($source, $offset);
 
-        $this->assertEquals($expected, $result->suggestions()->toArray());
-        $this->assertEquals(json_encode($expected, true), json_encode($result->suggestions()->toArray(), true));
+        $actual = $result->suggestions()->toArray();
+
+        foreach ($expected as $index => $expectedSuggestion) {
+            $this->assertArraySubset($expectedSuggestion, $actual[$index]);
+        }
+
+        $this->assertCount(count($expected), $actual);
     }
 
     protected function assertCompletionErrors(string $source, array $expected)
