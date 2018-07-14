@@ -10,6 +10,7 @@ class Suggestion
     const TYPE_CLASS_MEMBER = 'm';
     const TYPE_VARIABLE = 'v';
     const TYPE_CONSTANT = 'm';
+    const TYPE_UNDEFINED = 'u';
 
     /**
      * @var string
@@ -33,10 +34,9 @@ class Suggestion
         $this->info = $info;
     }
 
-    public static function create(string $type, string $name, string $info)
+    public static function create(string $name)
     {
-        throw new \Exception('Remove me');
-        return new self($type, $name, $info);
+        return new self(Suggestion::TYPE_UNDEFINED, $name, '');
     }
 
     public static function createWithOptions(string $name, array $options): self

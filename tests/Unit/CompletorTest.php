@@ -52,7 +52,7 @@ class CompletorTest extends TestCase
     {
         $expected = Response::fromSuggestions(
             Suggestions::fromSuggestions([
-                Suggestion::create('m', 'foobar', 'private $foobar')
+                Suggestion::create('foobar')
             ])
         );
         $completor = $this->create([

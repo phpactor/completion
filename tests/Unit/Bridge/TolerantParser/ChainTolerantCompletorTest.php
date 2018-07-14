@@ -41,7 +41,7 @@ class ChainTolerantCompletorTest extends TestCase
         )->willReturn(
             Response::fromSuggestions(
                 Suggestions::fromSuggestions([
-                    Suggestion::create('v', 'foo', 'bar')
+                    Suggestion::create('foo')
                 ])
             )
         );
