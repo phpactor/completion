@@ -27,16 +27,22 @@ class Suggestion
      */
     private $info;
 
-    public function __construct(string $type, string $name, string $info)
+    /**
+     * @var array
+     */
+    private $classImports;
+
+    private function __construct(string $name, string $type = Suggestion::TYPE_UNDEFINED, string $info = '', array $classImports = [])
     {
         $this->type = $type;
         $this->name = $name;
         $this->info = $info;
+        $this->classImports = $classImports;
     }
 
     public static function create(string $name)
     {
-        return new self(Suggestion::TYPE_UNDEFINED, $name, '');
+        return new self($name);
     }
 
     public static function createWithOptions(string $name, array $options): self
@@ -44,6 +50,7 @@ class Suggestion
         $defaults = [
             'short_description' => '',
             'type' => '',
+            'class_imports' => [],
         ];
 
         if ($diff = array_diff(array_keys($options), array_keys($defaults))) {
@@ -55,7 +62,12 @@ class Suggestion
 
         $options = array_merge($defaults, $options);
 
-        return new self($options['type'], $name, $options['short_description']);
+        return new self(
+            $name,
+            $options['type'],
+            $options['short_description'],
+            $options['class_imports']
+        );
     }
 
     public function type(): string
