@@ -72,9 +72,4 @@ class Suggestion
     {
         return $this->info;
     }
-
-    public function imports(): array
-    {
-        return $this->imports;
-    }
 }
