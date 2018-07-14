@@ -128,8 +128,11 @@ class WorseClassMemberCompletor implements TolerantCompletor
             if ($publicOnly && false === $method->visibility()->isPublic()) {
                 continue;
             }
-            $info = $this->formatter->format($method);
-            $suggestions->add(Suggestion::create('f', $method->name(), $info));
+
+            $suggestions->add(Suggestion::createWithOptions($method->name(), [
+                'type' => Suggestion::TYPE_CLASS_MEMBER,
+                'short_description' => $this->formatter->format($method),
+            ]));
         }
 
         if ($classReflection instanceof ReflectionClass) {
@@ -137,7 +140,10 @@ class WorseClassMemberCompletor implements TolerantCompletor
                 if ($publicOnly && false === $property->visibility()->isPublic()) {
                     continue;
                 }
-                $suggestions->add(Suggestion::create('m', $property->name(), $this->formatter->format($property)));
+                $suggestions->add(Suggestion::createWithOptions($property->name(), [
+                    'type' => Suggestion::TYPE_CLASS_MEMBER,
+                    'short_description' => $this->formatter->format($property),
+                ]));
             }
         }
 
@@ -146,7 +152,10 @@ class WorseClassMemberCompletor implements TolerantCompletor
         ) {
             /** @var ReflectionClass|ReflectionInterface */
             foreach ($classReflection->constants() as $constant) {
-                $suggestions->add(Suggestion::create('m', $constant->name(), 'const ' . $constant->name()));
+                $suggestions->add(Suggestion::createWithOptions($constant->name(), [
+                    'type' => Suggestion::TYPE_CLASS_MEMBER,
+                    'short_description' => 'const ' . $constant->name(),
+                ]));
             }
         }
 

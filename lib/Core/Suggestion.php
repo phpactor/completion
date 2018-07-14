@@ -6,6 +6,9 @@ use RuntimeException;
 
 class Suggestion
 {
+    const TYPE_FUNCTION = 'f';
+    const TYPE_CLASS_MEMBER = 'm';
+
     /**
      * @var string
      */
@@ -30,6 +33,7 @@ class Suggestion
 
     public static function create(string $type, string $name, string $info)
     {
+        throw new \Exception('Remove me');
         return new self($type, $name, $info);
     }
 

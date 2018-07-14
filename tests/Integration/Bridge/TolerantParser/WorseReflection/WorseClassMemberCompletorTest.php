@@ -4,6 +4,7 @@ namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseRefle
 
 use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
+use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
 use Phpactor\WorseReflection\Core\Logger\ArrayLogger;
 use Phpactor\WorseReflection\Core\SourceCodeLocator\StringSourceLocator;
@@ -54,7 +55,7 @@ $foobar-><>
 EOT
         , [
             [
-                'type' => 'm',
+                'type' => Suggestion::TYPE_CLASS_MEMBER,
                 'name' => 'foo',
                 'info' => 'pub $foo',
             ]
@@ -101,7 +102,7 @@ $foobar->foo-><>
 EOT
         , [
             [
-                'type' => 'm',
+                'type' => Suggestion::TYPE_CLASS_MEMBER,
                 'name' => 'bar',
                 'info' => 'pub $bar',
             ]
@@ -125,7 +126,7 @@ $foobar-><>
 EOT
         , [
             [
-                'type' => 'f',
+                'type' => Suggestion::TYPE_CLASS_MEMBER,
                 'name' => 'foo',
                 'info' => 'pub foo(string $zzzbar = \'bar\', $def): Barbar',
             ]
@@ -152,7 +153,7 @@ $foobar-><>
 EOT
         , [
             [
-                'type' => 'f',
+                'type' => Suggestion::TYPE_CLASS_MEMBER,
                 'name' => 'foo',
                 'info' => 'pub foo(): Foobar|Barbar',
             ]
@@ -193,7 +194,7 @@ $foobar::<>
 EOT
         , [
             [
-                'type' => 'm',
+                'type' => Suggestion::TYPE_CLASS_MEMBER,
                 'name' => 'foo',
                 'info' => 'pub static $foo',
             ]
@@ -220,12 +221,12 @@ $foobar->me::<>
 EOT
         , [
             [
-                'type' => 'm',
+                'type' => Suggestion::TYPE_CLASS_MEMBER,
                 'name' => 'foo',
                 'info' => 'pub static $foo',
             ],
             [
-                'type' => 'm',
+                'type' => Suggestion::TYPE_CLASS_MEMBER,
                 'name' => 'me',
                 'info' => 'pub $me: Foobar',
             ]
@@ -248,7 +249,7 @@ $foobar::f<>
 EOT
         , [
             [
-                'type' => 'm',
+                'type' => Suggestion::TYPE_CLASS_MEMBER,
                 'name' => 'foobar',
                 'info' => 'pub static $foobar',
             ]
@@ -273,7 +274,7 @@ class Foobar
 EOT
         , [
             [
-                'type' => 'f',
+                'type' => Suggestion::TYPE_CLASS_MEMBER,
                 'name' => 'bbb',
                 'info' => 'pub bbb()',
             ]
@@ -295,12 +296,12 @@ $foobar::<>
 EOT
         , [
             [
-                'type' => 'm',
+                'type' => Suggestion::TYPE_CLASS_MEMBER,
                 'name' => 'FOOBAR',
                 'info' => 'const FOOBAR',
             ],
             [
-                'type' => 'm',
+                'type' => Suggestion::TYPE_CLASS_MEMBER,
                 'name' => 'BARFOO',
                 'info' => 'const BARFOO',
             ],
@@ -323,7 +324,7 @@ $foobar
 EOT
         , [
             [
-                'type' => 'm',
+                'type' => Suggestion::TYPE_CLASS_MEMBER,
                 'name' => 'foobar',
                 'info' => 'pub $foobar',
             ],
@@ -354,7 +355,7 @@ $collection-><>
 EOT
         , [
             [
-                'type' => 'f',
+                'type' => Suggestion::TYPE_CLASS_MEMBER,
                 'name' => 'heyho',
                 'info' => 'pub heyho()',
             ],
@@ -376,7 +377,7 @@ $foobar = $foobar->meth<>
 EOT
         , [
             [
-                'type' => 'f',
+                'type' => Suggestion::TYPE_CLASS_MEMBER,
                 'name' => 'method1',
                 'info' => 'pub method1()',
             ],
