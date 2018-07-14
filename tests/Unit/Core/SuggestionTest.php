@@ -16,15 +16,17 @@ class SuggestionTest extends TestCase
         Suggestion::createWithOptions('foobar', ['foobar' => 'barfoo']);
     }
 
-    public function testCanBeCreatedWithOptions()
+    public function testCanBeCreatedWithOptionsAndProvidesAccessors()
     {
         $suggestion = Suggestion::createWithOptions('hello', [
-            'type' => 'm',
-            'short_description' => 'foobar'
+            'type' => 'c',
+            'short_description' => 'Foobar',
+            'import_class' => 'Namespace\\Foobar',
         ]);
 
         $this->assertEquals('m', $suggestion->type());
         $this->assertEquals('hello', $suggestion->name());
-        $this->assertEquals('foobar', $suggestion->info());
+        $this->assertEquals('Foobar', $suggestion->info());
+        $this->assertEquals('Namespace\\Foobar', $suggestion->classImport());
     }
 }

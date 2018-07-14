@@ -11,6 +11,7 @@ class Suggestion
     const TYPE_VARIABLE = 'v';
     const TYPE_CONSTANT = 'm';
     const TYPE_UNDEFINED = 'u';
+    const TYPE_CLASS = 't';
 
     /**
      * @var string
@@ -28,16 +29,21 @@ class Suggestion
     private $info;
 
     /**
-     * @var array
+     * @var string|null
      */
-    private $classImports;
+    private $classImport;
 
-    private function __construct(string $name, string $type = Suggestion::TYPE_UNDEFINED, string $info = '', array $classImports = [])
+    private function __construct(
+        string $name,
+        string $type = Suggestion::TYPE_UNDEFINED,
+        string $info = '',
+        string $classImport = null
+    )
     {
         $this->type = $type;
         $this->name = $name;
         $this->info = $info;
-        $this->classImports = $classImports;
+        $this->classImport = $classImport;
     }
 
     public static function create(string $name)
@@ -50,7 +56,7 @@ class Suggestion
         $defaults = [
             'short_description' => '',
             'type' => '',
-            'class_imports' => [],
+            'class_import' => null,
         ];
 
         if ($diff = array_diff(array_keys($options), array_keys($defaults))) {
@@ -66,7 +72,7 @@ class Suggestion
             $name,
             $options['type'],
             $options['short_description'],
-            $options['class_imports']
+            $options['class_import']
         );
     }
 
@@ -83,5 +89,13 @@ class Suggestion
     public function info(): string
     {
         return $this->info;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function classImport()
+    {
+        return $this->classImport;
     }
 }

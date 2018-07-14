@@ -74,7 +74,8 @@ class ScfClassCompletor implements TolerantCompletor
                 $best->name(),
                 [
                     'type' => 't',
-                    'short_description' => $best->__toString()
+                    'short_description' => $best->__toString(),
+                    'class_import' => $best->__toString(),
                 ]
             );
 

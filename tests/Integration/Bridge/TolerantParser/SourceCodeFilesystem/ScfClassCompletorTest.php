@@ -6,6 +6,7 @@ use Generator;
 use Phpactor\ClassFileConverter\Adapter\Simple\SimpleFileToClass;
 use Phpactor\Completion\Bridge\TolerantParser\SourceCodeFilesystem\ScfClassCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
+use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
 use Phpactor\Filesystem\Adapter\Simple\SimpleFilesystem;
 use Phpactor\Filesystem\Domain\FilePath;
@@ -16,6 +17,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
     {
         $filesystem = new SimpleFilesystem(FilePath::fromString(__DIR__ . '/files'));
         $fileToClass = new SimpleFileToClass();
+
         return new ScfClassCompletor($filesystem, $fileToClass);
     }
 
@@ -33,17 +35,17 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             '<?php class Foobar extends <>',
             [
                 [
-                    'type' => 't',
+                    'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Alphabet',
                     'info' => 'Test\Name\Alphabet',
                 ],
                 [
-                    'type' => 't',
+                    'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Backwards',
                     'info' => 'Test\Name\Backwards',
                 ],
                 [
-                    'type' => 't',
+                    'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'info' => 'Test\Name\Clapping',
                 ],
@@ -54,7 +56,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             '<?php class Foobar extends Cl<>',
             [
                 [
-                    'type' => 't',
+                    'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'info' => 'Test\Name\Clapping',
                 ],
@@ -65,7 +67,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             '<?php class Foobar extends Cl<> { }',
             [
                 [
-                    'type' => 't',
+                    'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'info' => 'Test\Name\Clapping',
                 ],
@@ -76,17 +78,17 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             '<?php new <>',
             [
                 [
-                    'type' => 't',
+                    'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Alphabet',
                     'info' => 'Test\Name\Alphabet',
                 ],
                 [
-                    'type' => 't',
+                    'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Backwards',
                     'info' => 'Test\Name\Backwards',
                 ],
                 [
-                    'type' => 't',
+                    'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'info' => 'Test\Name\Clapping',
                 ],
@@ -97,7 +99,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             '<?php new Cla<>',
             [
                 [
-                    'type' => 't',
+                    'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'info' => 'Test\Name\Clapping',
                 ],
@@ -108,17 +110,17 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             '<?php use <>',
             [
                 [
-                    'type' => 't',
+                    'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Alphabet',
                     'info' => 'Test\Name\Alphabet',
                 ],
                 [
-                    'type' => 't',
+                    'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Backwards',
                     'info' => 'Test\Name\Backwards',
                 ],
                 [
-                    'type' => 't',
+                    'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'info' => 'Test\Name\Clapping',
                 ],
@@ -129,7 +131,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             '<?php use Cla<>',
             [
                 [
-                    'type' => 't',
+                    'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'info' => 'Test\Name\Clapping',
                 ],
