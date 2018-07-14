@@ -8,6 +8,8 @@ class Suggestion
 {
     const TYPE_FUNCTION = 'f';
     const TYPE_CLASS_MEMBER = 'm';
+    const TYPE_VARIABLE = 'v';
+    const TYPE_CONSTANT = 'm';
 
     /**
      * @var string

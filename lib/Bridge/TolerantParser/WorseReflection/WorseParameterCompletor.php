@@ -121,15 +121,17 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
                 continue;
             }
 
-            $response->suggestions()->add(Suggestion::create(
-                'v',
+            $response->suggestions()->add(Suggestion::createWithOptions(
                 '$' . $variable->name(),
-                sprintf(
-                    '%s => param #%d %s',
-                    $this->formatter->format($variable->symbolContext()->types()),
-                    $paramIndex,
-                    $this->formatter->format($parameter)
-                )
+                [
+                    'type' => Suggestion::TYPE_VARIABLE,
+                    'short_description' => sprintf(
+                        '%s => param #%d %s',
+                        $this->formatter->format($variable->symbolContext()->types()),
+                        $paramIndex,
+                        $this->formatter->format($parameter)
+                    )
+                ]
             ));
         }
 

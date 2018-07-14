@@ -48,10 +48,12 @@ class WorseLocalVariableCompletor extends AbstractVariableCompletor implements T
         $suggestions = Suggestions::new();
         foreach ($this->variableCompletions($node, $source, $offset) as $local) {
             $suggestions->add(
-                Suggestion::create(
-                    'v',
+                Suggestion::createWithOptions(
                     '$' . $local->name(),
-                    $this->informationFormatter->format($local)
+                    [
+                        'type' => Suggestion::TYPE_VARIABLE,
+                        'short_description' => $this->informationFormatter->format($local)
+                    ]
                 )
             );
         }
