@@ -46,6 +46,11 @@ class OffsetHelperTest extends TestCase
             6
         ];
 
+        yield 'multi-byte chars' => [
+            "fȯøbar<>\r\n",
+            6
+        ];
+
         yield 'extra tab' => [
             "foobar<>\t",
             6
