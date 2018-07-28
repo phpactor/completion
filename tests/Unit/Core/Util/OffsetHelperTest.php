@@ -55,5 +55,10 @@ class OffsetHelperTest extends TestCase
             "foobar<>\t",
             6
         ];
+
+        yield 'long string (about 6MB)' => [
+            str_repeat("foobar", 2**20) . "<>\t",
+            'this is actually unused'
+        ];
     }
 }
