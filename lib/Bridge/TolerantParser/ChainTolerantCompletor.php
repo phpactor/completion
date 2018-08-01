@@ -36,9 +36,13 @@ class ChainTolerantCompletor implements Completor
         // ` will evaluate the Variable node as an expression node with a
         // double variable `$\n    $bar = `
         $truncatedSource = mb_substr($source, 0, $offset);
-
         $nonWhitespaceOffset = OffsetHelper::lastNonWhitespaceOffset($truncatedSource);
-        $node = $this->parser->parseSourceFile($truncatedSource)->getDescendantNodeAtPosition($nonWhitespaceOffset);
+        $truncatedSource = mb_substr($source, 0, $nonWhitespaceOffset);
+
+        $node = $this->parser->parseSourceFile($truncatedSource)->getDescendantNodeAtPosition(
+            // the parser requires the byte offset, not the char offset
+            strlen($truncatedSource)
+        );
         $response = Response::new();
 
         foreach ($this->tolerantCompletors as $tolerantCompletor) {

@@ -10,6 +10,8 @@ use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Suggestions;
+use Phpactor\Completion\Core\Util\OffsetHelper;
+use Phpactor\TestUtils\ExtractOffset;
 use Prophecy\Argument;
 
 class ChainTolerantCompletorTest extends TestCase
@@ -46,6 +48,40 @@ class ChainTolerantCompletorTest extends TestCase
 
         $result = $completor->complete('<?php ', 1);
         $this->assertCount(1, $result->suggestions());
+    }
+
+    public function testPassesCorrectByteOffsetToParser()
+    {
+        $completor = $this->create([ $this->completor1->reveal() ]);
+        [ $source, $offset ] = ExtractOffset::fromSource(<<<'EOT'
+<?php
+
+// 姓名
+
+class A
+{
+  public function foo()
+  {
+  }
+}
+
+$a = new A;
+$<>
+EOT
+    );
+
+        // the parser node passed to the tolerant completor should be the one
+        // at the requested char offset
+        $this->completor1->complete(
+            Argument::that(function ($arg) {
+                return $arg->getText() === '$';
+            }),
+            $source,
+            $offset
+        )->will(function ($args) {
+            return Response::new();
+        });
+        $completor->complete($source, $offset);
     }
 
     private function create(array $completors): ChainTolerantCompletor
