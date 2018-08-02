@@ -29,15 +29,14 @@ class ChainTolerantCompletor implements Completor
         $this->tolerantCompletors = $tolerantCompletors;
     }
 
-    public function complete(string $source, int $offset): Response
+    public function complete(string $source, int $byteOffset): Response
     {
-        // truncate source at offset - we don't want the rest of the source
-        // file contaminating the completion (for example `$foo($<>\n    $bar =
-        // ` will evaluate the Variable node as an expression node with a
-        // double variable `$\n    $bar = `
-        $truncatedSource = mb_substr($source, 0, $offset);
-        $nonWhitespaceOffset = OffsetHelper::lastNonWhitespaceOffset($truncatedSource);
-        $truncatedSource = mb_substr($source, 0, $nonWhitespaceOffset);
+        $truncatedSource = $this->truncateSource($source, $byteOffset);
+
+        $node = $this->parser->parseSourceFile($truncatedSource)->getDescendantNodeAtPosition(
+            // the parser requires the byte offset, not the char offset
+            strlen($truncatedSource)
+        );
 
         $node = $this->parser->parseSourceFile($truncatedSource)->getDescendantNodeAtPosition(
             // the parser requires the byte offset, not the char offset
@@ -46,9 +45,26 @@ class ChainTolerantCompletor implements Completor
         $response = Response::new();
 
         foreach ($this->tolerantCompletors as $tolerantCompletor) {
-            $response->merge($tolerantCompletor->complete($node, $source, $offset));
+            $response->merge($tolerantCompletor->complete($node, $source, $byteOffset));
         }
 
         return $response;
+    }
+
+    private function truncateSource(string $source, int $byteOffset)
+    {
+        // truncate source at byte offset - we don't want the rest of the source
+        // file contaminating the completion (for example `$foo($<>\n    $bar =
+        // ` will evaluate the Variable node as an expression node with a
+        // double variable `$\n    $bar = `
+        $truncatedSource = substr($source, 0, $byteOffset);
+        
+        // determine the last non-whitespace _character_ offset
+        $characterOffset = OffsetHelper::lastNonWhitespaceCharacterOffset($truncatedSource);
+        
+        // truncate the source at the character offset
+        $truncatedSource = mb_substr($source, 0, $characterOffset);
+
+        return $truncatedSource;
     }
 }

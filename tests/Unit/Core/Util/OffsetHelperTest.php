@@ -14,46 +14,43 @@ class OffsetHelperTest extends TestCase
     public function testReturnsLastNonWhitespaceOffset(string $example)
     {
         list($source, $expectedOffset) = ExtractOffset::fromSource($example);
-        $offset = OffsetHelper::lastNonWhitespaceOffset($source);
+        $characterOffset = OffsetHelper::lastNonWhitespaceCharacterOffset($source);
 
-        $this->assertEquals($expectedOffset, $offset);
+        $this->assertEquals(
+            $expectedOffset,
+            strlen(mb_substr($source, 0, $characterOffset)),
+            'Character offset corresponds to correct byte offset'
+        );
     }
 
     public function provideReturnsLastNonWhitespaceOffset()
     {
         yield 'empty string' => [
             '',
-            0
         ];
 
         yield 'no extra whitespace' => [
             'foobar<>',
-            6
         ];
 
         yield 'extra whitespace' => [
             'foobar<>    ',
-            6
         ];
 
         yield 'extra newline' => [
             'foobar<>' . PHP_EOL,
-            6
         ];
 
         yield 'extra windows newline' => [
             "foobar<>\r\n",
-            6
         ];
 
         yield 'multi-byte chars' => [
             "fȯøbar<>\r\n",
-            6
         ];
 
         yield 'extra tab' => [
             "foobar<>\t",
-            6
         ];
 
         yield 'long string (about 6MB)' => [
