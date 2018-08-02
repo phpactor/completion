@@ -53,7 +53,7 @@ class ChainTolerantCompletorTest extends TestCase
     public function testPassesCorrectByteOffsetToParser()
     {
         $completor = $this->create([ $this->completor1->reveal() ]);
-        [ $source, $offset ] = ExtractOffset::fromSource(<<<'EOT'
+        list($source, $offset) = ExtractOffset::fromSource(<<<'EOT'
 <?php
 
 // 姓名
