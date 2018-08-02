@@ -83,12 +83,9 @@ class WorseClassMemberCompletor implements TolerantCompletor
             return Response::new();
         }
 
-        $partialMatch = $memberName->getText($node->getFileContents());
+        $partialMatch = (string) $memberName->getText($node->getFileContents());
 
-        $reflectionOffset = $this->reflector->reflectOffset(
-            SourceCode::fromString($source),
-            Offset::fromInt($offset)
-        );
+        $reflectionOffset = $this->reflector->reflectOffset($source, $offset);
 
         $symbolContext = $reflectionOffset->symbolContext();
         $types = $symbolContext->types();
