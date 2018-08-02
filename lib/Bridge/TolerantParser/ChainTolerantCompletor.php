@@ -38,10 +38,6 @@ class ChainTolerantCompletor implements Completor
             strlen($truncatedSource)
         );
 
-        $node = $this->parser->parseSourceFile($truncatedSource)->getDescendantNodeAtPosition(
-            // the parser requires the byte offset, not the char offset
-            strlen($truncatedSource)
-        );
         $response = Response::new();
 
         foreach ($this->tolerantCompletors as $tolerantCompletor) {
