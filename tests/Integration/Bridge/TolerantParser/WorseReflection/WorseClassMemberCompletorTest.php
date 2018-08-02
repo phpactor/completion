@@ -382,6 +382,30 @@ EOT
             ],
         ],
     ];
+
+        yield 'member is variable name' => [
+            <<<'EOT'
+<?php
+
+class BarBar
+{
+    public $barbar;
+}
+
+class Foobar
+{
+    /**
+     * @var BarBar
+     */
+    public $foobar;
+}
+
+$barbar = 'foobar';
+$foobar = new Foobar();
+$foobar->$bar<>;
+EOT
+        , [
+        ]];
     }
 
     /**

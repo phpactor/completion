@@ -3,6 +3,7 @@
 namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
 use Microsoft\PhpParser\Node;
+use Microsoft\PhpParser\Token;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Core\Formatter\Formatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\MethodFormatter;
@@ -48,15 +49,45 @@ class WorseClassMemberCompletor implements TolerantCompletor
 
     public function complete(Node $node, string $source, int $offset): Response
     {
-        if (false === $this->couldComplete($node, $source, $offset)) {
+        if (
+            (
+                !$node instanceof MemberAccessExpression &&
+                !$node instanceof ScopedPropertyAccessExpression
+            ) 
+            && 
+            (
+                $node->parent instanceof MemberAccessExpression || 
+                $node->parent instanceof ScopedPropertyAccessExpression
+            )
+        ) {
+            $node = $node->parent;
+        }
+
+        if (
+            false === $node instanceof MemberAccessExpression && 
+            false === $node instanceof ScopedPropertyAccessExpression
+        ) {
             return Response::new();
         }
 
-        list($offset, $partialMatch) = $this->getOffetToReflect($source, $offset);
+        if ($node instanceof MemberAccessExpression) {
+            $offset = $node->arrowToken->getFullStart() - 1;
+        }
+
+        if ($node instanceof ScopedPropertyAccessExpression) {
+            $offset = $node->doubleColon->getFullStart() - 1;
+        }
+
+        $memberName = $node->memberName;
+        if (!$memberName instanceof Token) {
+            return Response::new();
+        }
+
+        $partialMatch = $memberName->getText($node->getFileContents());
 
         $reflectionOffset = $this->reflector->reflectOffset(
             SourceCode::fromString($source),
-            Offset::fromint($offset)
+            Offset::fromInt($offset)
         );
 
         $symbolContext = $reflectionOffset->symbolContext();
@@ -72,34 +103,6 @@ class WorseClassMemberCompletor implements TolerantCompletor
 
 
         return new Response($suggestions, Issues::fromStrings($symbolContext->issues()));
-    }
-
-    private function getOffetToReflect($source, $offset)
-    {
-        /** @var string $source */
-        $source = str_replace(PHP_EOL, ' ', $source);
-        $untilCursor = mb_substr($source, 0, $offset);
-
-        $pos = mb_strlen($untilCursor) - 1;
-        $original = null;
-        while ($pos) {
-            if (in_array(mb_substr($untilCursor, $pos, 2), [ '->', '::' ])) {
-                $original = $pos;
-                break;
-            }
-            $pos--;
-        }
-
-        $pos--;
-        while (isset($untilCursor[$pos]) && $untilCursor[$pos] == ' ') {
-            $pos--;
-        }
-        $pos++;
-
-        $accessorOffset = ($original - $pos) + 2;
-        $extra = trim(mb_substr($untilCursor, $pos + $accessorOffset, $offset));
-
-        return [ $pos,  $extra ];
     }
 
     private function populateSuggestions(SymbolContext $symbolContext, Type $type, Suggestions $suggestions): SymbolContext
