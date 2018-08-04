@@ -6,7 +6,7 @@ namespace Phpactor\Completion\Core;
  * Completion types based on the language server protocol:
  * https://github.com/Microsoft/language-server-protocol/blob/gh-pages/specification.md#completion-request-leftwards_arrow_with_hook
  */
-class CompletionType
+class SuggestionType
 {
     public const TEXT = 'text';
     public const METHOD = 'method';

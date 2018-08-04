@@ -73,7 +73,7 @@ class ScfClassCompletor implements TolerantCompletor
             $suggestions[] = Suggestion::createWithOptions(
                 $best->name(),
                 [
-                    'type' => 't',
+                    'type' => Suggestion::TYPE_CLASS,
                     'short_description' => $best->__toString(),
                     'class_import' => $best->__toString(),
                 ]

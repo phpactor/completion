@@ -55,7 +55,7 @@ $foobar-><>
 EOT
         , [
             [
-                'type' => Suggestion::TYPE_CLASS_MEMBER,
+                'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'foo',
                 'info' => 'pub $foo',
             ]
@@ -102,7 +102,7 @@ $foobar->foo-><>
 EOT
         , [
             [
-                'type' => Suggestion::TYPE_CLASS_MEMBER,
+                'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'bar',
                 'info' => 'pub $bar',
             ]
@@ -126,7 +126,7 @@ $foobar-><>
 EOT
         , [
             [
-                'type' => Suggestion::TYPE_CLASS_MEMBER,
+                'type' => Suggestion::TYPE_METHOD,
                 'name' => 'foo',
                 'info' => 'pub foo(string $zzzbar = \'bar\', $def): Barbar',
             ]
@@ -153,7 +153,7 @@ $foobar-><>
 EOT
         , [
             [
-                'type' => Suggestion::TYPE_CLASS_MEMBER,
+                'type' => Suggestion::TYPE_METHOD,
                 'name' => 'foo',
                 'info' => 'pub foo(): Foobar|Barbar',
             ]
@@ -179,7 +179,7 @@ EOT
         ]
     ];
 
-        yield 'Static method' => [
+        yield 'Static property' => [
             <<<'EOT'
 <?php
 
@@ -194,14 +194,14 @@ $foobar::<>
 EOT
         , [
             [
-                'type' => Suggestion::TYPE_CLASS_MEMBER,
+                'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'foo',
                 'info' => 'pub static $foo',
             ]
         ]
     ];
 
-        yield 'Static method with previous arrow accessor' => [
+        yield 'Static property with previous arrow accessor' => [
             <<<'EOT'
 <?php
 
@@ -221,12 +221,12 @@ $foobar->me::<>
 EOT
         , [
             [
-                'type' => Suggestion::TYPE_CLASS_MEMBER,
+                'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'foo',
                 'info' => 'pub static $foo',
             ],
             [
-                'type' => Suggestion::TYPE_CLASS_MEMBER,
+                'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'me',
                 'info' => 'pub $me: Foobar',
             ]
@@ -249,7 +249,7 @@ $foobar::f<>
 EOT
         , [
             [
-                'type' => Suggestion::TYPE_CLASS_MEMBER,
+                'type' => Suggestion::TYPE_METHOD,
                 'name' => 'foobar',
                 'info' => 'pub static $foobar',
             ]
@@ -274,7 +274,7 @@ class Foobar
 EOT
         , [
             [
-                'type' => Suggestion::TYPE_CLASS_MEMBER,
+                'type' => Suggestion::TYPE_METHOD,
                 'name' => 'bbb',
                 'info' => 'pub bbb()',
             ]
@@ -296,12 +296,12 @@ $foobar::<>
 EOT
         , [
             [
-                'type' => Suggestion::TYPE_CLASS_MEMBER,
+                'type' => Suggestion::TYPE_CONSTANT,
                 'name' => 'FOOBAR',
                 'info' => 'const FOOBAR',
             ],
             [
-                'type' => Suggestion::TYPE_CLASS_MEMBER,
+                'type' => Suggestion::TYPE_CONSTANT,
                 'name' => 'BARFOO',
                 'info' => 'const BARFOO',
             ],
@@ -324,7 +324,7 @@ $foobar
 EOT
         , [
             [
-                'type' => Suggestion::TYPE_CLASS_MEMBER,
+                'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'foobar',
                 'info' => 'pub $foobar',
             ],
@@ -355,7 +355,7 @@ $collection-><>
 EOT
         , [
             [
-                'type' => Suggestion::TYPE_CLASS_MEMBER,
+                'type' => Suggestion::TYPE_METHOD,
                 'name' => 'heyho',
                 'info' => 'pub heyho()',
             ],
@@ -377,7 +377,7 @@ $foobar = $foobar->meth<>
 EOT
         , [
             [
-                'type' => Suggestion::TYPE_CLASS_MEMBER,
+                'type' => Suggestion::TYPE_METHOD,
                 'name' => 'method1',
                 'info' => 'pub method1()',
             ],

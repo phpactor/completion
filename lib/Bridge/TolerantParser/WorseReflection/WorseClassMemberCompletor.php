@@ -130,7 +130,7 @@ class WorseClassMemberCompletor implements TolerantCompletor
             }
 
             $suggestions->add(Suggestion::createWithOptions($method->name(), [
-                'type' => Suggestion::TYPE_CLASS_MEMBER,
+                'type' => Suggestion::TYPE_METHOD,
                 'short_description' => $this->formatter->format($method),
             ]));
         }
@@ -141,7 +141,7 @@ class WorseClassMemberCompletor implements TolerantCompletor
                     continue;
                 }
                 $suggestions->add(Suggestion::createWithOptions($property->name(), [
-                    'type' => Suggestion::TYPE_CLASS_MEMBER,
+                    'type' => Suggestion::TYPE_PROPERTY,
                     'short_description' => $this->formatter->format($property),
                 ]));
             }
@@ -153,7 +153,7 @@ class WorseClassMemberCompletor implements TolerantCompletor
             /** @var ReflectionClass|ReflectionInterface */
             foreach ($classReflection->constants() as $constant) {
                 $suggestions->add(Suggestion::createWithOptions($constant->name(), [
-                    'type' => Suggestion::TYPE_CLASS_MEMBER,
+                    'type' => Suggestion::TYPE_CONSTANT,
                     'short_description' => 'const ' . $constant->name(),
                 ]));
             }

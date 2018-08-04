@@ -5,6 +5,7 @@ namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseRefle
 use Generator;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseParameterCompletor;
+use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseReflection\WorseParameterCompletorTest;
 use Phpactor\WorseReflection\ReflectorBuilder;
@@ -50,7 +51,7 @@ $foobar->barbar($<>
 EOT
             , [
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$param',
                     'info' => 'string => param #1 string $foo',
                 ]
@@ -68,7 +69,7 @@ $foobar->barbar($foo, $<>
 EOT
             , [
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$foobar',
                     'info' => 'Foobar => param #2 Foobar $bar',
                 ]
@@ -86,12 +87,12 @@ $foobar->barbar($param, $foobar, $<>);
 EOT
             , [
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$foobar',
                     'info' => 'Foobar => param #3 $mixed',
                 ],
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$param',
                     'info' => 'string => param #3 $mixed',
                 ],
@@ -120,7 +121,7 @@ foobar($param, $<>);
 EOT
             ,[
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$hello',
                     'info' => 'string => param #2 string $barbar',
                 ],
@@ -137,7 +138,7 @@ foobar($<>);
 EOT
             ,[
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$hello',
                     'info' => 'string => param #1 $bar',
                 ],
@@ -162,7 +163,7 @@ class Hello
 EOT
             ,[
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$hello',
                     'info' => 'string => param #1 $bar',
                 ],
@@ -186,12 +187,12 @@ class Hello
 EOT
             ,[
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$hello',
                     'info' => 'string => param #1 $bar',
                 ],
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$this',
                     'info' => 'Hello => param #1 $bar',
                 ],
@@ -215,7 +216,7 @@ class Hello
 EOT
             ,[
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$this',
                     'info' => 'Hello => param #1 $bar',
                 ],
@@ -239,7 +240,7 @@ class Hello
 EOT
             ,[
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$this',
                     'info' => 'Hello => param #1 $bar',
                 ],
@@ -267,7 +268,7 @@ foobar($hello, <>);
 EOT
             ,[
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$hello',
                     'info' => 'string => param #2 string $barbar',
                 ],
@@ -284,7 +285,7 @@ foobar(<>
 EOT
             ,[
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$hello',
                     'info' => 'string => param #1 $bar',
                 ],
@@ -313,7 +314,7 @@ Foobar::barbar($param, $foobar, $<>);
 EOT
             ,[
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$param',
                     'info' => 'string => param #3 $mixed',
                 ],
