@@ -44,7 +44,8 @@ class Suggestions implements IteratorAggregate
                 'short_description' => $suggestion->shortDescription(),
                 'class_import' => $suggestion->classImport(),
 
-                // For BC only
+                // deprecated: in favour of short_description, to be removed
+                // after 0.10.0
                 'info' => $suggestion->shortDescription(),
             ];
         }, $this->suggestions);
