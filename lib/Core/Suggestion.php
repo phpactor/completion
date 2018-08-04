@@ -31,7 +31,7 @@ class Suggestion
     const TYPE_CONSTANT = 'constant';
 
     /**
-     * @var string
+     * @var string|null
      */
     private $type;
 
@@ -41,7 +41,7 @@ class Suggestion
     private $name;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $info;
 
@@ -93,7 +93,10 @@ class Suggestion
         );
     }
 
-    public function type(): string
+    /**
+     * @return string|null
+     */
+    public function type()
     {
         return $this->type;
     }
@@ -103,7 +106,10 @@ class Suggestion
         return $this->name;
     }
 
-    public function info(): string
+    /**
+     * @return string|null
+     */
+    public function info()
     {
         return $this->info;
     }
