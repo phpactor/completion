@@ -51,11 +51,9 @@ class ScfClassCompletor implements TolerantCompletor
 
         $files = $this->filesystem->fileList()->phpFiles();
 
-        $partial = '';
         if ($node instanceof QualifiedName) {
-            $partial = mb_substr($source, $node->getStart(), $node->getWidth());
-            $files = $files->filter(function (SplFileInfo $file) use ($partial) {
-                return 0 === strpos($file->getFilename(), $partial);
+            $files = $files->filter(function (SplFileInfo $file) use ($node) {
+                return 0 === strpos($file->getFilename(), $node->getText());
             });
         }
 
