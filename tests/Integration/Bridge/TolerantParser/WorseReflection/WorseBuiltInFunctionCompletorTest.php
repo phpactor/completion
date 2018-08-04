@@ -5,6 +5,7 @@ namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseRefle
 use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseFunctionCompletor;
+use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
 use Phpactor\WorseReflection\Core\Logger\ArrayLogger;
 use Phpactor\WorseReflection\Core\SourceCodeLocator\StringSourceLocator;
@@ -50,9 +51,9 @@ class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
         yield 'function with parameters' => [ 
             '<?php function mystrpos ($haystack, $needle, $offset = 0):int {}; mystrpos<>', [
                 [
-                    'type' => 'f',
+                    'type' => Suggestion::TYPE_FUNCTION,
                     'name' => 'mystrpos',
-                    'info' => 'mystrpos($haystack, $needle, $offset = 0): int',
+                    'short_description' => 'mystrpos($haystack, $needle, $offset = 0): int',
                 ]
             ]
         ];
@@ -60,9 +61,9 @@ class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
         yield 'namespaced function name' => [ 
             '<?php namespace foobar; function barfoo ():int {}; bar<> }', [
                 [
-                    'type' => 'f',
+                    'type' => Suggestion::TYPE_FUNCTION,
                     'name' => 'barfoo',
-                    'info' => 'foobar\barfoo(): int',
+                    'short_description' => 'foobar\barfoo(): int',
                 ]
             ]
         ];

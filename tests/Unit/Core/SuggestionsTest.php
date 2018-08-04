@@ -11,7 +11,7 @@ class SuggestionsTest extends TestCase
     public function testReturnsAllIfStartingWithNeedleIsEmpty()
     {
         $suggestions1 = new Suggestions([
-            Suggestion::create('Foo', 'aaa', 'v'),
+            Suggestion::create('aaa', 'v'),
         ]);
         $suggestions2 = $suggestions1->startingWith('');
         $this->assertSame($suggestions1, $suggestions2);
@@ -20,31 +20,31 @@ class SuggestionsTest extends TestCase
     public function testFiltersSuggestionsStartingWith()
     {
         $suggestions = new Suggestions([
-            Suggestion::create('Foo', 'aaa', 'v'),
-            Suggestion::create('Foo', 'bbb', 'v'),
-            Suggestion::create('Foo', 'aaa', 'v'),
+            Suggestion::create('aaa'),
+            Suggestion::create('bbb'),
+            Suggestion::create('aaa'),
         ]);
 
         $suggestions = $suggestions->startingWith('a');
         $this->assertEquals(new Suggestions([
-            Suggestion::create('Foo', 'aaa', 'v'),
-            Suggestion::create('Foo', 'aaa', 'v'),
+            Suggestion::create('aaa'),
+            Suggestion::create('aaa'),
         ]), $suggestions);
     }
 
     public function testSortSuggestions()
     {
         $suggestions = new Suggestions([
-            Suggestion::create('Foo', 'aaa', 'v'),
-            Suggestion::create('Foo', 'cc', 'v'),
-            Suggestion::create('Foo', 'bbb', 'v'),
+            Suggestion::create('aaa'),
+            Suggestion::create('cc'),
+            Suggestion::create('bbb'),
         ]);
 
         $suggestions = $suggestions->sorted();
         $this->assertEquals(new Suggestions([
-            Suggestion::create('Foo', 'aaa', 'v'),
-            Suggestion::create('Foo', 'bbb', 'v'),
-            Suggestion::create('Foo', 'cc', 'v'),
+            Suggestion::create('aaa'),
+            Suggestion::create('bbb'),
+            Suggestion::create('cc'),
         ]), $suggestions);
     }
 }

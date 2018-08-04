@@ -3,6 +3,7 @@
 namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseReflection;
 
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
+use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
 use Phpactor\Completion\Tests\Integration\CompletorTestCase;
 use Phpactor\Completion\Core\Completor;
@@ -52,9 +53,9 @@ class WorseLocalVariableCompletorTest extends TolerantCompletorTestCase
             '<?php $foobar = "hello"; $<>',
             [
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$foobar',
-                    'info' => 'string',
+                    'short_description' => 'string',
                 ]
             ]
         ];
@@ -63,9 +64,9 @@ class WorseLocalVariableCompletorTest extends TolerantCompletorTestCase
             '<?php $barfoo = "goodbye"; $foobar = "hello"; $foo<>',
             [
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$foobar',
-                    'info' => 'string',
+                    'short_description' => 'string',
                 ]
             ]
         ];
@@ -74,14 +75,14 @@ class WorseLocalVariableCompletorTest extends TolerantCompletorTestCase
             '<?php $barfoo = 12; $foobar = "hello"; $<>',
             [
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$foobar',
-                    'info' => 'string',
+                    'short_description' => 'string',
                 ],
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$barfoo',
-                    'info' => 'int',
+                    'short_description' => 'int',
                 ],
             ]
         ];
@@ -100,9 +101,9 @@ $call<>
 EOT
             , [
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$callMe',
-                    'info' => 'Barfoo',
+                    'short_description' => 'Barfoo',
                 ],
             ],
         ];
@@ -117,9 +118,9 @@ $std = $st<>
 EOT
             , [
                 [
-                    'type' => 'v',
+                    'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$std',
-                    'info' => 'stdClass',
+                    'short_description' => 'stdClass',
                 ],
             ],
         ];

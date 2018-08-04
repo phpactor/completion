@@ -50,10 +50,12 @@ class WorseFunctionCompletor implements TolerantCompletor
         $suggestions = Suggestions::new();
         /** @var ReflectionFunction $functionReflection */
         foreach ($functions as $functionReflection) {
-            $suggestions->add(Suggestion::create(
-                'f',
+            $suggestions->add(Suggestion::createWithOptions(
                 $functionReflection->name()->short(),
-                $this->formatter->format($functionReflection)
+                [
+                    'type' => Suggestion::TYPE_FUNCTION,
+                    'short_description' => $this->formatter->format($functionReflection),
+                ]
             ));
         }
 

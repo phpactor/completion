@@ -70,10 +70,13 @@ class ScfClassCompletor implements TolerantCompletor
             }
 
             $best = $candidates->best();
-            $suggestions[] = Suggestion::create(
-                't',
+            $suggestions[] = Suggestion::createWithOptions(
                 $best->name(),
-                $best->__toString()
+                [
+                    'type' => Suggestion::TYPE_CLASS,
+                    'short_description' => $best->__toString(),
+                    'class_import' => $best->__toString(),
+                ]
             );
 
             if (++$count >= $this->limit) {

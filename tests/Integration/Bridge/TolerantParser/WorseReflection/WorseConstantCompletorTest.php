@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseConstantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseFunctionCompletor;
+use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
 use Phpactor\WorseReflection\Core\Logger\ArrayLogger;
 use Phpactor\WorseReflection\Core\SourceCodeLocator\StringSourceLocator;
@@ -50,9 +51,9 @@ class WorseConstantCompletorTest extends TolerantCompletorTestCase
         yield 'constant' => [ 
             '<?php PHPACTOR_TEST_<>', [
                 [
-                    'type' => 'm',
+                    'type' => Suggestion::TYPE_CONSTANT,
                     'name' => 'PHPACTOR_TEST_FOO',
-                    'info' => "PHPACTOR_TEST_FOO = 'Hello'",
+                    'short_description' => "PHPACTOR_TEST_FOO = 'Hello'",
                 ]
             ]
         ];
@@ -61,9 +62,9 @@ class WorseConstantCompletorTest extends TolerantCompletorTestCase
         yield 'namespaced constant' => [ 
             '<?php PHPACTOR_NAME<>', [
                 [
-                    'type' => 'm',
+                    'type' => Suggestion::TYPE_CONSTANT,
                     'name' => 'PHPACTOR_NAMESPACED',
-                    'info' => "namespaced\PHPACTOR_NAMESPACED = 'Hello'",
+                    'short_description' => "namespaced\PHPACTOR_NAMESPACED = 'Hello'",
                 ]
             ]
         ];

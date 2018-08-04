@@ -26,10 +26,12 @@ class WorseConstantCompletor implements TolerantCompletor
             $name = Name::fromString((string) $name);
 
             if (0 === mb_strpos($name->short(), $partial)) {
-                $suggestions->add(Suggestion::create(
-                    'm',
+                $suggestions->add(Suggestion::createWithOptions(
                     $name->short(),
-                    sprintf('%s = %s', $name->full(), var_export($value, true))
+                    [
+                        'type' => Suggestion::TYPE_CONSTANT,
+                        'short_description' => sprintf('%s = %s', $name->full(), var_export($value, true))
+                    ]
                 ));
             }
         }

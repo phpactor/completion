@@ -4,6 +4,7 @@ namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseRefle
 
 use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
+use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
 use Phpactor\WorseReflection\Core\Logger\ArrayLogger;
 use Phpactor\WorseReflection\Core\SourceCodeLocator\StringSourceLocator;
@@ -54,9 +55,9 @@ $foobar-><>
 EOT
         , [
             [
-                'type' => 'm',
+                'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'foo',
-                'info' => 'pub $foo',
+                'short_description' => 'pub $foo',
             ]
         ]
     ];
@@ -101,9 +102,9 @@ $foobar->foo-><>
 EOT
         , [
             [
-                'type' => 'm',
+                'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'bar',
-                'info' => 'pub $bar',
+                'short_description' => 'pub $bar',
             ]
         ]
     ];
@@ -125,9 +126,9 @@ $foobar-><>
 EOT
         , [
             [
-                'type' => 'f',
+                'type' => Suggestion::TYPE_METHOD,
                 'name' => 'foo',
-                'info' => 'pub foo(string $zzzbar = \'bar\', $def): Barbar',
+                'short_description' => 'pub foo(string $zzzbar = \'bar\', $def): Barbar',
             ]
         ]
     ];
@@ -152,9 +153,9 @@ $foobar-><>
 EOT
         , [
             [
-                'type' => 'f',
+                'type' => Suggestion::TYPE_METHOD,
                 'name' => 'foo',
-                'info' => 'pub foo(): Foobar|Barbar',
+                'short_description' => 'pub foo(): Foobar|Barbar',
             ]
         ]
     ];
@@ -178,7 +179,7 @@ EOT
         ]
     ];
 
-        yield 'Static method' => [
+        yield 'Static property' => [
             <<<'EOT'
 <?php
 
@@ -193,14 +194,14 @@ $foobar::<>
 EOT
         , [
             [
-                'type' => 'm',
+                'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'foo',
-                'info' => 'pub static $foo',
+                'short_description' => 'pub static $foo',
             ]
         ]
     ];
 
-        yield 'Static method with previous arrow accessor' => [
+        yield 'Static property with previous arrow accessor' => [
             <<<'EOT'
 <?php
 
@@ -220,14 +221,14 @@ $foobar->me::<>
 EOT
         , [
             [
-                'type' => 'm',
+                'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'foo',
-                'info' => 'pub static $foo',
+                'short_description' => 'pub static $foo',
             ],
             [
-                'type' => 'm',
+                'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'me',
-                'info' => 'pub $me: Foobar',
+                'short_description' => 'pub $me: Foobar',
             ]
         ]
     ];
@@ -248,9 +249,9 @@ $foobar::f<>
 EOT
         , [
             [
-                'type' => 'm',
+                'type' => Suggestion::TYPE_METHOD,
                 'name' => 'foobar',
-                'info' => 'pub static $foobar',
+                'short_description' => 'pub static $foobar',
             ]
         ]
     ];
@@ -273,9 +274,9 @@ class Foobar
 EOT
         , [
             [
-                'type' => 'f',
+                'type' => Suggestion::TYPE_METHOD,
                 'name' => 'bbb',
-                'info' => 'pub bbb()',
+                'short_description' => 'pub bbb()',
             ]
         ]
     ];
@@ -295,14 +296,14 @@ $foobar::<>
 EOT
         , [
             [
-                'type' => 'm',
+                'type' => Suggestion::TYPE_CONSTANT,
                 'name' => 'FOOBAR',
-                'info' => 'const FOOBAR',
+                'short_description' => 'const FOOBAR',
             ],
             [
-                'type' => 'm',
+                'type' => Suggestion::TYPE_CONSTANT,
                 'name' => 'BARFOO',
-                'info' => 'const BARFOO',
+                'short_description' => 'const BARFOO',
             ],
         ],
     ];
@@ -323,9 +324,9 @@ $foobar
 EOT
         , [
             [
-                'type' => 'm',
+                'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'foobar',
-                'info' => 'pub $foobar',
+                'short_description' => 'pub $foobar',
             ],
         ],
     ];
@@ -354,9 +355,9 @@ $collection-><>
 EOT
         , [
             [
-                'type' => 'f',
+                'type' => Suggestion::TYPE_METHOD,
                 'name' => 'heyho',
-                'info' => 'pub heyho()',
+                'short_description' => 'pub heyho()',
             ],
         ],
     ];
@@ -376,9 +377,9 @@ $foobar = $foobar->meth<>
 EOT
         , [
             [
-                'type' => 'f',
+                'type' => Suggestion::TYPE_METHOD,
                 'name' => 'method1',
-                'info' => 'pub method1()',
+                'short_description' => 'pub method1()',
             ],
         ],
     ];
