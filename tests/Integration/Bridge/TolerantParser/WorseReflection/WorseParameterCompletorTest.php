@@ -53,7 +53,7 @@ EOT
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$param',
-                    'info' => 'string => param #1 string $foo',
+                    'short_description' => 'string => param #1 string $foo',
                 ]
             ]
         ];
@@ -71,7 +71,7 @@ EOT
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$foobar',
-                    'info' => 'Foobar => param #2 Foobar $bar',
+                    'short_description' => 'Foobar => param #2 Foobar $bar',
                 ]
             ]
         ];
@@ -89,12 +89,12 @@ EOT
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$foobar',
-                    'info' => 'Foobar => param #3 $mixed',
+                    'short_description' => 'Foobar => param #3 $mixed',
                 ],
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$param',
-                    'info' => 'string => param #3 $mixed',
+                    'short_description' => 'string => param #3 $mixed',
                 ],
             ]
         ];
@@ -123,7 +123,7 @@ EOT
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$hello',
-                    'info' => 'string => param #2 string $barbar',
+                    'short_description' => 'string => param #2 string $barbar',
                 ],
             ],
         ];
@@ -140,7 +140,7 @@ EOT
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$hello',
-                    'info' => 'string => param #1 $bar',
+                    'short_description' => 'string => param #1 $bar',
                 ],
             ],
         ];
@@ -165,7 +165,7 @@ EOT
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$hello',
-                    'info' => 'string => param #1 $bar',
+                    'short_description' => 'string => param #1 $bar',
                 ],
             ],
         ];
@@ -189,12 +189,12 @@ EOT
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$hello',
-                    'info' => 'string => param #1 $bar',
+                    'short_description' => 'string => param #1 $bar',
                 ],
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$this',
-                    'info' => 'Hello => param #1 $bar',
+                    'short_description' => 'Hello => param #1 $bar',
                 ],
             ],
         ];
@@ -218,7 +218,7 @@ EOT
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$this',
-                    'info' => 'Hello => param #1 $bar',
+                    'short_description' => 'Hello => param #1 $bar',
                 ],
             ],
         ];
@@ -242,7 +242,7 @@ EOT
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$this',
-                    'info' => 'Hello => param #1 $bar',
+                    'short_description' => 'Hello => param #1 $bar',
                 ],
             ],
         ];
@@ -270,7 +270,7 @@ EOT
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$hello',
-                    'info' => 'string => param #2 string $barbar',
+                    'short_description' => 'string => param #2 string $barbar',
                 ],
             ],
         ];
@@ -287,7 +287,7 @@ EOT
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$hello',
-                    'info' => 'string => param #1 $bar',
+                    'short_description' => 'string => param #1 $bar',
                 ],
             ],
         ];
@@ -316,7 +316,7 @@ EOT
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$param',
-                    'info' => 'string => param #3 $mixed',
+                    'short_description' => 'string => param #3 $mixed',
                 ],
             ],
         ];

@@ -43,7 +43,7 @@ class Suggestion
     /**
      * @var string|null
      */
-    private $info;
+    private $shortDescription;
 
     /**
      * @var string|null
@@ -53,13 +53,13 @@ class Suggestion
     private function __construct(
         string $name,
         string $type = null,
-        string $info = null,
+        string $shortDescription = null,
         string $classImport = null
     )
     {
         $this->type = $type;
         $this->name = $name;
-        $this->info = $info;
+        $this->shortDescription = $shortDescription;
         $this->classImport = $classImport;
     }
 
@@ -109,9 +109,9 @@ class Suggestion
     /**
      * @return string|null
      */
-    public function info()
+    public function shortDescription()
     {
-        return $this->info;
+        return $this->shortDescription;
     }
 
     /**

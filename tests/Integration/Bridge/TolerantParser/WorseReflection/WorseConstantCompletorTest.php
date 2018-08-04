@@ -53,7 +53,7 @@ class WorseConstantCompletorTest extends TolerantCompletorTestCase
                 [
                     'type' => Suggestion::TYPE_CONSTANT,
                     'name' => 'PHPACTOR_TEST_FOO',
-                    'info' => "PHPACTOR_TEST_FOO = 'Hello'",
+                    'short_description' => "PHPACTOR_TEST_FOO = 'Hello'",
                 ]
             ]
         ];
@@ -64,7 +64,7 @@ class WorseConstantCompletorTest extends TolerantCompletorTestCase
                 [
                     'type' => Suggestion::TYPE_CONSTANT,
                     'name' => 'PHPACTOR_NAMESPACED',
-                    'info' => "namespaced\PHPACTOR_NAMESPACED = 'Hello'",
+                    'short_description' => "namespaced\PHPACTOR_NAMESPACED = 'Hello'",
                 ]
             ]
         ];

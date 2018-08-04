@@ -37,17 +37,17 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Alphabet',
-                    'info' => 'Test\Name\Alphabet',
+                    'short_description' => 'Test\Name\Alphabet',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Backwards',
-                    'info' => 'Test\Name\Backwards',
+                    'short_description' => 'Test\Name\Backwards',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
-                    'info' => 'Test\Name\Clapping',
+                    'short_description' => 'Test\Name\Clapping',
                 ],
             ],
         ];
@@ -58,7 +58,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
-                    'info' => 'Test\Name\Clapping',
+                    'short_description' => 'Test\Name\Clapping',
                 ],
             ],
         ];
@@ -69,7 +69,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
-                    'info' => 'Test\Name\Clapping',
+                    'short_description' => 'Test\Name\Clapping',
                 ],
             ],
         ];
@@ -80,17 +80,17 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Alphabet',
-                    'info' => 'Test\Name\Alphabet',
+                    'short_description' => 'Test\Name\Alphabet',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Backwards',
-                    'info' => 'Test\Name\Backwards',
+                    'short_description' => 'Test\Name\Backwards',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
-                    'info' => 'Test\Name\Clapping',
+                    'short_description' => 'Test\Name\Clapping',
                 ],
             ],
         ];
@@ -101,7 +101,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
-                    'info' => 'Test\Name\Clapping',
+                    'short_description' => 'Test\Name\Clapping',
                 ],
             ],
         ];
@@ -112,17 +112,17 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Alphabet',
-                    'info' => 'Test\Name\Alphabet',
+                    'short_description' => 'Test\Name\Alphabet',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Backwards',
-                    'info' => 'Test\Name\Backwards',
+                    'short_description' => 'Test\Name\Backwards',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
-                    'info' => 'Test\Name\Clapping',
+                    'short_description' => 'Test\Name\Clapping',
                 ],
             ],
         ];
@@ -133,7 +133,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
-                    'info' => 'Test\Name\Clapping',
+                    'short_description' => 'Test\Name\Clapping',
                 ],
             ],
         ];

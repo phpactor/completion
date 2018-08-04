@@ -57,7 +57,7 @@ EOT
             [
                 'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'foo',
-                'info' => 'pub $foo',
+                'short_description' => 'pub $foo',
             ]
         ]
     ];
@@ -104,7 +104,7 @@ EOT
             [
                 'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'bar',
-                'info' => 'pub $bar',
+                'short_description' => 'pub $bar',
             ]
         ]
     ];
@@ -128,7 +128,7 @@ EOT
             [
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'foo',
-                'info' => 'pub foo(string $zzzbar = \'bar\', $def): Barbar',
+                'short_description' => 'pub foo(string $zzzbar = \'bar\', $def): Barbar',
             ]
         ]
     ];
@@ -155,7 +155,7 @@ EOT
             [
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'foo',
-                'info' => 'pub foo(): Foobar|Barbar',
+                'short_description' => 'pub foo(): Foobar|Barbar',
             ]
         ]
     ];
@@ -196,7 +196,7 @@ EOT
             [
                 'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'foo',
-                'info' => 'pub static $foo',
+                'short_description' => 'pub static $foo',
             ]
         ]
     ];
@@ -223,12 +223,12 @@ EOT
             [
                 'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'foo',
-                'info' => 'pub static $foo',
+                'short_description' => 'pub static $foo',
             ],
             [
                 'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'me',
-                'info' => 'pub $me: Foobar',
+                'short_description' => 'pub $me: Foobar',
             ]
         ]
     ];
@@ -251,7 +251,7 @@ EOT
             [
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'foobar',
-                'info' => 'pub static $foobar',
+                'short_description' => 'pub static $foobar',
             ]
         ]
     ];
@@ -276,7 +276,7 @@ EOT
             [
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'bbb',
-                'info' => 'pub bbb()',
+                'short_description' => 'pub bbb()',
             ]
         ]
     ];
@@ -298,12 +298,12 @@ EOT
             [
                 'type' => Suggestion::TYPE_CONSTANT,
                 'name' => 'FOOBAR',
-                'info' => 'const FOOBAR',
+                'short_description' => 'const FOOBAR',
             ],
             [
                 'type' => Suggestion::TYPE_CONSTANT,
                 'name' => 'BARFOO',
-                'info' => 'const BARFOO',
+                'short_description' => 'const BARFOO',
             ],
         ],
     ];
@@ -326,7 +326,7 @@ EOT
             [
                 'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'foobar',
-                'info' => 'pub $foobar',
+                'short_description' => 'pub $foobar',
             ],
         ],
     ];
@@ -357,7 +357,7 @@ EOT
             [
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'heyho',
-                'info' => 'pub heyho()',
+                'short_description' => 'pub heyho()',
             ],
         ],
     ];
@@ -379,7 +379,7 @@ EOT
             [
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'method1',
-                'info' => 'pub method1()',
+                'short_description' => 'pub method1()',
             ],
         ],
     ];

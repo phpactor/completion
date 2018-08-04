@@ -53,7 +53,7 @@ class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
                 [
                     'type' => Suggestion::TYPE_FUNCTION,
                     'name' => 'mystrpos',
-                    'info' => 'mystrpos($haystack, $needle, $offset = 0): int',
+                    'short_description' => 'mystrpos($haystack, $needle, $offset = 0): int',
                 ]
             ]
         ];
@@ -63,7 +63,7 @@ class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
                 [
                     'type' => Suggestion::TYPE_FUNCTION,
                     'name' => 'barfoo',
-                    'info' => 'foobar\barfoo(): int',
+                    'short_description' => 'foobar\barfoo(): int',
                 ]
             ]
         ];
