@@ -59,6 +59,7 @@ class ScfClassCompletor implements TolerantCompletor
 
         $suggestions = [];
         $count = 0;
+        $imports = $node->getImportTablesForCurrentScope();
         /** @var ScfFilePath $file */
         foreach ($files as $file) {
             $candidates = $this->fileToClass->fileToClassCandidates(FilePath::fromString($file->path()));
@@ -73,7 +74,7 @@ class ScfClassCompletor implements TolerantCompletor
                 'short_description' => $best->__toString(),
             ];
 
-            if (!$this->isAlreadyImported($best->__toString(), $node)) {
+            if (!$this->isAlreadyImported($best->__toString(), $imports)) {
                 $options['class_import'] = $best->__toString();
             }
 
@@ -89,9 +90,9 @@ class ScfClassCompletor implements TolerantCompletor
         return Response::fromSuggestions($suggestions->sorted());
     }
 
-    private function isAlreadyImported(string $candidate, Node $node): bool
+    private function isAlreadyImported(string $candidate, array $imports): bool
     {
-        foreach ($node->getImportTablesForCurrentScope()[0] as $resolvedName) {
+        foreach ($imports[0] as $resolvedName) {
             if ($resolvedName->getFullyQualifiedNameText() === $candidate) {
                 return true;
             }
