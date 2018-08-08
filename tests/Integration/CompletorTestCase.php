@@ -47,6 +47,10 @@ abstract class CompletorTestCase extends TestCase
 
         foreach ($expected as $index => $expectedSuggestion) {
             $this->assertArraySubset($expectedSuggestion, $actual[$index]);
+
+            if (!isset($expectedSuggestion['class_import']) || $expectedSuggestion['class_import'] === null) {
+                $this->assertNull($actual[$index]['class_import']);
+            }
         }
 
         $this->assertCount(count($expected), $actual);

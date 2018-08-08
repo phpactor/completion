@@ -27,6 +27,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
     public function testComplete(string $source, array $expected)
     {
         $this->assertComplete($source, $expected);
+
     }
 
     public function provideComplete(): Generator
@@ -38,22 +39,37 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Alphabet',
                     'short_description' => 'Test\Name\Alphabet',
+                    'class_import' => 'Test\Name\Alphabet',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Backwards',
                     'short_description' => 'Test\Name\Backwards',
+                    'class_import' => 'Test\Name\Backwards',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
+                    'class_import' => 'Test\Name\Clapping',
                 ],
             ],
         ];
 
         yield 'extends partial' => [
             '<?php class Foobar extends Cl<>',
+            [
+                [
+                    'type' => Suggestion::TYPE_CLASS,
+                    'name' => 'Clapping',
+                    'short_description' => 'Test\Name\Clapping',
+                    'class_import' => 'Test\Name\Clapping',
+                ],
+            ],
+        ];
+
+        yield 'extends partial with existing import' => [
+            '<?php  use Test\Name\Clapping  class Foobar extends Cl<>',
             [
                 [
                     'type' => Suggestion::TYPE_CLASS,
@@ -70,6 +86,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
+                    'class_import' => 'Test\Name\Clapping',
                 ],
             ],
         ];
@@ -81,16 +98,19 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Alphabet',
                     'short_description' => 'Test\Name\Alphabet',
+                    'class_import' => 'Test\Name\Alphabet',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Backwards',
                     'short_description' => 'Test\Name\Backwards',
+                    'class_import' => 'Test\Name\Backwards',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
+                    'class_import' => 'Test\Name\Clapping',
                 ],
             ],
         ];
@@ -102,6 +122,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
+                    'class_import' => 'Test\Name\Clapping',
                 ],
             ],
         ];
@@ -113,16 +134,19 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Alphabet',
                     'short_description' => 'Test\Name\Alphabet',
+                    'class_import' => 'Test\Name\Alphabet',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Backwards',
                     'short_description' => 'Test\Name\Backwards',
+                    'class_import' => 'Test\Name\Backwards',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
+                    'class_import' => 'Test\Name\Clapping',
                 ],
             ],
         ];
@@ -134,6 +158,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
+                    'class_import' => 'Test\Name\Clapping',
                 ],
             ],
         ];
