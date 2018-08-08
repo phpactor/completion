@@ -68,14 +68,16 @@ class ScfClassCompletor implements TolerantCompletor
             }
 
             $best = $candidates->best();
-            $suggestions[] = Suggestion::createWithOptions(
-                $best->name(),
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'short_description' => $best->__toString(),
-                    'class_import' => $best->__toString(),
-                ]
-            );
+            $options = [
+                'type' => Suggestion::TYPE_CLASS,
+                'short_description' => $best->__toString(),
+            ];
+
+            if (!$this->isAlreadyImported($best->__toString(), $node)) {
+                $options['class_import'] = $best->__toString();
+            }
+
+            $suggestions[] = Suggestion::createWithOptions($best->name(), $options);
 
             if (++$count >= $this->limit) {
                 break;
@@ -85,6 +87,17 @@ class ScfClassCompletor implements TolerantCompletor
         $suggestions = Suggestions::fromSuggestions($suggestions);
 
         return Response::fromSuggestions($suggestions->sorted());
+    }
+
+    private function isAlreadyImported(string $candidate, Node $node): bool
+    {
+        foreach ($node->getImportTablesForCurrentScope()[0] as $resolvedName) {
+            if ($resolvedName->getFullyQualifiedNameText() === $candidate) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function couldComplete(Node $node): bool
