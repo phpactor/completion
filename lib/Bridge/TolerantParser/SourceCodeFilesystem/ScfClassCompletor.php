@@ -69,16 +69,14 @@ class ScfClassCompletor implements TolerantCompletor
             }
 
             $best = $candidates->best();
-            $options = [
-                'type' => Suggestion::TYPE_CLASS,
-                'short_description' => $best->__toString(),
-            ];
-
-            if (!$this->isAlreadyImported($best->__toString(), $imports)) {
-                $options['class_import'] = $best->__toString();
-            }
-
-            $suggestions[] = Suggestion::createWithOptions($best->name(), $options);
+            $suggestions[] = Suggestion::createWithOptions(
+                $best->name(),
+                [
+                    'type' => Suggestion::TYPE_CLASS,
+                    'short_description' => $best->__toString(),
+                    'class_import' => $this->isAlreadyImported($best->__toString(), $imports) ? null : $best->__toString(),
+                ]
+            );
 
             if (++$count >= $this->limit) {
                 break;
