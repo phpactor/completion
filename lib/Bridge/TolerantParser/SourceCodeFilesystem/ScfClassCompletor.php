@@ -8,6 +8,7 @@ use Microsoft\PhpParser\Node\Expression\ObjectCreationExpression;
 use Microsoft\PhpParser\Node\NamespaceUseClause;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Microsoft\PhpParser\Node\Statement\NamespaceUseDeclaration;
+use Microsoft\PhpParser\ResolvedName;
 use Phpactor\ClassFileConverter\Domain\FilePath;
 use Phpactor\ClassFileConverter\Domain\FileToClass;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
@@ -59,6 +60,10 @@ class ScfClassCompletor implements TolerantCompletor
 
         $suggestions = [];
         $count = 0;
+        $currentNamespaceDefinition = $node->getNamespaceDefinition();
+        $currentNamespace = (null !== $currentNamespaceDefinition && null !== $currentNamespaceDefinition->name)
+                          ? $currentNamespaceDefinition->name->getText()
+                          : null;
         $imports = $node->getImportTablesForCurrentScope();
         /** @var ScfFilePath $file */
         foreach ($files as $file) {
@@ -74,7 +79,7 @@ class ScfClassCompletor implements TolerantCompletor
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'short_description' => $best->__toString(),
-                    'class_import' => $this->isAlreadyImported($best->__toString(), $imports) ? null : $best->__toString(),
+                    'class_import' => $this->isImportNeeded($best, $imports, $currentNamespace) ? $best->__toString() : null,
                 ]
             );
 
@@ -88,15 +93,20 @@ class ScfClassCompletor implements TolerantCompletor
         return Response::fromSuggestions($suggestions->sorted());
     }
 
-    private function isAlreadyImported(string $candidate, array $imports): bool
+    private function isImportNeeded($candidate, array $imports, ?string $currentNamespace): bool
     {
+        if ($currentNamespace === $candidate->namespace()) {
+            return false;
+        }
+
+        /** @var ResolvedName $resolvedName */
         foreach ($imports[0] as $resolvedName) {
-            if ($resolvedName->getFullyQualifiedNameText() === $candidate) {
-                return true;
+            if ($candidate->__toString() === $resolvedName->getFullyQualifiedNameText()) {
+                return false;
             }
         }
 
-        return false;
+        return true;
     }
 
     private function couldComplete(Node $node): bool
