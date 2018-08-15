@@ -60,10 +60,7 @@ class ScfClassCompletor implements TolerantCompletor
 
         $suggestions = [];
         $count = 0;
-        $currentNamespaceDefinition = $node->getNamespaceDefinition();
-        $currentNamespace = (null !== $currentNamespaceDefinition && null !== $currentNamespaceDefinition->name)
-                          ? $currentNamespaceDefinition->name->getText()
-                          : null;
+        $currentNamespace = $this->getCurrentNamespace($node);
         $imports = $node->getImportTablesForCurrentScope();
         /** @var ScfFilePath $file */
         foreach ($files as $file) {
@@ -95,7 +92,8 @@ class ScfClassCompletor implements TolerantCompletor
 
     private function isImportNeeded($candidate, array $imports, ?string $currentNamespace): bool
     {
-        if ($currentNamespace === $candidate->namespace()) {
+        $candidateNamespace = $candidate->namespace();
+        if ($currentNamespace == $candidateNamespace || $candidateNamespace == null) {
             return false;
         }
 
@@ -107,6 +105,15 @@ class ScfClassCompletor implements TolerantCompletor
         }
 
         return true;
+    }
+
+    private function getCurrentNamespace(Node $node): ?string
+    {
+        $currentNamespaceDefinition = $node->getNamespaceDefinition();
+
+        return null !== $currentNamespaceDefinition && null !== $currentNamespaceDefinition->name
+            ? $currentNamespaceDefinition->name->getText()
+            : null;
     }
 
     private function couldComplete(Node $node): bool
