@@ -76,7 +76,7 @@ class ScfClassCompletor implements TolerantCompletor
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'short_description' => $best->__toString(),
-                    'class_import' => $this->isImportNeeded($best, $imports, $currentNamespace) ? $best->__toString() : null,
+                    'class_import' => $this->getClassNameForImport($best, $imports, $currentNamespace),
                 ]
             );
 
@@ -90,21 +90,22 @@ class ScfClassCompletor implements TolerantCompletor
         return Response::fromSuggestions($suggestions->sorted());
     }
 
-    private function isImportNeeded($candidate, array $imports, ?string $currentNamespace): bool
+    private function getClassNameForImport($candidate, array $imports, ?string $currentNamespace): ?string
     {
         $candidateNamespace = $candidate->namespace();
+
         if ($currentNamespace == $candidateNamespace || $candidateNamespace == null) {
-            return false;
+            return null;
         }
 
         /** @var ResolvedName $resolvedName */
         foreach ($imports[0] as $resolvedName) {
             if ($candidate->__toString() === $resolvedName->getFullyQualifiedNameText()) {
-                return false;
+                return null;
             }
         }
 
-        return true;
+        return $candidate->__toString();
     }
 
     private function getCurrentNamespace(Node $node): ?string
