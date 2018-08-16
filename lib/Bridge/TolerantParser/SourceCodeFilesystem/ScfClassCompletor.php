@@ -94,7 +94,7 @@ class ScfClassCompletor implements TolerantCompletor
     {
         $candidateNamespace = $candidate->namespace();
 
-        if ($currentNamespace == $candidateNamespace || $candidateNamespace == null) {
+        if ($currentNamespace === $candidateNamespace || $candidateNamespace === '' ) {
             return null;
         }
 
