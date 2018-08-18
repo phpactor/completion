@@ -2,9 +2,9 @@
 
 namespace Phpactor\Completion\Bridge\WorseReflection\Formatter;
 
-use Phpactor\WorseReflection\Bridge\TolerantParser\Reflection\ReflectionMethod;
 use Phpactor\Completion\Core\Formatter\Formatter;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
+use Phpactor\WorseReflection\Core\Reflection\ReflectionMethod;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
 
 class MethodFormatter implements Formatter
