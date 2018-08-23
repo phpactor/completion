@@ -27,7 +27,6 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
     public function testComplete(string $source, array $expected)
     {
         $this->assertComplete($source, $expected);
-
     }
 
     public function provideComplete(): Generator
@@ -65,60 +64,20 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
         yield 'extends when class already imported' => [
             '<?php use Test\Name\Alphabet; class Foobar extends <>',
             [
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Alphabet',
-                    'short_description' => 'Test\Name\Alphabet',
-                    'class_import' => null,
-                ],
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Backwards',
-                    'short_description' => 'Test\Name\Backwards',
-                    'class_import' => 'Test\Name\Backwards',
-                ],
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Clapping',
-                    'short_description' => 'Test\Name\Clapping',
-                    'class_import' => 'Test\Name\Clapping',
-                ],
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'WithoutNS',
-                    'short_description' => 'WithoutNS',
-                    'class_import' => null,
-                ],
+                ['class_import' => null],
+                ['class_import' => 'Test\Name\Backwards'],
+                ['class_import' => 'Test\Name\Clapping'],
+                ['class_import' => null],
             ],
         ];
 
         yield 'extends when class from same namespace' => [
             '<?php namespace Test\Name; class Foobar extends <>',
             [
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Alphabet',
-                    'short_description' => 'Test\Name\Alphabet',
-                    'class_import' => null,
-                ],
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Backwards',
-                    'short_description' => 'Test\Name\Backwards',
-                    'class_import' => null,
-                ],
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Clapping',
-                    'short_description' => 'Test\Name\Clapping',
-                    'class_import' => null,
-                ],
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'WithoutNS',
-                    'short_description' => 'WithoutNS',
-                    'class_import' => null,
-                ],
+                ['class_import' => null],
+                ['class_import' => null],
+                ['class_import' => null],
+                ['class_import' => null],
             ],
         ];
 
@@ -137,36 +96,21 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
         yield 'extends partial' => [
             '<?php class Foobar extends Wi<>',
             [
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'WithoutNS',
-                    'short_description' => 'WithoutNS',
-                    'class_import' => null,
-                ],
+                ['class_import' => null],
             ],
         ];
 
         yield 'extends partial with class already imported' => [
             '<?php  use Test\Name\Clapping;  class Foobar extends Cl<>',
             [
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Clapping',
-                    'short_description' => 'Test\Name\Clapping',
-                    'class_import' => null,
-                ],
+                ['class_import' => null],
             ],
         ];
 
         yield 'extends partial with class from same namespace' => [
             '<?php  namespace Test\Name;  class Foobar extends Cl<>',
             [
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Clapping',
-                    'short_description' => 'Test\Name\Clapping',
-                    'class_import' => null,
-                ],
+                ['class_import' => null],
             ],
         ];
 
@@ -183,26 +127,9 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
         ];
 
         yield 'extends keyword with subsequent code, with class already imported' => [
-            '<?php use Test\Name\Clapping; class Foobar extends Cl<> { }',
+            '<?php use Test\Name\Clapping; class Foobar extends Cl<>',
             [
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Clapping',
-                    'short_description' => 'Test\Name\Clapping',
-                    'class_import' => null,
-                ],
-            ],
-        ];
-
-        yield 'extends keyword with subsequent code, with class from same namespace' => [
-            '<?php namespace Test\Name; class Foobar extends Cl<> { }',
-            [
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Clapping',
-                    'short_description' => 'Test\Name\Clapping',
-                    'class_import' => null,
-                ],
+                ['class_import' => null],
             ],
         ];
 
@@ -234,64 +161,6 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             ],
         ];
 
-        yield 'new keyword with already imported class' => [
-            '<?php use Test\Name\Alphabet; new <>',
-            [
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Alphabet',
-                    'short_description' => 'Test\Name\Alphabet',
-                    'class_import' => null,
-                ],
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Backwards',
-                    'short_description' => 'Test\Name\Backwards',
-                ],
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Clapping',
-                    'short_description' => 'Test\Name\Clapping',
-                ],
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'WithoutNS',
-                    'short_description' => 'WithoutNS',
-                    'class_import' => null,
-                ],
-            ],
-        ];
-
-        yield 'new keyword with namespace' => [
-            '<?php namespace Test\Name; new <>',
-            [
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Alphabet',
-                    'short_description' => 'Test\Name\Alphabet',
-                    'class_import' => null,
-                ],
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Backwards',
-                    'short_description' => 'Test\Name\Backwards',
-                    'class_import' => null,
-                ],
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Clapping',
-                    'short_description' => 'Test\Name\Clapping',
-                    'class_import' => null,
-                ],
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'WithoutNS',
-                    'short_description' => 'WithoutNS',
-                    'class_import' => null,
-                ],
-            ],
-        ];
-
         yield 'new keyword with partial' => [
             '<?php new Cla<>',
             [
@@ -300,30 +169,6 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
                     'class_import' => 'Test\Name\Clapping',
-                ],
-            ],
-        ];
-
-        yield 'new keyword with partial with class already imported' => [
-            '<?php use Test\Name\Clapping; new Cla<>',
-            [
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Clapping',
-                    'short_description' => 'Test\Name\Clapping',
-                    'class_import' => null,
-                ],
-            ],
-        ];
-
-        yield 'new keyword with partial with class from same namespace' => [
-            '<?php namespace Test\Name; new Cla<>',
-            [
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Clapping',
-                    'short_description' => 'Test\Name\Clapping',
-                    'class_import' => null,
                 ],
             ],
         ];
