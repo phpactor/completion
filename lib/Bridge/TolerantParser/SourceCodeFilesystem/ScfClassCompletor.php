@@ -8,6 +8,7 @@ use Microsoft\PhpParser\Node\Expression\ObjectCreationExpression;
 use Microsoft\PhpParser\Node\NamespaceUseClause;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Microsoft\PhpParser\Node\Statement\NamespaceUseDeclaration;
+use Microsoft\PhpParser\ResolvedName;
 use Phpactor\ClassFileConverter\Domain\FilePath;
 use Phpactor\ClassFileConverter\Domain\FileToClass;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
@@ -59,6 +60,8 @@ class ScfClassCompletor implements TolerantCompletor
 
         $suggestions = [];
         $count = 0;
+        $currentNamespace = $this->getCurrentNamespace($node);
+        $imports = $node->getImportTablesForCurrentScope();
         /** @var ScfFilePath $file */
         foreach ($files as $file) {
             $candidates = $this->fileToClass->fileToClassCandidates(FilePath::fromString($file->path()));
@@ -73,7 +76,7 @@ class ScfClassCompletor implements TolerantCompletor
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'short_description' => $best->__toString(),
-                    'class_import' => $best->__toString(),
+                    'class_import' => $this->getClassNameForImport($best, $imports, $currentNamespace),
                 ]
             );
 
@@ -85,6 +88,33 @@ class ScfClassCompletor implements TolerantCompletor
         $suggestions = Suggestions::fromSuggestions($suggestions);
 
         return Response::fromSuggestions($suggestions->sorted());
+    }
+
+    private function getClassNameForImport($candidate, array $imports, ?string $currentNamespace): ?string
+    {
+        $candidateNamespace = $candidate->namespace();
+
+        if ($currentNamespace === $candidateNamespace || $candidateNamespace === '' ) {
+            return null;
+        }
+
+        /** @var ResolvedName $resolvedName */
+        foreach ($imports[0] as $resolvedName) {
+            if ($candidate->__toString() === $resolvedName->getFullyQualifiedNameText()) {
+                return null;
+            }
+        }
+
+        return $candidate->__toString();
+    }
+
+    private function getCurrentNamespace(Node $node): ?string
+    {
+        $currentNamespaceDefinition = $node->getNamespaceDefinition();
+
+        return null !== $currentNamespaceDefinition && null !== $currentNamespaceDefinition->name
+            ? $currentNamespaceDefinition->name->getText()
+            : null;
     }
 
     private function couldComplete(Node $node): bool

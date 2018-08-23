@@ -38,17 +38,46 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Alphabet',
                     'short_description' => 'Test\Name\Alphabet',
+                    'class_import' => 'Test\Name\Alphabet',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Backwards',
                     'short_description' => 'Test\Name\Backwards',
+                    'class_import' => 'Test\Name\Backwards',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
+                    'class_import' => 'Test\Name\Clapping',
                 ],
+                [
+                    'type' => Suggestion::TYPE_CLASS,
+                    'name' => 'WithoutNS',
+                    'short_description' => 'WithoutNS',
+                    'class_import' => null,
+                ],
+            ],
+        ];
+
+        yield 'extends when class already imported' => [
+            '<?php use Test\Name\Alphabet; class Foobar extends <>',
+            [
+                ['class_import' => null],
+                ['class_import' => 'Test\Name\Backwards'],
+                ['class_import' => 'Test\Name\Clapping'],
+                ['class_import' => null],
+            ],
+        ];
+
+        yield 'extends when class from same namespace' => [
+            '<?php namespace Test\Name; class Foobar extends <>',
+            [
+                ['class_import' => null],
+                ['class_import' => null],
+                ['class_import' => null],
+                ['class_import' => null],
             ],
         ];
 
@@ -59,7 +88,29 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
+                    'class_import' => 'Test\Name\Clapping',
                 ],
+            ],
+        ];
+
+        yield 'extends partial' => [
+            '<?php class Foobar extends Wi<>',
+            [
+                ['class_import' => null],
+            ],
+        ];
+
+        yield 'extends partial with class already imported' => [
+            '<?php  use Test\Name\Clapping;  class Foobar extends Cl<>',
+            [
+                ['class_import' => null],
+            ],
+        ];
+
+        yield 'extends partial with class from same namespace' => [
+            '<?php  namespace Test\Name;  class Foobar extends Cl<>',
+            [
+                ['class_import' => null],
             ],
         ];
 
@@ -70,7 +121,15 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
+                    'class_import' => 'Test\Name\Clapping',
                 ],
+            ],
+        ];
+
+        yield 'extends keyword with subsequent code, with class already imported' => [
+            '<?php use Test\Name\Clapping; class Foobar extends Cl<>',
+            [
+                ['class_import' => null],
             ],
         ];
 
@@ -81,6 +140,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Alphabet',
                     'short_description' => 'Test\Name\Alphabet',
+                    'class_import' => 'Test\Name\Alphabet',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
@@ -91,6 +151,12 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
+                ],
+                [
+                    'type' => Suggestion::TYPE_CLASS,
+                    'name' => 'WithoutNS',
+                    'short_description' => 'WithoutNS',
+                    'class_import' => null,
                 ],
             ],
         ];
@@ -102,6 +168,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
+                    'class_import' => 'Test\Name\Clapping',
                 ],
             ],
         ];
@@ -113,16 +180,25 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Alphabet',
                     'short_description' => 'Test\Name\Alphabet',
+                    'class_import' => 'Test\Name\Alphabet',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Backwards',
                     'short_description' => 'Test\Name\Backwards',
+                    'class_import' => 'Test\Name\Backwards',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
+                    'class_import' => 'Test\Name\Clapping',
+                ],
+                [
+                    'type' => Suggestion::TYPE_CLASS,
+                    'name' => 'WithoutNS',
+                    'short_description' => 'WithoutNS',
+                    'class_import' => null,
                 ],
             ],
         ];
@@ -134,6 +210,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
+                    'class_import' => 'Test\Name\Clapping',
                 ],
             ],
         ];
