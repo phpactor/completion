@@ -180,6 +180,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             [
                 [
                     'name' => 'Alphabet',
+                    'class_import' => null,
                 ],
             ],
         ];
