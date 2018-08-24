@@ -165,7 +165,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
 
     public function provideImportClass()
     {
-        yield 'does not import from the root namespace when in the root namespace namespace' => [
+        yield 'does not import from the root namespace when in the root namespace' => [
             '<?php Without<>',
             [
                 [
@@ -175,7 +175,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             ],
         ];
 
-        yield 'does not import when class in the same namespace' => [
+        yield 'does not import when candidate class is in the same namespace' => [
             '<?php namespace Test\Name; class Foobar extends Alphabe<>',
             [
                 [
@@ -184,7 +184,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             ],
         ];
 
-        yield 'does not import when class is already imported' => [
+        yield 'does not import when candidate class is already imported' => [
             '<?php use Test\Name\Alphabet; Alpha<>',
             [
                 [
@@ -194,7 +194,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             ],
         ];
 
-        yield 'when class in different namespace' => [
+        yield 'when candidate class is in different namespace' => [
             '<?php namespace Foobar; Alpha<>',
             [
                 [
@@ -204,7 +204,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
             ],
         ];
 
-        yield 'when new class in root namespace' => [
+        yield 'when the candidate class is in the root namespace' => [
             '<?php namespace Foobar; WithoutN<>',
             [
                 [
