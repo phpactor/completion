@@ -62,6 +62,7 @@ class ScfClassCompletor implements TolerantCompletor
         $count = 0;
         $currentNamespace = $this->getCurrentNamespace($node);
         $imports = $node->getImportTablesForCurrentScope();
+
         /** @var ScfFilePath $file */
         foreach ($files as $file) {
             $candidates = $this->fileToClass->fileToClassCandidates(FilePath::fromString($file->path()));
@@ -94,7 +95,7 @@ class ScfClassCompletor implements TolerantCompletor
     {
         $candidateNamespace = $candidate->namespace();
 
-        if ($currentNamespace === $candidateNamespace || $candidateNamespace === '' ) {
+        if ((string) $currentNamespace === (string) $candidateNamespace) {
             return null;
         }
 

@@ -38,46 +38,22 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Alphabet',
                     'short_description' => 'Test\Name\Alphabet',
-                    'class_import' => 'Test\Name\Alphabet',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Backwards',
                     'short_description' => 'Test\Name\Backwards',
-                    'class_import' => 'Test\Name\Backwards',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
-                    'class_import' => 'Test\Name\Clapping',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'WithoutNS',
                     'short_description' => 'WithoutNS',
-                    'class_import' => null,
                 ],
-            ],
-        ];
-
-        yield 'extends when class already imported' => [
-            '<?php use Test\Name\Alphabet; class Foobar extends <>',
-            [
-                ['class_import' => null],
-                ['class_import' => 'Test\Name\Backwards'],
-                ['class_import' => 'Test\Name\Clapping'],
-                ['class_import' => null],
-            ],
-        ];
-
-        yield 'extends when class from same namespace' => [
-            '<?php namespace Test\Name; class Foobar extends <>',
-            [
-                ['class_import' => null],
-                ['class_import' => null],
-                ['class_import' => null],
-                ['class_import' => null],
             ],
         ];
 
@@ -88,29 +64,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
-                    'class_import' => 'Test\Name\Clapping',
                 ],
-            ],
-        ];
-
-        yield 'extends partial' => [
-            '<?php class Foobar extends Wi<>',
-            [
-                ['class_import' => null],
-            ],
-        ];
-
-        yield 'extends partial with class already imported' => [
-            '<?php  use Test\Name\Clapping;  class Foobar extends Cl<>',
-            [
-                ['class_import' => null],
-            ],
-        ];
-
-        yield 'extends partial with class from same namespace' => [
-            '<?php  namespace Test\Name;  class Foobar extends Cl<>',
-            [
-                ['class_import' => null],
             ],
         ];
 
@@ -121,15 +75,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
-                    'class_import' => 'Test\Name\Clapping',
                 ],
-            ],
-        ];
-
-        yield 'extends keyword with subsequent code, with class already imported' => [
-            '<?php use Test\Name\Clapping; class Foobar extends Cl<>',
-            [
-                ['class_import' => null],
             ],
         ];
 
@@ -140,7 +86,6 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Alphabet',
                     'short_description' => 'Test\Name\Alphabet',
-                    'class_import' => 'Test\Name\Alphabet',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
@@ -156,7 +101,6 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'WithoutNS',
                     'short_description' => 'WithoutNS',
-                    'class_import' => null,
                 ],
             ],
         ];
@@ -168,7 +112,6 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
-                    'class_import' => 'Test\Name\Clapping',
                 ],
             ],
         ];
@@ -180,25 +123,21 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Alphabet',
                     'short_description' => 'Test\Name\Alphabet',
-                    'class_import' => 'Test\Name\Alphabet',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Backwards',
                     'short_description' => 'Test\Name\Backwards',
-                    'class_import' => 'Test\Name\Backwards',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
-                    'class_import' => 'Test\Name\Clapping',
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'WithoutNS',
                     'short_description' => 'WithoutNS',
-                    'class_import' => null,
                 ],
             ],
         ];
@@ -210,10 +149,71 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
-                    'class_import' => 'Test\Name\Clapping',
                 ],
             ],
         ];
+    }
+
+
+    /**
+     * @dataProvider provideImportClass
+     */
+    public function testImportClass($source, $expected)
+    {
+        $this->assertComplete($source, $expected);
+    }
+
+    public function provideImportClass()
+    {
+        yield 'does not import from the root namespace when in the root namespace namespace' => [
+            '<?php Without<>',
+            [
+                [
+                    'name' => 'WithoutNS',
+                    'class_import' => null,
+                ],
+            ],
+        ];
+
+        yield 'does not import when class in the same namespace' => [
+            '<?php namespace Test\Name; class Foobar extends Alphabe<>',
+            [
+                [
+                    'name' => 'Alphabet',
+                ],
+            ],
+        ];
+
+        yield 'does not import when class is already imported' => [
+            '<?php use Test\Name\Alphabet; Alpha<>',
+            [
+                [
+                    'name' => 'Alphabet',
+                    'class_import' => null
+                ],
+            ],
+        ];
+
+        yield 'when class in different namespace' => [
+            '<?php namespace Foobar; Alpha<>',
+            [
+                [
+                    'name' => 'Alphabet',
+                    'class_import' => 'Test\Name\Alphabet',
+                ],
+            ],
+        ];
+
+        yield 'when new class in root namespace' => [
+            '<?php namespace Foobar; WithoutN<>',
+            [
+                [
+                    'name' => 'WithoutNS',
+                    'class_import' => 'WithoutNS',
+                ],
+            ],
+        ];
+
     }
 
     public function provideCouldNotComplete(): Generator
