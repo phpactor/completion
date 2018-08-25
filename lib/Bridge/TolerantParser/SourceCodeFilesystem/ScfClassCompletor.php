@@ -91,7 +91,7 @@ class ScfClassCompletor implements TolerantCompletor
         return Response::fromSuggestions($suggestions->sorted());
     }
 
-    private function getClassNameForImport($candidate, array $imports, ?string $currentNamespace): ?string
+    private function getClassNameForImport($candidate, array $imports, string $currentNamespace = null)
     {
         $candidateNamespace = $candidate->namespace();
 
@@ -109,7 +109,7 @@ class ScfClassCompletor implements TolerantCompletor
         return $candidate->__toString();
     }
 
-    private function getCurrentNamespace(Node $node): ?string
+    private function getCurrentNamespace(Node $node): string
     {
         $currentNamespaceDefinition = $node->getNamespaceDefinition();
 
