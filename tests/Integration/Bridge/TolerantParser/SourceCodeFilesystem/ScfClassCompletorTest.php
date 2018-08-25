@@ -49,6 +49,11 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
                 ],
+                [
+                    'type' => Suggestion::TYPE_CLASS,
+                    'name' => 'WithoutNS',
+                    'short_description' => 'WithoutNS',
+                ],
             ],
         ];
 
@@ -92,6 +97,11 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
                 ],
+                [
+                    'type' => Suggestion::TYPE_CLASS,
+                    'name' => 'WithoutNS',
+                    'short_description' => 'WithoutNS',
+                ],
             ],
         ];
 
@@ -124,6 +134,11 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
                 ],
+                [
+                    'type' => Suggestion::TYPE_CLASS,
+                    'name' => 'WithoutNS',
+                    'short_description' => 'WithoutNS',
+                ],
             ],
         ];
 
@@ -137,6 +152,69 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                 ],
             ],
         ];
+    }
+
+
+    /**
+     * @dataProvider provideImportClass
+     */
+    public function testImportClass($source, $expected)
+    {
+        $this->assertComplete($source, $expected);
+    }
+
+    public function provideImportClass()
+    {
+        yield 'does not import from the root namespace when in the root namespace' => [
+            '<?php Without<>',
+            [
+                [
+                    'name' => 'WithoutNS',
+                    'class_import' => null,
+                ],
+            ],
+        ];
+
+        yield 'does not import when candidate class is in the same namespace' => [
+            '<?php namespace Test\Name; class Foobar extends Alphabe<>',
+            [
+                [
+                    'name' => 'Alphabet',
+                    'class_import' => null,
+                ],
+            ],
+        ];
+
+        yield 'does not import when candidate class is already imported' => [
+            '<?php use Test\Name\Alphabet; Alpha<>',
+            [
+                [
+                    'name' => 'Alphabet',
+                    'class_import' => null
+                ],
+            ],
+        ];
+
+        yield 'when candidate class is in different namespace' => [
+            '<?php namespace Foobar; Alpha<>',
+            [
+                [
+                    'name' => 'Alphabet',
+                    'class_import' => 'Test\Name\Alphabet',
+                ],
+            ],
+        ];
+
+        yield 'when the candidate class is in the root namespace' => [
+            '<?php namespace Foobar; WithoutN<>',
+            [
+                [
+                    'name' => 'WithoutNS',
+                    'class_import' => 'WithoutNS',
+                ],
+            ],
+        ];
+
     }
 
     public function provideCouldNotComplete(): Generator

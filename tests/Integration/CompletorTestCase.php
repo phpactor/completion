@@ -45,6 +45,7 @@ abstract class CompletorTestCase extends TestCase
 
         $actual = $result->suggestions()->toArray();
 
+        $this->assertCount(count($expected), $actual);
         foreach ($expected as $index => $expectedSuggestion) {
             $this->assertArraySubset($expectedSuggestion, $actual[$index]);
         }
