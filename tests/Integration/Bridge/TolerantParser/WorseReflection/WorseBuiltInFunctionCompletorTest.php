@@ -73,5 +73,6 @@ class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
     {
         yield 'non member access' => [ '<?php $hello<>' ];
         yield 'return value' => [ '<?php function barfoo() {}; class Hello { function barbar(): bar<>' ];
+        yield 'parameter type' => [ '<?php function barfoo() {}; class Hello { function barbar(bar<>)' ];
     }
 }
