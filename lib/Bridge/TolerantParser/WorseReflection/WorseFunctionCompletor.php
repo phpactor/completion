@@ -4,6 +4,7 @@ namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
 use Generator;
 use Microsoft\PhpParser\Node;
+use Microsoft\PhpParser\Node\MethodDeclaration;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Core\Completor;
@@ -43,11 +44,16 @@ class WorseFunctionCompletor implements TolerantCompletor
             return Response::new();
         }
 
+        if ($node->parent instanceof MethodDeclaration) {
+            return Response::new();
+        }
+
         $functionNames = $this->reflectedFunctions($source);
         $functionNames = $this->definedNamesFor($functionNames, $node->getText());
         $functions = $this->functionReflections($functionNames);
 
         $suggestions = Suggestions::new();
+
         /** @var ReflectionFunction $functionReflection */
         foreach ($functions as $functionReflection) {
             $suggestions->add(Suggestion::createWithOptions(

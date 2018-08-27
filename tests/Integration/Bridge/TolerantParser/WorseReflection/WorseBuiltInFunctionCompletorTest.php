@@ -72,5 +72,6 @@ class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
     public function provideCouldNotComplete(): Generator
     {
         yield 'non member access' => [ '<?php $hello<>' ];
+        yield 'return value' => [ '<?php function barfoo() {}; class Hello { function barbar(): bar<>' ];
     }
 }
