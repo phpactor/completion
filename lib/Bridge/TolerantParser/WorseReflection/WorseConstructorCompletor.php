@@ -86,7 +86,10 @@ class WorseConstructorCompletor extends AbstractParameterCompletor implements To
         return $this->populateResponse($response, $creationExpression, $reflectionConstruct, $variables);
     }
 
-    private function reflectClass(string $source, ObjectCreationExpression $creationExpresion): ?ReflectionClass
+    /**
+     * @return ReflectionClass|null
+     */
+    private function reflectClass(string $source, ObjectCreationExpression $creationExpresion)
     {
         $typeName = $creationExpresion->classTypeDesignator;
 
@@ -94,6 +97,8 @@ class WorseConstructorCompletor extends AbstractParameterCompletor implements To
             return null;
         }
 
-        return $this->reflector->reflectClass((string) $typeName);
+        $resolvedName = $typeName->getNamespacedName();
+
+        return $this->reflector->reflectClass($resolvedName->getFullyQualifiedNameText());
     }
 }

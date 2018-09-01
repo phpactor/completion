@@ -97,10 +97,29 @@ EOT
 class Foobar { public function __construct(string $foo) {} }
 
 $param = 'string';
-$foobar = new Foobar();
-$foobar->barbar($param, $<>);
+$foobar = new Foobar($param, $<>);
 EOT
             , []
+        ];
+
+        yield 'namespaced class' => [
+            <<<'EOT'
+<?php 
+
+namespace Hello;
+
+class Foobar { public function __construct(string $foo) {} }
+
+$param = 'string';
+$foobar = new Foobar($<>);
+EOT
+            , [
+                [
+                    'type' => Suggestion::TYPE_VARIABLE,
+                    'name' => '$param',
+                    'short_description' => 'string => param #1 string $foo',
+                ],
+            ]
         ];
     }
 
