@@ -15,7 +15,7 @@ abstract class AbstractVariableCompletor
     /**
      * @var Reflector
      */
-    private $reflector;
+    protected $reflector;
 
     public function __construct(Reflector $reflector)
     {

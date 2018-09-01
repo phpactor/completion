@@ -26,25 +26,8 @@ use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
 use Phpactor\WorseReflection\Core\Type;
 use Phpactor\WorseReflection\Reflector;
 
-class WorseParameterCompletor extends AbstractVariableCompletor implements TolerantCompletor
+class WorseParameterCompletor extends AbstractParameterCompletor implements TolerantCompletor
 {
-    /**
-     * @var Reflector
-     */
-    private $reflector;
-
-    /**
-     * @var ObjectFormatter
-     */
-    private $formatter;
-
-    public function __construct(Reflector $reflector, ObjectFormatter $formatter)
-    {
-        parent::__construct($reflector);
-        $this->reflector = $reflector;
-        $this->formatter = $formatter;
-    }
-
     public function complete(Node $node, string $source, int $offset): Response
     {
         $response = Response::new();
@@ -97,45 +80,7 @@ class WorseParameterCompletor extends AbstractVariableCompletor implements Toler
             return $response;
         }
 
-        // function has no parameters, return empty handed
-        if ($reflectionFunctionLike->parameters()->count() === 0) {
-            return $response;
-        }
-
-        $paramIndex = $this->paramIndex($callableExpression);
-
-        if ($this->numberOfArgumentsExceedParameterArity($reflectionFunctionLike, $paramIndex)) {
-            $response->issues()->add('Parameter index exceeds parameter arity');
-            return $response;
-        }
-
-        $parameter = $this->reflectedParameter($reflectionFunctionLike, $paramIndex);
-
-        $suggestions = [];
-        foreach ($variables as $variable) {
-            if (
-                $variable->symbolContext()->types()->count() && 
-                false === $this->isVariableValidForParameter($variable, $parameter)
-            ) {
-                // parameter has no types and is not valid for this position, ignore it
-                continue;
-            }
-
-            $response->suggestions()->add(Suggestion::createWithOptions(
-                '$' . $variable->name(),
-                [
-                    'type' => Suggestion::TYPE_VARIABLE,
-                    'short_description' => sprintf(
-                        '%s => param #%d %s',
-                        $this->formatter->format($variable->symbolContext()->types()),
-                        $paramIndex,
-                        $this->formatter->format($parameter)
-                    )
-                ]
-            ));
-        }
-
-        return $response;
+        return $this->populateResponse($response, $callableExpression, $reflectionFunctionLike, $variables);
     }
 
     private function paramIndex(Node $node)
