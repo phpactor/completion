@@ -121,6 +121,28 @@ EOT
                 ],
             ]
         ];
+
+        yield 'complete on open braclet' => [
+            <<<'EOT'
+<?php 
+class Hello
+{
+    public function __construct(string $foobar) 
+    {
+    }
+}
+
+$mar = '';
+new Hello(<>
+EOT
+            ,[
+                [
+                    'type' => Suggestion::TYPE_VARIABLE,
+                    'name' => '$mar',
+                    'short_description' => 'string => param #1 string $foobar',
+                ],
+            ],
+        ];
     }
 
     public function provideCompleteStaticClassParameter()

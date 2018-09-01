@@ -45,11 +45,11 @@ class WorseConstructorCompletor extends AbstractParameterCompletor implements To
             $node = $node->parent;
         }
 
-        if (!$node instanceof Variable && !$node instanceof CallExpression) {
+        if (!$node instanceof Variable && !$node instanceof ObjectCreationExpression) {
             return $response;
         }
 
-        $creationExpression = $node->getFirstAncestor(ObjectCreationExpression::class);
+        $creationExpression = $node instanceof ObjectCreationExpression ? $node : $node->getFirstAncestor(ObjectCreationExpression::class);
 
         if (!$creationExpression) {
             return $response;
