@@ -23,11 +23,6 @@ use Microsoft\PhpParser\Node\Expression\AssignmentExpression;
 class WorseLocalVariableCompletor extends AbstractVariableCompletor implements TolerantCompletor
 {
     /**
-     * @var Reflector
-     */
-    private $reflector;
-
-    /**
      * @var ObjectFormatter
      */
     private $informationFormatter;
