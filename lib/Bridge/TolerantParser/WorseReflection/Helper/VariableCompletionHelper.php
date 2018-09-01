@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
+namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection\Helper;
 
 use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Node\Expression\AssignmentExpression;
@@ -10,12 +10,12 @@ use Phpactor\WorseReflection\Core\Inference\Frame;
 use Phpactor\WorseReflection\Core\Inference\Variable;
 use Phpactor\WorseReflection\Reflector;
 
-abstract class AbstractVariableCompletor
+class VariableCompletionHelper
 {
     /**
      * @var Reflector
      */
-    private $reflector;
+    protected $reflector;
 
     public function __construct(Reflector $reflector)
     {
@@ -25,7 +25,7 @@ abstract class AbstractVariableCompletor
     /**
      * @return Variable[]
      */
-    protected function variableCompletions(Node $node, string $source, int $offset): array
+    public function variableCompletions(Node $node, string $source, int $offset): array
     {
         $partialMatch = '';
         if ($node instanceof ParserVariable) {

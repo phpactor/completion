@@ -9,80 +9,86 @@ use Microsoft\PhpParser\Node\DelimitedList\ArgumentExpressionList;
 use Microsoft\PhpParser\Node\Expression\ArgumentExpression;
 use Microsoft\PhpParser\Node\Expression\CallExpression;
 use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
+use Microsoft\PhpParser\Node\Expression\ObjectCreationExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 use Microsoft\PhpParser\Node\Expression\Variable;
 use Microsoft\PhpParser\Node\QualifiedName;
-use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
+use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\Helper\VariableCompletionHelper;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestion;
-use Phpactor\Completion\Core\Suggestions;
-use Phpactor\WorseReflection\Core\Exception\CouldNotResolveNode;
-use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Inference\Variable as WorseVariable;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionFunctionLike;
-use Phpactor\WorseReflection\Core\Reflection\ReflectionMethod;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
 use Phpactor\WorseReflection\Core\Type;
 use Phpactor\WorseReflection\Reflector;
 
-class WorseParameterCompletor extends AbstractParameterCompletor implements TolerantCompletor
+abstract class AbstractParameterCompletor
 {
-    public function complete(Node $node, string $source, int $offset): Response
+    /**
+     * @var Reflector
+     */
+    protected $reflector;
+
+    /**
+     * @var ObjectFormatter
+     */
+    private $formatter;
+
+    /**
+     * @var VariableCompletionHelper
+     */
+    protected $variableCompletionHelper;
+
+    public function __construct(Reflector $reflector, ObjectFormatter $formatter, VariableCompletionHelper $variableCompletionHelper = null)
     {
-        $response = Response::new();
-
-        // Tolerant parser _seems_ to resolve f.e. offset 74 as the qualified
-        // name of the node, when it is actually the open bracket. If it is a qualified
-        // name, we take our chances on the parent.
-        if ($node instanceof QualifiedName) {
-            $node = $node->parent;
-        }
-
-        if ($node instanceof ArgumentExpressionList) {
-            $node = $node->parent;
-        }
-
-        if (!$node instanceof Variable && !$node instanceof CallExpression) {
-            return $response;
-        }
-
-        $callExpression = $node instanceof CallExpression ? $node : $node->getFirstAncestor(CallExpression::class);
-
-        if (!$callExpression) {
-            return $response;
-        }
-
-        assert($callExpression instanceof CallExpression);
-        $callableExpression = $callExpression->callableExpression;
-
-        $variables = $this->variableCompletionHelper->variableCompletions($node, $source, $offset);
-
-        // no variables available for completion, return empty handed
-        if (empty($variables)) {
-            return $response;
-        }
-
-        try {
-            $reflectionFunctionLike = $this->reflectFunctionLike($source, $callableExpression);
-        } catch (NotFound $exception) {
-            $response->issues()->add($exception->getMessage());
-            return $response;
-        }
-
-        if (null === $reflectionFunctionLike) {
-            $response->issues()->add('Could not reflect function / method');
-            return $response;
-        }
-
-        if (null === $reflectionFunctionLike) {
-            $response->issues()->add('Could not determine containing class of call');
-            return $response;
-        }
-
-        return $this->populateResponse($response, $callableExpression, $reflectionFunctionLike, $variables);
+        $this->reflector = $reflector;
+        $this->formatter = $formatter;
+        $this->variableCompletionHelper = $variableCompletionHelper ?: new VariableCompletionHelper($reflector);
     }
 
+    protected function populateResponse(Response $response, Node $callableExpression, ReflectionFunctionLike $functionLikeReflection, array $variables)
+    {
+        // function has no parameters, return empty handed
+        if ($functionLikeReflection->parameters()->count() === 0) {
+            return $response;
+        }
+
+        $paramIndex = $this->paramIndex($callableExpression);
+
+        if ($this->numberOfArgumentsExceedParameterArity($functionLikeReflection, $paramIndex)) {
+            $response->issues()->add('Parameter index exceeds parameter arity');
+            return $response;
+        }
+
+        $parameter = $this->reflectedParameter($functionLikeReflection, $paramIndex);
+
+        $suggestions = [];
+        foreach ($variables as $variable) {
+            if (
+                $variable->symbolContext()->types()->count() && 
+                false === $this->isVariableValidForParameter($variable, $parameter)
+            ) {
+                // parameter has no types and is not valid for this position, ignore it
+                continue;
+            }
+
+            $response->suggestions()->add(Suggestion::createWithOptions(
+                '$' . $variable->name(),
+                [
+                    'type' => Suggestion::TYPE_VARIABLE,
+                    'short_description' => sprintf(
+                        '%s => param #%d %s',
+                        $this->formatter->format($variable->symbolContext()->types()),
+                        $paramIndex,
+                        $this->formatter->format($parameter)
+                    )
+                ]
+            ));
+        }
+
+        return $response;
+    }
     private function paramIndex(Node $node)
     {
         $argumentList = $this->argumentListFromNode($node);
@@ -168,31 +174,14 @@ class WorseParameterCompletor extends AbstractParameterCompletor implements Tole
     }
 
     /**
-     * @return ReflectionFunctionLike|null
-     */
-    private function reflectFunctionLike(string $source, Node $callableExpression)
-    {
-        $offset = $this->reflector->reflectOffset($source, $callableExpression->getEndPosition());
-
-        if ($containerType = $offset->symbolContext()->containerType()) {
-            $containerClass = $this->reflector->reflectClassLike($containerType->className());
-            return $containerClass->methods()->get($offset->symbolContext()->symbol()->name());
-        }
-
-        if (!$callableExpression instanceof QualifiedName) {
-            return null;
-        }
-
-        $name = $callableExpression->getResolvedName() ?? $callableExpression->getText();
-
-        return $this->reflector->reflectFunction((string) $name);
-    }
-
-    /**
      * @return ArgumentExpressionList|null
      */
     private function argumentListFromNode(Node $node)
     {
+        if ($node instanceof ObjectCreationExpression) {
+            return $node->argumentExpressionList;
+        }
+
         if ($node instanceof QualifiedName) {
             $callExpression = $node->parent;
             assert($callExpression instanceof CallExpression);

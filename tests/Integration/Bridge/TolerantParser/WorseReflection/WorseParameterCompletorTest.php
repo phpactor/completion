@@ -230,7 +230,7 @@ class Hello
 {
     public function goodbye()
     {
-        $this->bonjour($<>
+        $this->bonjour(<>
     }
 
     public function bonjour($bar)
