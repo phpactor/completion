@@ -64,10 +64,10 @@ class WorseConstructorCompletor extends AbstractParameterCompletor implements To
 
         assert($creationExpression instanceof ObjectCreationExpression);
 
-        try {
-            $reflectionClass = $this->reflectClass($source, $creationExpression);
-        } catch (NotFound $exception) {
-            $response->issues()->add($exception->getMessage());
+        $reflectionClass = $this->reflectClass($source, $creationExpression);
+
+        if (null === $reflectionClass) {
+            $response->issues()->add('Could not resolve reflection class');
             return $response;
         }
 

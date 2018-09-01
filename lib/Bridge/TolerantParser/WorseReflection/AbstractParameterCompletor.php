@@ -2,9 +2,12 @@
 
 namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
+use LogicException;
 use Microsoft\PhpParser\MissingToken;
 use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Node\DelimitedList\ArgumentExpressionList;
+use Microsoft\PhpParser\Node\Expression\ArgumentExpression;
+use Microsoft\PhpParser\Node\Expression\CallExpression;
 use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
 use Microsoft\PhpParser\Node\Expression\ObjectCreationExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
@@ -22,6 +25,11 @@ use Phpactor\WorseReflection\Reflector;
 
 abstract class AbstractParameterCompletor
 {
+    /**
+     * @var Reflector
+     */
+    protected $reflector;
+
     /**
      * @var ObjectFormatter
      */

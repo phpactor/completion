@@ -34,11 +34,6 @@ class WorseLocalVariableCompletor implements TolerantCompletor
     private $reflector;
 
     /**
-     * @var ObjectFormatter
-     */
-    private $typeFormatter;
-
-    /**
      * @var VariableCompletionHelper
      */
     private $variableCompletionHelper;
@@ -48,7 +43,6 @@ class WorseLocalVariableCompletor implements TolerantCompletor
     {
         $this->reflector = $reflector;
         $this->informationFormatter = $typeFormatter ?: new ObjectFormatter();
-        $this->typeFormatter = $typeFormatter;
         $this->variableCompletionHelper = $variableCompletionHelper ?: new VariableCompletionHelper($reflector);
     }
 
