@@ -5,6 +5,7 @@ namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 use Microsoft\PhpParser\Node;
 use Phpactor\Completion\Adapter\WorseReflection\Completor\LocalVariable\VariableWithNode;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
+use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\Helper\VariableCompletionHelper;
 use Phpactor\Completion\Core\Formatter\Formatter;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Response;
@@ -20,18 +21,35 @@ use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 use Microsoft\PhpParser\Node\Expression\AssignmentExpression;
 
-class WorseLocalVariableCompletor extends AbstractVariableCompletor implements TolerantCompletor
+class WorseLocalVariableCompletor implements TolerantCompletor
 {
     /**
      * @var ObjectFormatter
      */
     private $informationFormatter;
 
-    public function __construct(Reflector $reflector, ObjectFormatter $typeFormatter = null)
+    /**
+     * @var Reflector
+     */
+    private $reflector;
+
+    /**
+     * @var ObjectFormatter
+     */
+    private $typeFormatter;
+
+    /**
+     * @var VariableCompletionHelper
+     */
+    private $variableCompletionHelper;
+
+
+    public function __construct(Reflector $reflector, ObjectFormatter $typeFormatter = null, VariableCompletionHelper $variableCompletionHelper = null)
     {
-        parent::__construct($reflector);
         $this->reflector = $reflector;
         $this->informationFormatter = $typeFormatter ?: new ObjectFormatter();
+        $this->typeFormatter = $typeFormatter;
+        $this->variableCompletionHelper = $variableCompletionHelper ?: new VariableCompletionHelper($reflector);
     }
 
     public function complete(Node $node, string $source, int $offset): Response
@@ -41,7 +59,7 @@ class WorseLocalVariableCompletor extends AbstractVariableCompletor implements T
         }
 
         $suggestions = Suggestions::new();
-        foreach ($this->variableCompletions($node, $source, $offset) as $local) {
+        foreach ($this->variableCompletionHelper->variableCompletions($node, $source, $offset) as $local) {
             $suggestions->add(
                 Suggestion::createWithOptions(
                     '$' . $local->name(),

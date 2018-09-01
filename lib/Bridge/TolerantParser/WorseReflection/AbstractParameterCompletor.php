@@ -10,6 +10,7 @@ use Microsoft\PhpParser\Node\Expression\ObjectCreationExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 use Microsoft\PhpParser\Node\Expression\Variable;
 use Microsoft\PhpParser\Node\QualifiedName;
+use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\Helper\VariableCompletionHelper;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestion;
@@ -19,18 +20,23 @@ use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
 use Phpactor\WorseReflection\Core\Type;
 use Phpactor\WorseReflection\Reflector;
 
-abstract class AbstractParameterCompletor extends AbstractVariableCompletor
+abstract class AbstractParameterCompletor
 {
     /**
      * @var ObjectFormatter
      */
     private $formatter;
 
-    public function __construct(Reflector $reflector, ObjectFormatter $formatter)
+    /**
+     * @var VariableCompletionHelper
+     */
+    protected $variableCompletionHelper;
+
+    public function __construct(Reflector $reflector, ObjectFormatter $formatter, VariableCompletionHelper $variableCompletionHelper = null)
     {
-        parent::__construct($reflector);
         $this->reflector = $reflector;
         $this->formatter = $formatter;
+        $this->variableCompletionHelper = $variableCompletionHelper ?: new VariableCompletionHelper($reflector);
     }
 
     protected function populateResponse(Response $response, Node $callableExpression, ReflectionFunctionLike $functionLikeReflection, array $variables)

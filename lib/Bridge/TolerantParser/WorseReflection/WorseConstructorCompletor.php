@@ -55,7 +55,7 @@ class WorseConstructorCompletor extends AbstractParameterCompletor implements To
             return $response;
         }
 
-        $variables = $this->variableCompletions($node, $source, $offset);
+        $variables = $this->variableCompletionHelper->variableCompletions($node, $source, $offset);
 
         // no variables available for completion, return empty handed
         if (empty($variables)) {
