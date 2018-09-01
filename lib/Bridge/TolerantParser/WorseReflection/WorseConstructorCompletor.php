@@ -51,7 +51,7 @@ class WorseConstructorCompletor extends AbstractParameterCompletor implements To
 
         $creationExpression = $node instanceof ObjectCreationExpression ? $node : $node->getFirstAncestor(ObjectCreationExpression::class);
 
-        if (!$creationExpression || null === $creationExpression->openParen) {
+        if (!$creationExpression || ($creationExpression instanceof ObjectCreationExpression && null === $creationExpression->openParen)) {
             return $response;
         }
 
@@ -99,6 +99,10 @@ class WorseConstructorCompletor extends AbstractParameterCompletor implements To
 
         $resolvedName = $typeName->getResolvedName();
 
-        return $this->reflector->reflectClass($resolvedName->getFullyQualifiedNameText());
+        if (null === $resolvedName) {
+            return null;
+        }
+
+        return $this->reflector->reflectClass((string) $resolvedName);
     }
 }
