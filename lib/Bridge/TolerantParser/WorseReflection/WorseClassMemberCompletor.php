@@ -71,11 +71,11 @@ class WorseClassMemberCompletor implements TolerantCompletor
         }
 
         if ($node instanceof MemberAccessExpression) {
-            $offset = $node->arrowToken->getFullStart() - 1;
+            $offset = $node->arrowToken->getFullStart();
         }
 
         if ($node instanceof ScopedPropertyAccessExpression) {
-            $offset = $node->doubleColon->getFullStart() - 1;
+            $offset = $node->doubleColon->getFullStart();
         }
 
         $memberName = $node->memberName;

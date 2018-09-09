@@ -407,6 +407,53 @@ $foobar->$bar<>;
 EOT
         , [
         ]];
+
+        yield 'chained method call with arguments' => [
+            <<<'EOT'
+<?php
+
+class BarBar {
+    public function hello($one, $two): Foobar {}
+}
+
+class Foobar {
+    public function goodbye(): BarBar {}
+}
+
+$foobar = (new Foobar())
+    ->goodbye()
+    ->hello('one', 'two')
+    -><>
+EOT
+        , [
+            [
+                'type' => Suggestion::TYPE_METHOD,
+                'name' => 'goodbye',
+            ],
+        ]];
+
+        yield 'chained static method call with arguments' => [
+            <<<'EOT'
+<?php
+
+class BarBar {
+    public static function hello($one, $two): Foobar {}
+}
+
+class Foobar {
+    public static function goodbye(): BarBar {}
+}
+
+$foobar = Foobar::goodbye()
+    ->hello('one', 'two')
+    -><>
+EOT
+        , [
+            [
+                'type' => Suggestion::TYPE_METHOD,
+                'name' => 'goodbye',
+            ],
+        ]];
     }
 
     /**
