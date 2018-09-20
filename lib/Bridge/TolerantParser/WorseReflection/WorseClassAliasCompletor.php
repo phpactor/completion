@@ -17,15 +17,9 @@ class WorseClassAliasCompletor implements TolerantCompletor
      */
     private $reflector;
 
-    /**
-     * @var ObjectFormatter
-     */
-    private $formatter;
-
-    public function __construct(Reflector $reflector, ObjectFormatter $formatter)
+    public function __construct(Reflector $reflector)
     {
         $this->reflector = $reflector;
-        $this->formatter = $formatter;
     }
 
     public function complete(Node $node, string $source, int $offset): Response

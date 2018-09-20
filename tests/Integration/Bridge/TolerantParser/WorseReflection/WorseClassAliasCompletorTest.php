@@ -14,7 +14,7 @@ class WorseClassAliasCompletorTest extends TolerantCompletorTestCase
     protected function createTolerantCompletor(string $source): TolerantCompletor
     {
         $reflector = ReflectorBuilder::create()->addSource($source)->build();
-        return new WorseClassAliasCompletor($reflector, $this->formatter());
+        return new WorseClassAliasCompletor($reflector);
     }
 
     /**
