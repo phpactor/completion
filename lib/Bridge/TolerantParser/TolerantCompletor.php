@@ -3,6 +3,7 @@
 namespace Phpactor\Completion\Bridge\TolerantParser;
 
 use Microsoft\PhpParser\Node;
+use Phpactor\Completion\Bridge\TolerantParser\Qualifier\Qualifier;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestions;

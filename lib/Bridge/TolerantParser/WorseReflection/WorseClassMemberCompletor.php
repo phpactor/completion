@@ -4,7 +4,10 @@ namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
 use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Token;
+use Phpactor\Completion\Bridge\TolerantParser\Qualifier\ClassMemberQualifier;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
+use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifiable;
+use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifier;
 use Phpactor\Completion\Core\Formatter\Formatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\MethodFormatter;
 use Phpactor\WorseReflection\Core\ClassName;
@@ -29,7 +32,7 @@ use Microsoft\PhpParser\Parser;
 use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 
-class WorseClassMemberCompletor implements TolerantCompletor
+class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiable
 {
     /**
      * @var Reflector
@@ -47,29 +50,13 @@ class WorseClassMemberCompletor implements TolerantCompletor
         $this->formatter = $formatter;
     }
 
+    public function qualifier(): TolerantQualifier
+    {
+        return new ClassMemberQualifier();
+    }
+
     public function complete(Node $node, string $source, int $offset): Response
     {
-        if (
-            (
-                !$node instanceof MemberAccessExpression &&
-                !$node instanceof ScopedPropertyAccessExpression
-            ) 
-            && 
-            (
-                $node->parent instanceof MemberAccessExpression || 
-                $node->parent instanceof ScopedPropertyAccessExpression
-            )
-        ) {
-            $node = $node->parent;
-        }
-
-        if (
-            false === $node instanceof MemberAccessExpression && 
-            false === $node instanceof ScopedPropertyAccessExpression
-        ) {
-            return Response::new();
-        }
-
         if ($node instanceof MemberAccessExpression) {
             $offset = $node->arrowToken->getFullStart();
         }
@@ -160,21 +147,5 @@ class WorseClassMemberCompletor implements TolerantCompletor
         }
 
         return $symbolContext;
-    }
-
-    private function couldComplete(Node $node, string $source, int $offset): bool
-    {
-        $parentNode = $node->parent;
-
-        if (
-            $node instanceof MemberAccessExpression ||
-            $node instanceof ScopedPropertyAccessExpression ||
-            $parentNode instanceof MemberAccessExpression ||
-            $parentNode instanceof ScopedPropertyAccessExpression
-        ) {
-            return true;
-        }
-
-        return false;
     }
 }

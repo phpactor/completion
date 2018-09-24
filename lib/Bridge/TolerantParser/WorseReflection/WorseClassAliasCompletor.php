@@ -3,6 +3,8 @@
 namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
 use Microsoft\PhpParser\Node;
+use Phpactor\Completion\Bridge\TolerantParser\Qualifier\ClassQualifier;
+use Phpactor\Completion\Bridge\TolerantParser\Qualifier\Qualifier;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\Completion\Core\Response;
@@ -16,6 +18,11 @@ class WorseClassAliasCompletor implements TolerantCompletor
      * @var Reflector
      */
     private $reflector;
+
+    /**
+     * @var ClassQualifier
+     */
+    private $qualifier;
 
     public function __construct(Reflector $reflector)
     {
@@ -41,5 +48,10 @@ class WorseClassAliasCompletor implements TolerantCompletor
             );
         }
         return Response::fromSuggestions(Suggestions::fromSuggestions($suggestions));
+    }
+
+    public function qualifier(): Qualifier
+    {
+        return new ClassQualifier();
     }
 }

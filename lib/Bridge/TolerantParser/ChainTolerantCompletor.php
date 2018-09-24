@@ -2,6 +2,7 @@
 
 namespace Phpactor\Completion\Bridge\TolerantParser;
 
+use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Parser;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Response;
@@ -41,7 +42,17 @@ class ChainTolerantCompletor implements Completor
         $response = Response::new();
 
         foreach ($this->tolerantCompletors as $tolerantCompletor) {
-            $response->merge($tolerantCompletor->complete($node, $source, $byteOffset));
+            $completionNode = $node;
+
+            if ($tolerantCompletor instanceof TolerantQualifiable) {
+                $completionNode = $tolerantCompletor->qualifier()->couldComplete($node);
+            }
+
+            if (!$completionNode) {
+                continue;
+            }
+
+            $response->merge($tolerantCompletor->complete($completionNode, $source, $byteOffset));
         }
 
         return $response;
@@ -62,5 +73,16 @@ class ChainTolerantCompletor implements Completor
         $truncatedSource = mb_substr($source, 0, $characterOffset);
 
         return $truncatedSource;
+    }
+
+    private function filterNonQualifyingClasses(Node $node)
+    {
+        return array_filter($this->tolerantCompletors, function (TolerantCompletor $completor) use ($node) {
+            if (!$completor instanceof TolerantQualifiable) {
+                return true;
+            }
+
+            return $completor->qualifier()->couldComplete($node);
+        });
     }
 }

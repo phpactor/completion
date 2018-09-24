@@ -11,6 +11,7 @@ use Microsoft\PhpParser\Node\Statement\NamespaceUseDeclaration;
 use Microsoft\PhpParser\ResolvedName;
 use Phpactor\ClassFileConverter\Domain\FilePath;
 use Phpactor\ClassFileConverter\Domain\FileToClass;
+use Phpactor\Completion\Bridge\TolerantParser\Qualifier\ClassQualifier;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestion;
@@ -36,16 +37,22 @@ class ScfClassCompletor implements TolerantCompletor
      */
     private $limit;
 
+    /**
+     * @var ClassQualifier
+     */
+    private $qualifier;
+
     public function __construct(Filesystem $filesystem, FileToClass $fileToClass, int $limit = 100)
     {
         $this->filesystem = $filesystem;
         $this->fileToClass = $fileToClass;
         $this->limit = $limit;
+        $this->qualifier = new ClassQualifier();
     }
 
     public function complete(Node $node, string $source, int $offset): Response
     {
-        if (false === $this->couldComplete($node)) {
+        if (false === $this->qualifier->couldComplete($node)) {
             return Response::new();
         }
 
@@ -124,28 +131,4 @@ class ScfClassCompletor implements TolerantCompletor
             : null;
     }
 
-    private function couldComplete(Node $node): bool
-    {
-        if ($node instanceof QualifiedName) {
-            return true;
-        }
-
-        if ($node instanceof ObjectCreationExpression) {
-            return true;
-        }
-
-        if ($node instanceof NamespaceUseClause) {
-            return true;
-        }
-
-        if ($node instanceof NamespaceUseDeclaration) {
-            return true;
-        }
-
-        if ($node instanceof ClassBaseClause) {
-            return true;
-        }
-
-        return false;
-    }
 }

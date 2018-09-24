@@ -7,6 +7,8 @@ use Microsoft\PhpParser\Parser;
 use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Bridge\TolerantParser\ChainTolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
+use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifiable;
+use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifier;
 use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Suggestions;
@@ -16,9 +18,39 @@ use Prophecy\Argument;
 
 class ChainTolerantCompletorTest extends TestCase
 {
+    /**
+     * @var ObjectProphecy
+     */
+    private $completor1;
+    /**
+     * @var ObjectProphecy
+     */
+    private $qualifiableCompletor1;
+    /**
+     * @var ObjectProphecy
+     */
+    private $qualifier1;
+
+    /**
+     * @var ObjectProphecy
+     */
+    private $qualifiableCompletor2;
+
+    /**
+     * @var ObjectProphecy
+     */
+    private $qualifier2;
+
     public function setUp()
     {
         $this->completor1 = $this->prophesize(TolerantCompletor::class);
+        $this->qualifiableCompletor1 = $this->prophesize(TolerantCompletor::class)
+            ->willImplement(TolerantQualifiable::class);
+        $this->qualifiableCompletor2 = $this->prophesize(TolerantCompletor::class)
+            ->willImplement(TolerantQualifiable::class);
+
+        $this->qualifier1 = $this->prophesize(TolerantQualifier::class);
+        $this->qualifier2 = $this->prophesize(TolerantQualifier::class);
     }
 
     public function testEmptyResponseWithNoCompletors()
@@ -81,7 +113,38 @@ EOT
         )->will(function ($args) {
             return Response::new();
         });
+
         $completor->complete($source, $offset);
+        $this->addToAssertionCount(1);
+    }
+
+    public function testExcludesNonQualifingClasses()
+    {
+        $completor = $this->create([
+            $this->qualifiableCompletor1->reveal(),
+            $this->qualifiableCompletor2->reveal(),
+        ]);
+        $this->qualifiableCompletor1->qualifier()->willReturn($this->qualifier1->reveal());
+        $this->qualifiableCompletor2->qualifier()->willReturn($this->qualifier2->reveal());
+
+        $this->qualifier1->couldComplete(Argument::type(Node::class))->shouldBeCalled()->will(function (array $args) { return $args[0]; });
+        $this->qualifier2->couldComplete(Argument::type(Node::class))->shouldBeCalled()->willReturn(null);
+
+        $this->qualifiableCompletor1->complete(
+            Argument::type(Node::class),
+            '<?php ',
+            1
+        )->willReturn(
+            Response::fromSuggestions(
+                Suggestions::fromSuggestions([
+                    Suggestion::create('foo')
+                ])
+            )
+        );
+        $this->qualifiableCompletor2->complete(Argument::cetera())->shouldNotBeCalled();
+
+        $result = $completor->complete('<?php ', 1);
+        $this->assertCount(1, $result->suggestions());
     }
 
     private function create(array $completors): ChainTolerantCompletor
