@@ -3,6 +3,7 @@
 namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
 use Microsoft\PhpParser\Node;
+use Microsoft\PhpParser\ResolvedName;
 use Phpactor\Completion\Bridge\TolerantParser\Qualifier\ClassQualifier;
 use Phpactor\Completion\Bridge\TolerantParser\Qualifier\Qualifier;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
@@ -34,8 +35,16 @@ class WorseClassAliasCompletor implements TolerantCompletor
         $namespaceImports = $node->getImportTablesForCurrentScope()[0];
         $suggestions = [];
 
+        /** @var ResolvedName $resolvedName */
         foreach ($namespaceImports as $alias => $resolvedName) {
-            if ($alias === (string) $resolvedName) {
+            $parts = $resolvedName->getNameParts();
+            if (empty($parts)) {
+                continue;
+            }
+
+            $lastPart = array_pop($parts);
+
+            if ($alias === $lastPart) {
                 continue;
             }
 

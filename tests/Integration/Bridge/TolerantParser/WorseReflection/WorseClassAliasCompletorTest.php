@@ -85,5 +85,20 @@ EOT
                 ]
             ]
         ];
+
+        yield 'import multi-part non-aliased class' => [
+            <<<'EOT'
+<?php 
+
+    use Foo\Bar\Barfoo;
+    use Foo\Bar\Barbar;
+
+    $class = new B<>
+}
+EOT
+        , 
+            [
+            ]
+        ];
     }
 }
