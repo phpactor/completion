@@ -216,13 +216,4 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
         ];
 
     }
-
-    public function provideCouldNotComplete(): Generator
-    {
-        yield 'non member access' => [ '<?php $hello<>' ];
-        yield 'variable with previous accessor' => [ '<?php $foobar->hello; $hello<>' ];
-        yield 'variable with previous accessor' => [ '<?php $foobar->hello; $hello<>' ];
-        yield 'statement with previous member access' => [ '<?php if ($foobar && $this->foobar) { echo<>' ];
-        yield 'variable with previous static member access' => [ '<?php Hello::hello(); $foo<>' ];
-    }
 }

@@ -36,5 +36,7 @@ class ClassQualifier implements TolerantQualifier
         if ($node instanceof ClassBaseClause) {
             return $node;
         }
+
+        return null;
     }
 }
