@@ -52,11 +52,6 @@ class ScfClassCompletor implements TolerantCompletor
 
     public function complete(Node $node, string $source, int $offset): Response
     {
-        if (false === $this->qualifier->couldComplete($node)) {
-            return Response::new();
-        }
-
-
         $files = $this->filesystem->fileList()->phpFiles();
 
         if ($node instanceof QualifiedName) {

@@ -26,8 +26,12 @@ class ClassMemberQualifier implements TolerantQualifier
         return null;
     }
 
-    private function isMemberNode(Node $node)
+    private function isMemberNode(?Node $node)
     {
+        if (null === $node) {
+            return false;
+        }
+
         return
             $node instanceof MemberAccessExpression ||
             $node instanceof ScopedPropertyAccessExpression;

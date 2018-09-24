@@ -65,6 +65,9 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
             $offset = $node->doubleColon->getFullStart();
         }
 
+
+        assert($node instanceof MemberAccessExpression || $node instanceof ScopedPropertyAccessExpression);
+
         $memberName = $node->memberName;
         if (!$memberName instanceof Token) {
             return Response::new();
