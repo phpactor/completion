@@ -13,6 +13,8 @@ use Phpactor\ClassFileConverter\Domain\FilePath;
 use Phpactor\ClassFileConverter\Domain\FileToClass;
 use Phpactor\Completion\Bridge\TolerantParser\Qualifier\ClassQualifier;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
+use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifiable;
+use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifier;
 use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Suggestions;
@@ -20,7 +22,7 @@ use Phpactor\Filesystem\Domain\FilePath as ScfFilePath;
 use Phpactor\Filesystem\Domain\Filesystem;
 use SplFileInfo;
 
-class ScfClassCompletor implements TolerantCompletor
+class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
 {
     /**
      * @var Filesystem
@@ -48,6 +50,11 @@ class ScfClassCompletor implements TolerantCompletor
         $this->fileToClass = $fileToClass;
         $this->limit = $limit;
         $this->qualifier = new ClassQualifier();
+    }
+
+    public function qualifier(): TolerantQualifier
+    {
+        return new ClassQualifier();
     }
 
     public function complete(Node $node, string $source, int $offset): Response
@@ -125,5 +132,4 @@ class ScfClassCompletor implements TolerantCompletor
             ? $currentNamespaceDefinition->name->getText()
             : null;
     }
-
 }
