@@ -90,9 +90,6 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
         }
     }
 
-    /**
-     * @return Generator<Suggestion>
-     */
     private function populateSuggestions(SymbolContext $symbolContext, Type $type): Generator
     {
         if (false === $type->isDefined()) {
