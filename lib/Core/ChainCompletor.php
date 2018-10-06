@@ -37,7 +37,5 @@ class ChainCompletor implements Completor
                 yield $suggestion;
             }
         }
-
-        return $response;
     }
 }

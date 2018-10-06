@@ -35,7 +35,6 @@ class WorseClassAliasCompletor implements TolerantCompletor, TolerantQualifiable
     public function complete(Node $node, string $source, int $offset): Generator
     {
         $namespaceImports = $node->getImportTablesForCurrentScope()[0];
-        $suggestions = [];
 
         /** @var ResolvedName $resolvedName */
         foreach ($namespaceImports as $alias => $resolvedName) {
@@ -50,7 +49,7 @@ class WorseClassAliasCompletor implements TolerantCompletor, TolerantQualifiable
                 continue;
             }
 
-            yield$suggestions[] = Suggestion::createWithOptions(
+            yield Suggestion::createWithOptions(
                 $alias,
                 [
                     'type' => Suggestion::TYPE_CLASS,

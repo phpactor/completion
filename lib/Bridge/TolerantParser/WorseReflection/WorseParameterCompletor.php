@@ -73,7 +73,6 @@ class WorseParameterCompletor extends AbstractParameterCompletor implements Tole
         }
 
         if (null === $reflectionFunctionLike) {
-            $response->issues()->add('Could not determine containing class of call');
             return;
         }
 

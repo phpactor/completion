@@ -74,8 +74,8 @@ class ChainTolerantCompletorTest extends TestCase
             yield Suggestion::create('foo');
         });
 
-        $result = $completor->complete('<?php ', 1);
-        $this->assertCount(1, $result->suggestions());
+        $suggestions = $completor->complete('<?php ', 1);
+        $this->assertCount(1, $suggestions);
     }
 
     public function testPassesCorrectByteOffsetToParser()
@@ -130,13 +130,9 @@ EOT
             Argument::type(Node::class),
             '<?php ',
             1
-        )->willReturn(
-            Response::fromSuggestions(
-                Suggestions::fromSuggestions([
-                    Suggestion::create('foo')
-                ])
-            )
-        );
+        )->will(function () {
+            yield Suggestion::create('foo');
+        });
         $this->qualifiableCompletor2->complete(Argument::cetera())->shouldNotBeCalled();
 
         $suggestions = $completor->complete('<?php ', 1);

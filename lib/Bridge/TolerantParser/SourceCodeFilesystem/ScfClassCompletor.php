@@ -66,7 +66,6 @@ class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
             });
         }
 
-        $suggestions = [];
         $count = 0;
         $currentNamespace = $this->getCurrentNamespace($node);
         $imports = $node->getImportTablesForCurrentScope();
