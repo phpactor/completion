@@ -7,7 +7,6 @@ use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Core\Suggestion;
-use Phpactor\Completion\Core\Suggestions;
 use Phpactor\WorseReflection\Core\Name;
 
 class WorseConstantCompletor implements TolerantCompletor

@@ -15,7 +15,6 @@ use Microsoft\PhpParser\Node\Expression\Variable;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\Helper\VariableCompletionHelper;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
-use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\WorseReflection\Core\Inference\Variable as WorseVariable;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionFunctionLike;
@@ -64,7 +63,7 @@ abstract class AbstractParameterCompletor
 
         foreach ($variables as $variable) {
             if (
-                $variable->symbolContext()->types()->count() && 
+                $variable->symbolContext()->types()->count() &&
                 false === $this->isVariableValidForParameter($variable, $parameter)
             ) {
                 // parameter has no types and is not valid for this position, ignore it
@@ -129,9 +128,8 @@ abstract class AbstractParameterCompletor
 
         /** @var Type $variableType */
         foreach ($variable->symbolContext()->types() as $variableType) {
-
             $variableTypeClass = null;
-            if ($variableType->isClass() ) {
+            if ($variableType->isClass()) {
                 $variableTypeClass = $this->reflector->reflectClassLike($variableType->className());
             }
 
@@ -142,9 +140,7 @@ abstract class AbstractParameterCompletor
 
                 if ($variableTypeClass && $parameterType->isClass() && $variableTypeClass->isInstanceOf($parameterType->className())) {
                     return true;
-                    
                 }
-
             }
         }
         return false;

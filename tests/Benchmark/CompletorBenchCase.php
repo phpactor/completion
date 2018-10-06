@@ -15,7 +15,7 @@ abstract class CompletorBenchCase
      */
     private $completor;
 
-    protected abstract function create(string $source): Completor;
+    abstract protected function create(string $source): Completor;
 
     public function setUp($params)
     {

@@ -2,7 +2,6 @@
 
 namespace Phpactor\Completion\Tests\Integration;
 
-use Generator;
 use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\FunctionFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\MethodFormatter;
@@ -13,11 +12,9 @@ use Phpactor\Completion\Bridge\WorseReflection\Formatter\PropertyFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\TypeFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\TypesFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\VariableFormatter;
-use Phpactor\Completion\Adapter\WorseReflection\Formatter\VariableWithNodeFormatter;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\TestUtils\ExtractOffset;
-use Phpactor\WorseReflection\ReflectorBuilder;
 
 abstract class CompletorTestCase extends TestCase
 {
@@ -62,5 +59,4 @@ abstract class CompletorTestCase extends TestCase
 
         $this->assertEmpty(iterator_to_array($result));
     }
-
 }

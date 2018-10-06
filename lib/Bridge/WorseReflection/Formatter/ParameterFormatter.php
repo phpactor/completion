@@ -2,7 +2,6 @@
 
 namespace Phpactor\Completion\Bridge\WorseReflection\Formatter;
 
-use Phpactor\WorseReflection\Bridge\TolerantParser\Reflection\ReflectionMethod;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
 use Phpactor\Completion\Core\Formatter\Formatter;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;

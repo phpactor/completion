@@ -4,11 +4,7 @@ namespace Phpactor\Completion\Bridge\TolerantParser\SourceCodeFilesystem;
 
 use Generator;
 use Microsoft\PhpParser\Node;
-use Microsoft\PhpParser\Node\ClassBaseClause;
-use Microsoft\PhpParser\Node\Expression\ObjectCreationExpression;
-use Microsoft\PhpParser\Node\NamespaceUseClause;
 use Microsoft\PhpParser\Node\QualifiedName;
-use Microsoft\PhpParser\Node\Statement\NamespaceUseDeclaration;
 use Microsoft\PhpParser\ResolvedName;
 use Phpactor\ClassFileConverter\Domain\FilePath;
 use Phpactor\ClassFileConverter\Domain\FileToClass;

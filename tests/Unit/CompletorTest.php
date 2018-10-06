@@ -4,7 +4,6 @@ namespace Phpactor\Completion\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Core\ChainCompletor;
-use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Completor;
 use Prophecy\Prophecy\ObjectProphecy;
 use Phpactor\Completion\Core\Suggestion;
@@ -40,7 +39,10 @@ class CompletorTest extends TestCase
 
         $this->completor1->complete(self::TEST_SOURCE, self::TEST_OFFSET)
             ->shouldBeCalled()
-            ->will(function () { return; yield; });
+            ->will(function () {
+                return;
+                yield;
+            });
 
         $suggestions = iterator_to_array($completor->complete(self::TEST_SOURCE, self::TEST_OFFSET));
 
@@ -59,7 +61,11 @@ class CompletorTest extends TestCase
 
         $this->completor1->complete(self::TEST_SOURCE, self::TEST_OFFSET)
             ->shouldBeCalled()
-            ->will(function () use ($expected) { foreach ($expected as $suggestion) { yield $suggestion; }});
+            ->will(function () use ($expected) {
+                foreach ($expected as $suggestion) {
+                    yield $suggestion;
+                }
+            });
 
         $suggestions = iterator_to_array($completor->complete(self::TEST_SOURCE, self::TEST_OFFSET));
 

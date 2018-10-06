@@ -19,7 +19,7 @@ abstract class TolerantQualifierTestCase extends TestCase
 
         $parser = new Parser();
         $root = $parser->parseSourceFile($source);
-        $node = $root->getDescendantNodeAtPosition($offset); 
+        $node = $root->getDescendantNodeAtPosition($offset);
 
         $assertion($this->createQualifier()->couldComplete($node));
     }

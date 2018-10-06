@@ -6,8 +6,6 @@ use Generator;
 use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Parser;
 use Phpactor\Completion\Core\Completor;
-use Phpactor\Completion\Core\Response;
-use Phpactor\Completion\Core\Suggestions;
 use Phpactor\Completion\Core\Util\OffsetHelper;
 
 class ChainTolerantCompletor implements Completor

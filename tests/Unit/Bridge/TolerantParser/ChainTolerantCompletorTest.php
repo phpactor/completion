@@ -9,10 +9,7 @@ use Phpactor\Completion\Bridge\TolerantParser\ChainTolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifiable;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifier;
-use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestion;
-use Phpactor\Completion\Core\Suggestions;
-use Phpactor\Completion\Core\Util\OffsetHelper;
 use Phpactor\TestUtils\ExtractOffset;
 use Prophecy\Argument;
 
@@ -81,7 +78,8 @@ class ChainTolerantCompletorTest extends TestCase
     public function testPassesCorrectByteOffsetToParser()
     {
         $completor = $this->create([ $this->completor1->reveal() ]);
-        list($source, $offset) = ExtractOffset::fromSource(<<<'EOT'
+        list($source, $offset) = ExtractOffset::fromSource(
+            <<<'EOT'
 <?php
 
 // 姓名
@@ -123,7 +121,9 @@ EOT
         $this->qualifiableCompletor1->qualifier()->willReturn($this->qualifier1->reveal());
         $this->qualifiableCompletor2->qualifier()->willReturn($this->qualifier2->reveal());
 
-        $this->qualifier1->couldComplete(Argument::type(Node::class))->shouldBeCalled()->will(function (array $args) { return $args[0]; });
+        $this->qualifier1->couldComplete(Argument::type(Node::class))->shouldBeCalled()->will(function (array $args) {
+            return $args[0];
+        });
         $this->qualifier2->couldComplete(Argument::type(Node::class))->shouldBeCalled()->willReturn(null);
 
         $this->qualifiableCompletor1->complete(

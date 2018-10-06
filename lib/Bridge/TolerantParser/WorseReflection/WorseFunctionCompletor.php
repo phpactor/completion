@@ -8,17 +8,11 @@ use Microsoft\PhpParser\Node\MethodDeclaration;
 use Microsoft\PhpParser\Node\Parameter;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
-use Phpactor\Completion\Core\Completor;
-use Phpactor\Completion\Core\Formatter\Formatter;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
-use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestion;
-use Phpactor\Completion\Core\Suggestions;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Name;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionFunction;
-use Phpactor\WorseReflection\Core\Reflector\FunctionReflector;
-use Phpactor\WorseReflection\Core\Reflector\SourceCodeReflector;
 use Phpactor\WorseReflection\Reflector;
 
 class WorseFunctionCompletor implements TolerantCompletor

@@ -10,9 +10,7 @@ use Phpactor\Completion\Bridge\TolerantParser\Qualifier\Qualifier;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifiable;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifier;
-use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\Completion\Core\Suggestion;
-use Phpactor\Completion\Core\Suggestions;
 use Phpactor\WorseReflection\Reflector;
 
 class WorseClassAliasCompletor implements TolerantCompletor, TolerantQualifiable

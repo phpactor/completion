@@ -14,18 +14,11 @@ use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 use Microsoft\PhpParser\Node\Expression\Variable;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
-use Phpactor\Completion\Core\Formatter\ObjectFormatter;
-use Phpactor\Completion\Core\Response;
-use Phpactor\Completion\Core\Suggestion;
-use Phpactor\Completion\Core\Suggestions;
-use Phpactor\WorseReflection\Core\Exception\CouldNotResolveNode;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Inference\Variable as WorseVariable;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionFunctionLike;
-use Phpactor\WorseReflection\Core\Reflection\ReflectionMethod;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
 use Phpactor\WorseReflection\Core\Type;
-use Phpactor\WorseReflection\Reflector;
 
 class WorseParameterCompletor extends AbstractParameterCompletor implements TolerantCompletor
 {
@@ -124,9 +117,8 @@ class WorseParameterCompletor extends AbstractParameterCompletor implements Tole
 
         /** @var Type $variableType */
         foreach ($variable->symbolContext()->types() as $variableType) {
-
             $variableTypeClass = null;
-            if ($variableType->isClass() ) {
+            if ($variableType->isClass()) {
                 $variableTypeClass = $this->reflector->reflectClassLike($variableType->className());
             }
 
@@ -137,9 +129,7 @@ class WorseParameterCompletor extends AbstractParameterCompletor implements Tole
 
                 if ($variableTypeClass && $parameterType->isClass() && $variableTypeClass->isInstanceOf($parameterType->className())) {
                     return true;
-                    
                 }
-
             }
         }
         return false;

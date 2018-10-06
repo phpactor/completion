@@ -2,24 +2,12 @@
 
 namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseReflection;
 
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
-use Phpactor\WorseReflection\Core\Logger\ArrayLogger;
-use Phpactor\WorseReflection\Core\SourceCodeLocator\StringSourceLocator;
-use Phpactor\WorseReflection\Core\SourceCode;
 use Phpactor\WorseReflection\ReflectorBuilder;
-use Phpactor\Completion\Core\ChainCompletor;
-use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseClassMemberCompletor;
-use Phpactor\Completion\Tests\Integration\CompletorTestCase;
 use Generator;
-use Phpactor\Completion\Core\Completor;
-use Phpactor\TestUtils\ExtractOffset;
-use PhpBench\Benchmark\Metadata\Annotations\Subject;
-use PhpBench\Benchmark\Metadata\Annotations\Iterations;
-use PhpBench\Benchmark\Metadata\Annotations\Revs;
 
 class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
 {
