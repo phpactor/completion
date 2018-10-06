@@ -2,6 +2,7 @@
 
 namespace Phpactor\Completion\Bridge\TolerantParser\SourceCodeFilesystem;
 
+use Generator;
 use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Node\ClassBaseClause;
 use Microsoft\PhpParser\Node\Expression\ObjectCreationExpression;
@@ -15,9 +16,7 @@ use Phpactor\Completion\Bridge\TolerantParser\Qualifier\ClassQualifier;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifiable;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifier;
-use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestion;
-use Phpactor\Completion\Core\Suggestions;
 use Phpactor\Filesystem\Domain\FilePath as ScfFilePath;
 use Phpactor\Filesystem\Domain\Filesystem;
 use SplFileInfo;
@@ -57,7 +56,7 @@ class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
         return new ClassQualifier();
     }
 
-    public function complete(Node $node, string $source, int $offset): Response
+    public function complete(Node $node, string $source, int $offset): Generator
     {
         $files = $this->filesystem->fileList()->phpFiles();
 
@@ -81,7 +80,7 @@ class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
             }
 
             $best = $candidates->best();
-            $suggestions[] = Suggestion::createWithOptions(
+            yield Suggestion::createWithOptions(
                 $best->name(),
                 [
                     'type' => Suggestion::TYPE_CLASS,
@@ -94,10 +93,6 @@ class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
                 break;
             }
         }
-
-        $suggestions = Suggestions::fromSuggestions($suggestions);
-
-        return Response::fromSuggestions($suggestions->sorted());
     }
 
     /**

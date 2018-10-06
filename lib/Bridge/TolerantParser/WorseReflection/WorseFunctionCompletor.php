@@ -39,39 +39,34 @@ class WorseFunctionCompletor implements TolerantCompletor
         $this->formatter = $formatter;
     }
 
-    public function complete(Node $node, string $source, int $offset): Response
+    public function complete(Node $node, string $source, int $offset): Generator
     {
         if (false === $node instanceof QualifiedName) {
-            return Response::new();
+            return;
         }
 
         if ($node->parent instanceof MethodDeclaration) {
-            return Response::new();
+            return;
         }
 
         if ($node->parent instanceof Parameter) {
-            return Response::new();
+            return;
         }
 
         $functionNames = $this->reflectedFunctions($source);
         $functionNames = $this->definedNamesFor($functionNames, $node->getText());
         $functions = $this->functionReflections($functionNames);
 
-        $suggestions = Suggestions::new();
-
         /** @var ReflectionFunction $functionReflection */
         foreach ($functions as $functionReflection) {
-            $suggestions->add(Suggestion::createWithOptions(
+            yield Suggestion::createWithOptions(
                 $functionReflection->name()->short(),
                 [
                     'type' => Suggestion::TYPE_FUNCTION,
                     'short_description' => $this->formatter->format($functionReflection),
                 ]
-            ));
+            );
         }
-
-
-        return Response::fromSuggestions($suggestions);
     }
 
     private function definedNamesFor(array $reflectedFunctions, string $partialName): Generator

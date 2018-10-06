@@ -2,6 +2,7 @@
 
 namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
+use Generator;
 use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Token;
 use Phpactor\Completion\Bridge\TolerantParser\Qualifier\ClassMemberQualifier;
@@ -22,7 +23,6 @@ use Phpactor\WorseReflection\Core\SourceCode;
 use Phpactor\WorseReflection\Core\Type;
 use Phpactor\WorseReflection\Reflector;
 use Phpactor\Completion\Core\Completor;
-use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestions;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Issues;
@@ -55,7 +55,7 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
         return new ClassMemberQualifier();
     }
 
-    public function complete(Node $node, string $source, int $offset): Response
+    public function complete(Node $node, string $source, int $offset): Generator
     {
         if ($node instanceof MemberAccessExpression) {
             $offset = $node->arrowToken->getFullStart();
@@ -69,8 +69,9 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
         assert($node instanceof MemberAccessExpression || $node instanceof ScopedPropertyAccessExpression);
 
         $memberName = $node->memberName;
+
         if (!$memberName instanceof Token) {
-            return Response::new();
+            return;
         }
 
         $partialMatch = (string) $memberName->getText($node->getFileContents());
@@ -80,32 +81,34 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
         $symbolContext = $reflectionOffset->symbolContext();
         $types = $symbolContext->types();
 
-        $suggestions = new Suggestions();
-
         foreach ($types as $type) {
-            $symbolContext = $this->populateSuggestions($symbolContext, $type, $suggestions);
+            foreach ($this->populateSuggestions($symbolContext, $type) as $suggestion) {
+                if ($partialMatch && 0 !== mb_strpos($suggestion->name(), $partialMatch)) {
+                    continue;
+                }
+
+                yield $suggestion;
+            }
         }
-
-        $suggestions = $suggestions->startingWith($partialMatch);
-
-
-        return new Response($suggestions, Issues::fromStrings($symbolContext->issues()));
     }
 
-    private function populateSuggestions(SymbolContext $symbolContext, Type $type, Suggestions $suggestions): SymbolContext
+    /**
+     * @return Generator<Suggestion>
+     */
+    private function populateSuggestions(SymbolContext $symbolContext, Type $type): Generator
     {
         if (false === $type->isDefined()) {
-            return $symbolContext;
+            return;
         }
 
         if (null === $type->className()) {
-            return $symbolContext->withIssue(sprintf('Cannot complete members on scalar value (%s)', (string) $type));
+            return;
         }
 
         try {
             $classReflection = $this->reflector->reflectClassLike($type->className()->full());
         } catch (NotFound $e) {
-            return $symbolContext->withIssue(sprintf('Could not find class "%s"', (string) $type));
+            return;
         }
 
         $publicOnly = !in_array($symbolContext->symbol()->name(), ['this', 'self'], true);
@@ -119,10 +122,10 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
                 continue;
             }
 
-            $suggestions->add(Suggestion::createWithOptions($method->name(), [
+            yield Suggestion::createWithOptions($method->name(), [
                 'type' => Suggestion::TYPE_METHOD,
                 'short_description' => $this->formatter->format($method),
-            ]));
+            ]);
         }
 
         if ($classReflection instanceof ReflectionClass) {
@@ -130,10 +133,10 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
                 if ($publicOnly && false === $property->visibility()->isPublic()) {
                     continue;
                 }
-                $suggestions->add(Suggestion::createWithOptions($property->name(), [
+                yield Suggestion::createWithOptions($property->name(), [
                     'type' => Suggestion::TYPE_PROPERTY,
                     'short_description' => $this->formatter->format($property),
-                ]));
+                ]);
             }
         }
 
@@ -142,13 +145,11 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
         ) {
             /** @var ReflectionClass|ReflectionInterface */
             foreach ($classReflection->constants() as $constant) {
-                $suggestions->add(Suggestion::createWithOptions($constant->name(), [
+                yield Suggestion::createWithOptions($constant->name(), [
                     'type' => Suggestion::TYPE_CONSTANT,
                     'short_description' => 'const ' . $constant->name(),
-                ]));
+                ]);
             }
         }
-
-        return $symbolContext;
     }
 }

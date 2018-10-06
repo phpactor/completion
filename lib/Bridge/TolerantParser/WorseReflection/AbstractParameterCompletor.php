@@ -47,23 +47,21 @@ abstract class AbstractParameterCompletor
         $this->variableCompletionHelper = $variableCompletionHelper ?: new VariableCompletionHelper($reflector);
     }
 
-    protected function populateResponse(Response $response, Node $callableExpression, ReflectionFunctionLike $functionLikeReflection, array $variables)
+    protected function populateResponse(Node $callableExpression, ReflectionFunctionLike $functionLikeReflection, array $variables)
     {
         // function has no parameters, return empty handed
         if ($functionLikeReflection->parameters()->count() === 0) {
-            return $response;
+            return;
         }
 
         $paramIndex = $this->paramIndex($callableExpression);
 
         if ($this->numberOfArgumentsExceedParameterArity($functionLikeReflection, $paramIndex)) {
-            $response->issues()->add('Parameter index exceeds parameter arity');
-            return $response;
+            return;
         }
 
         $parameter = $this->reflectedParameter($functionLikeReflection, $paramIndex);
 
-        $suggestions = [];
         foreach ($variables as $variable) {
             if (
                 $variable->symbolContext()->types()->count() && 
@@ -73,7 +71,7 @@ abstract class AbstractParameterCompletor
                 continue;
             }
 
-            $response->suggestions()->add(Suggestion::createWithOptions(
+            yield Suggestion::createWithOptions(
                 '$' . $variable->name(),
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
@@ -84,11 +82,10 @@ abstract class AbstractParameterCompletor
                         $this->formatter->format($parameter)
                     )
                 ]
-            ));
+            );
         }
-
-        return $response;
     }
+
     private function paramIndex(Node $node)
     {
         $argumentList = $this->argumentListFromNode($node);

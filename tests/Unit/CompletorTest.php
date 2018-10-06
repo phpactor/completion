@@ -25,23 +25,22 @@ class CompletorTest extends TestCase
         $this->completor1 = $this->prophesize(Completor::class);
     }
 
-    public function testReturnsEmptyResponseWithNoCompletors()
+    public function testEmptyGeneratorWithNoCompletors()
     {
         $completor = $this->create([]);
-        $response = $completor->complete(self::TEST_SOURCE, self::TEST_OFFSET);
+        $suggestions = $completor->complete(self::TEST_SOURCE, self::TEST_OFFSET);
 
-        $this->assertEquals(Response::new(), $response);
+        $this->assertCount(0, $suggestions);
     }
 
-    public function testReturnsEmptyResponseWhenCompletorCouldNotComplete()
+    public function testReturnsEmptyGeneratorWhenCompletorCouldNotComplete()
     {
         $completor = $this->create([
             $this->completor1->reveal()
         ]);
 
         $this->completor1->complete(self::TEST_SOURCE, self::TEST_OFFSET)
-            ->shouldBeCalled()
-            ->willReturn(Response::new());
+            ->shouldBeCalled();
 
         $response = $completor->complete(self::TEST_SOURCE, self::TEST_OFFSET);
 

@@ -2,6 +2,7 @@
 
 namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
+use Generator;
 use LogicException;
 use Microsoft\PhpParser\MissingToken;
 use Microsoft\PhpParser\Node;
@@ -30,10 +31,8 @@ use Phpactor\WorseReflection\Reflector;
 
 class WorseConstructorCompletor extends AbstractParameterCompletor implements TolerantCompletor
 {
-    public function complete(Node $node, string $source, int $offset): Response
+    public function complete(Node $node, string $source, int $offset): Generator
     {
-        $response = Response::new();
-
         // Tolerant parser _seems_ to resolve f.e. offset 74 as the qualified
         // name of the node, when it is actually the open bracket. If it is a qualified
         // name, we take our chances on the parent.
@@ -46,20 +45,20 @@ class WorseConstructorCompletor extends AbstractParameterCompletor implements To
         }
 
         if (!$node instanceof Variable && !$node instanceof ObjectCreationExpression) {
-            return $response;
+            return;
         }
 
         $creationExpression = $node instanceof ObjectCreationExpression ? $node : $node->getFirstAncestor(ObjectCreationExpression::class);
 
         if (!$creationExpression || ($creationExpression instanceof ObjectCreationExpression && null === $creationExpression->openParen)) {
-            return $response;
+            return;
         }
 
         $variables = $this->variableCompletionHelper->variableCompletions($node, $source, $offset);
 
         // no variables available for completion, return empty handed
         if (empty($variables)) {
-            return $response;
+            return;
         }
 
         assert($creationExpression instanceof ObjectCreationExpression);
@@ -67,23 +66,23 @@ class WorseConstructorCompletor extends AbstractParameterCompletor implements To
         $reflectionClass = $this->reflectClass($source, $creationExpression);
 
         if (null === $reflectionClass) {
-            $response->issues()->add('Could not resolve reflection class');
-            return $response;
+            return;
         }
 
         if (false === $reflectionClass->methods()->has('__construct') ) {
-            $response->issues()->add(sprintf('Class "%s" has no __construct', $reflectionClass->name()->__toString()));
-            return $response;
+            return;
         }
 
         $reflectionConstruct = $reflectionClass->methods()->get('__construct');
 
         // function has no parameters, return empty handed
         if ($reflectionConstruct->parameters()->count() === 0) {
-            return $response;
+            return;
         }
 
-        return $this->populateResponse($response, $creationExpression, $reflectionConstruct, $variables);
+        foreach ($this->populateResponse($creationExpression, $reflectionConstruct, $variables) as $suggestion) {
+            yield $suggestion;
+        }
     }
 
     /**

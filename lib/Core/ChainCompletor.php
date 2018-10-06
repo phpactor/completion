@@ -2,6 +2,7 @@
 
 namespace Phpactor\Completion\Core;
 
+use Generator;
 use Phpactor\WorseReflection\Core\ClassName;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Inference\SymbolContext;
@@ -29,12 +30,12 @@ class ChainCompletor implements Completor
         $this->completors = $completors;
     }
 
-    public function complete(string $source, int $offset): Response
+    public function complete(string $source, int $offset): Generator
     {
-        $response = Response::new();
-
         foreach ($this->completors as $completor) {
-            $response = $response->merge($completor->complete($source, $offset));
+            foreach ($completor->complete($source, $offset) as $suggestion) {
+                yield $suggestion;
+            }
         }
 
         return $response;

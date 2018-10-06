@@ -93,6 +93,20 @@ class Suggestion
         );
     }
 
+    public function toArray(): array
+    {
+        return [
+            'type' => $this->type(),
+            'name' => $this->name(),
+            'short_description' => $this->shortDescription(),
+            'class_import' => $this->classImport(),
+
+            // deprecated: in favour of short_description, to be removed
+            // after 0.10.0
+            'info' => $this->shortDescription(),
+        ];
+    }
+
     /**
      * @return string|null
      */

@@ -56,8 +56,8 @@ class ChainTolerantCompletorTest extends TestCase
     public function testEmptyResponseWithNoCompletors()
     {
         $completor = $this->create([]);
-        $result = $completor->complete('<?php ', 1);
-        $this->assertCount(0, $result->suggestions());
+        $suggestions = $completor->complete('<?php ', 1);
+        $this->assertCount(0, $suggestions);
     }
 
     public function testCallsCompletors()
@@ -70,13 +70,9 @@ class ChainTolerantCompletorTest extends TestCase
             Argument::type(Node::class),
             '<?php ',
             1
-        )->willReturn(
-            Response::fromSuggestions(
-                Suggestions::fromSuggestions([
-                    Suggestion::create('foo')
-                ])
-            )
-        );
+        )->will(function () {
+            yield Suggestion::create('foo');
+        });
 
         $result = $completor->complete('<?php ', 1);
         $this->assertCount(1, $result->suggestions());
@@ -111,7 +107,7 @@ EOT
             $source,
             $offset
         )->will(function ($args) {
-            return Response::new();
+            return;
         });
 
         $completor->complete($source, $offset);
@@ -143,8 +139,8 @@ EOT
         );
         $this->qualifiableCompletor2->complete(Argument::cetera())->shouldNotBeCalled();
 
-        $result = $completor->complete('<?php ', 1);
-        $this->assertCount(1, $result->suggestions());
+        $suggestions = $completor->complete('<?php ', 1);
+        $this->assertCount(1, $suggestions);
     }
 
     private function create(array $completors): ChainTolerantCompletor

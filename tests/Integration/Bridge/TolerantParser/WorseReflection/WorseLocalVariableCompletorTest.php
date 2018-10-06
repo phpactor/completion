@@ -76,13 +76,13 @@ class WorseLocalVariableCompletorTest extends TolerantCompletorTestCase
             [
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
-                    'name' => '$foobar',
-                    'short_description' => 'string',
+                    'name' => '$barfoo',
+                    'short_description' => 'int',
                 ],
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
-                    'name' => '$barfoo',
-                    'short_description' => 'int',
+                    'name' => '$foobar',
+                    'short_description' => 'string',
                 ],
             ]
         ];
