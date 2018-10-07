@@ -133,7 +133,7 @@ class Suggestion
     /**
      * @return string|null
      */
-    public function shortDescription()
+    public function shortDescription(): ?string
     {
         return $this->shortDescription;
     }
@@ -141,7 +141,7 @@ class Suggestion
     /**
      * @return string|null
      */
-    public function classImport()
+    public function classImport(): ?string
     {
         return $this->classImport;
     }

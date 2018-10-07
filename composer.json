@@ -10,6 +10,7 @@
         }
     ],
     "require": {
+        "php": "^7.1",
         "phpactor/worse-reflection": "~0.2",
         "phpactor/source-code-filesystem": "dev-master",
         "phpactor/class-to-file": "dev-master",
