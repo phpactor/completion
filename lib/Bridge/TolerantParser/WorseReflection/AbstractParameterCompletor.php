@@ -15,7 +15,6 @@ use Microsoft\PhpParser\Node\Expression\Variable;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\Helper\VariableCompletionHelper;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
-use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\WorseReflection\Core\Inference\Variable as WorseVariable;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionFunctionLike;
@@ -47,33 +46,31 @@ abstract class AbstractParameterCompletor
         $this->variableCompletionHelper = $variableCompletionHelper ?: new VariableCompletionHelper($reflector);
     }
 
-    protected function populateResponse(Response $response, Node $callableExpression, ReflectionFunctionLike $functionLikeReflection, array $variables)
+    protected function populateResponse(Node $callableExpression, ReflectionFunctionLike $functionLikeReflection, array $variables)
     {
         // function has no parameters, return empty handed
         if ($functionLikeReflection->parameters()->count() === 0) {
-            return $response;
+            return;
         }
 
         $paramIndex = $this->paramIndex($callableExpression);
 
         if ($this->numberOfArgumentsExceedParameterArity($functionLikeReflection, $paramIndex)) {
-            $response->issues()->add('Parameter index exceeds parameter arity');
-            return $response;
+            return;
         }
 
         $parameter = $this->reflectedParameter($functionLikeReflection, $paramIndex);
 
-        $suggestions = [];
         foreach ($variables as $variable) {
             if (
-                $variable->symbolContext()->types()->count() && 
+                $variable->symbolContext()->types()->count() &&
                 false === $this->isVariableValidForParameter($variable, $parameter)
             ) {
                 // parameter has no types and is not valid for this position, ignore it
                 continue;
             }
 
-            $response->suggestions()->add(Suggestion::createWithOptions(
+            yield Suggestion::createWithOptions(
                 '$' . $variable->name(),
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
@@ -84,11 +81,10 @@ abstract class AbstractParameterCompletor
                         $this->formatter->format($parameter)
                     )
                 ]
-            ));
+            );
         }
-
-        return $response;
     }
+
     private function paramIndex(Node $node)
     {
         $argumentList = $this->argumentListFromNode($node);
@@ -132,9 +128,8 @@ abstract class AbstractParameterCompletor
 
         /** @var Type $variableType */
         foreach ($variable->symbolContext()->types() as $variableType) {
-
             $variableTypeClass = null;
-            if ($variableType->isClass() ) {
+            if ($variableType->isClass()) {
                 $variableTypeClass = $this->reflector->reflectClassLike($variableType->className());
             }
 
@@ -145,9 +140,7 @@ abstract class AbstractParameterCompletor
 
                 if ($variableTypeClass && $parameterType->isClass() && $variableTypeClass->isInstanceOf($parameterType->className())) {
                     return true;
-                    
                 }
-
             }
         }
         return false;

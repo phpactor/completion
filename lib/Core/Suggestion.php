@@ -55,8 +55,7 @@ class Suggestion
         string $type = null,
         string $shortDescription = null,
         string $classImport = null
-    )
-    {
+    ) {
         $this->type = $type;
         $this->name = $name;
         $this->shortDescription = $shortDescription;
@@ -79,7 +78,8 @@ class Suggestion
         if ($diff = array_diff(array_keys($options), array_keys($defaults))) {
             throw new RuntimeException(sprintf(
                 'Invalid options for suggestion: "%s" valid options: "%s"',
-                implode('", "', $diff), implode('", "', array_keys($defaults))
+                implode('", "', $diff),
+                implode('", "', array_keys($defaults))
             ));
         }
 
@@ -91,6 +91,20 @@ class Suggestion
             $options['short_description'],
             $options['class_import']
         );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'type' => $this->type(),
+            'name' => $this->name(),
+            'short_description' => $this->shortDescription(),
+            'class_import' => $this->classImport(),
+
+            // deprecated: in favour of short_description, to be removed
+            // after 0.10.0
+            'info' => $this->shortDescription(),
+        ];
     }
 
     /**

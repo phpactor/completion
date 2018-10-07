@@ -33,7 +33,7 @@ class WorseClassAliasCompletorTest extends TolerantCompletorTestCase
 
 $class = new B<>
 EOT
-        , 
+        ,
             []
         ];
 
@@ -45,7 +45,7 @@ use Barfoo;
 
 $class = new B<>
 EOT
-        , 
+        ,
             []
         ];
 
@@ -57,7 +57,7 @@ EOT
     $class = new B<>
 }
 EOT
-        , 
+        ,
             [
                 [
                     'type' => Suggestion::TYPE_CLASS,
@@ -76,7 +76,7 @@ EOT
     $class = new B<>
 }
 EOT
-        , 
+        ,
             [
                 [
                     'type' => Suggestion::TYPE_CLASS,
@@ -96,7 +96,7 @@ EOT
     $class = new B<>
 }
 EOT
-        , 
+        ,
             [
             ]
         ];

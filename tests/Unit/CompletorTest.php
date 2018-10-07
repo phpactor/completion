@@ -4,10 +4,8 @@ namespace Phpactor\Completion\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Core\ChainCompletor;
-use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Completor;
 use Prophecy\Prophecy\ObjectProphecy;
-use Phpactor\Completion\Core\Suggestions;
 use Phpactor\Completion\Core\Suggestion;
 
 class CompletorTest extends TestCase
@@ -25,15 +23,15 @@ class CompletorTest extends TestCase
         $this->completor1 = $this->prophesize(Completor::class);
     }
 
-    public function testReturnsEmptyResponseWithNoCompletors()
+    public function testEmptyGeneratorWithNoCompletors()
     {
         $completor = $this->create([]);
-        $response = $completor->complete(self::TEST_SOURCE, self::TEST_OFFSET);
+        $suggestions = $completor->complete(self::TEST_SOURCE, self::TEST_OFFSET);
 
-        $this->assertEquals(Response::new(), $response);
+        $this->assertCount(0, $suggestions);
     }
 
-    public function testReturnsEmptyResponseWhenCompletorCouldNotComplete()
+    public function testReturnsEmptyGeneratorWhenCompletorCouldNotComplete()
     {
         $completor = $this->create([
             $this->completor1->reveal()
@@ -41,31 +39,37 @@ class CompletorTest extends TestCase
 
         $this->completor1->complete(self::TEST_SOURCE, self::TEST_OFFSET)
             ->shouldBeCalled()
-            ->willReturn(Response::new());
+            ->will(function () {
+                return;
+                yield;
+            });
 
-        $response = $completor->complete(self::TEST_SOURCE, self::TEST_OFFSET);
+        $suggestions = iterator_to_array($completor->complete(self::TEST_SOURCE, self::TEST_OFFSET));
 
-        $this->assertEquals(Response::new(), $response);
+        $this->assertCount(0, $suggestions);
     }
 
     public function testReturnsSuggestionsFromCompletor()
     {
-        $expected = Response::fromSuggestions(
-            Suggestions::fromSuggestions([
-                Suggestion::create('foobar')
-            ])
-        );
+        $expected = [
+            Suggestion::create('foobar')
+        ];
+
         $completor = $this->create([
             $this->completor1->reveal()
         ]);
 
         $this->completor1->complete(self::TEST_SOURCE, self::TEST_OFFSET)
             ->shouldBeCalled()
-            ->willReturn($expected);
+            ->will(function () use ($expected) {
+                foreach ($expected as $suggestion) {
+                    yield $suggestion;
+                }
+            });
 
-        $response = $completor->complete(self::TEST_SOURCE, self::TEST_OFFSET);
+        $suggestions = iterator_to_array($completor->complete(self::TEST_SOURCE, self::TEST_OFFSET));
 
-        $this->assertEquals($expected, $response);
+        $this->assertEquals($expected, $suggestions);
     }
 
     /**

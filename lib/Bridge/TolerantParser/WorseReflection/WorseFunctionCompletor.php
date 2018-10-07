@@ -8,17 +8,11 @@ use Microsoft\PhpParser\Node\MethodDeclaration;
 use Microsoft\PhpParser\Node\Parameter;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
-use Phpactor\Completion\Core\Completor;
-use Phpactor\Completion\Core\Formatter\Formatter;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
-use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestion;
-use Phpactor\Completion\Core\Suggestions;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Name;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionFunction;
-use Phpactor\WorseReflection\Core\Reflector\FunctionReflector;
-use Phpactor\WorseReflection\Core\Reflector\SourceCodeReflector;
 use Phpactor\WorseReflection\Reflector;
 
 class WorseFunctionCompletor implements TolerantCompletor
@@ -39,39 +33,34 @@ class WorseFunctionCompletor implements TolerantCompletor
         $this->formatter = $formatter;
     }
 
-    public function complete(Node $node, string $source, int $offset): Response
+    public function complete(Node $node, string $source, int $offset): Generator
     {
         if (false === $node instanceof QualifiedName) {
-            return Response::new();
+            return;
         }
 
         if ($node->parent instanceof MethodDeclaration) {
-            return Response::new();
+            return;
         }
 
         if ($node->parent instanceof Parameter) {
-            return Response::new();
+            return;
         }
 
         $functionNames = $this->reflectedFunctions($source);
         $functionNames = $this->definedNamesFor($functionNames, $node->getText());
         $functions = $this->functionReflections($functionNames);
 
-        $suggestions = Suggestions::new();
-
         /** @var ReflectionFunction $functionReflection */
         foreach ($functions as $functionReflection) {
-            $suggestions->add(Suggestion::createWithOptions(
+            yield Suggestion::createWithOptions(
                 $functionReflection->name()->short(),
                 [
                     'type' => Suggestion::TYPE_FUNCTION,
                     'short_description' => $this->formatter->format($functionReflection),
                 ]
-            ));
+            );
         }
-
-
-        return Response::fromSuggestions($suggestions);
     }
 
     private function definedNamesFor(array $reflectedFunctions, string $partialName): Generator

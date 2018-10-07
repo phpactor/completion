@@ -5,8 +5,6 @@ namespace Phpactor\Completion\Tests\Benchmark\Bridge\TolerantParser\WorseReflect
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\Completion\Tests\Benchmark\Bridge\TolerantParser\TolerantCompletorBenchCase;
-use Phpactor\Completion\Tests\Benchmark\CompletorBenchCase;
-use Phpactor\Completion\Core\Completor;
 use Phpactor\WorseReflection\ReflectorBuilder;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseClassMemberCompletor;
 

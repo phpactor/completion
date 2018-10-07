@@ -5,10 +5,8 @@ namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseRefle
 use Generator;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseConstructorCompletor;
-use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseParameterCompletor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
-use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseReflection\WorseParameterCompletorTest;
 use Phpactor\WorseReflection\ReflectorBuilder;
 
 class WorseConstructorCompletorTest extends TolerantCompletorTestCase
@@ -147,7 +145,6 @@ EOT
 
     public function provideCompleteStaticClassParameter()
     {
-
         yield 'complete static method parameter' => [
             <<<'EOT'
 <?php 

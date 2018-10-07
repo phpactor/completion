@@ -2,17 +2,7 @@
 
 namespace Phpactor\Completion\Core;
 
-use Phpactor\WorseReflection\Core\ClassName;
-use Phpactor\WorseReflection\Core\Exception\NotFound;
-use Phpactor\WorseReflection\Core\Inference\SymbolContext;
-use Phpactor\WorseReflection\Core\Offset;
-use Phpactor\WorseReflection\Core\Reflection\ReflectionClass;
-use Phpactor\WorseReflection\Core\Reflection\ReflectionMethod;
-use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
-use Phpactor\WorseReflection\Core\Reflection\ReflectionProperty;
-use Phpactor\WorseReflection\Core\SourceCode;
-use Phpactor\WorseReflection\Core\Type;
-use Phpactor\WorseReflection\Reflector;
+use Generator;
 
 class ChainCompletor implements Completor
 {
@@ -29,14 +19,12 @@ class ChainCompletor implements Completor
         $this->completors = $completors;
     }
 
-    public function complete(string $source, int $offset): Response
+    public function complete(string $source, int $offset): Generator
     {
-        $response = Response::new();
-
         foreach ($this->completors as $completor) {
-            $response = $response->merge($completor->complete($source, $offset));
+            foreach ($completor->complete($source, $offset) as $suggestion) {
+                yield $suggestion;
+            }
         }
-
-        return $response;
     }
 }

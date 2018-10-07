@@ -2,6 +2,7 @@
 
 namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
+use Generator;
 use LogicException;
 use Microsoft\PhpParser\MissingToken;
 use Microsoft\PhpParser\Node;
@@ -13,25 +14,16 @@ use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 use Microsoft\PhpParser\Node\Expression\Variable;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
-use Phpactor\Completion\Core\Formatter\ObjectFormatter;
-use Phpactor\Completion\Core\Response;
-use Phpactor\Completion\Core\Suggestion;
-use Phpactor\Completion\Core\Suggestions;
-use Phpactor\WorseReflection\Core\Exception\CouldNotResolveNode;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Inference\Variable as WorseVariable;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionFunctionLike;
-use Phpactor\WorseReflection\Core\Reflection\ReflectionMethod;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
 use Phpactor\WorseReflection\Core\Type;
-use Phpactor\WorseReflection\Reflector;
 
 class WorseParameterCompletor extends AbstractParameterCompletor implements TolerantCompletor
 {
-    public function complete(Node $node, string $source, int $offset): Response
+    public function complete(Node $node, string $source, int $offset): Generator
     {
-        $response = Response::new();
-
         // Tolerant parser _seems_ to resolve f.e. offset 74 as the qualified
         // name of the node, when it is actually the open bracket. If it is a qualified
         // name, we take our chances on the parent.
@@ -44,13 +36,13 @@ class WorseParameterCompletor extends AbstractParameterCompletor implements Tole
         }
 
         if (!$node instanceof Variable && !$node instanceof CallExpression) {
-            return $response;
+            return;
         }
 
         $callExpression = $node instanceof CallExpression ? $node : $node->getFirstAncestor(CallExpression::class);
 
         if (!$callExpression) {
-            return $response;
+            return;
         }
 
         assert($callExpression instanceof CallExpression);
@@ -60,27 +52,26 @@ class WorseParameterCompletor extends AbstractParameterCompletor implements Tole
 
         // no variables available for completion, return empty handed
         if (empty($variables)) {
-            return $response;
+            return;
         }
 
         try {
             $reflectionFunctionLike = $this->reflectFunctionLike($source, $callableExpression);
         } catch (NotFound $exception) {
-            $response->issues()->add($exception->getMessage());
-            return $response;
+            return;
         }
 
         if (null === $reflectionFunctionLike) {
-            $response->issues()->add('Could not reflect function / method');
-            return $response;
+            return;
         }
 
         if (null === $reflectionFunctionLike) {
-            $response->issues()->add('Could not determine containing class of call');
-            return $response;
+            return;
         }
 
-        return $this->populateResponse($response, $callableExpression, $reflectionFunctionLike, $variables);
+        foreach ($this->populateResponse($callableExpression, $reflectionFunctionLike, $variables) as $suggestion) {
+            yield $suggestion;
+        }
     }
 
     private function paramIndex(Node $node)
@@ -126,9 +117,8 @@ class WorseParameterCompletor extends AbstractParameterCompletor implements Tole
 
         /** @var Type $variableType */
         foreach ($variable->symbolContext()->types() as $variableType) {
-
             $variableTypeClass = null;
-            if ($variableType->isClass() ) {
+            if ($variableType->isClass()) {
                 $variableTypeClass = $this->reflector->reflectClassLike($variableType->className());
             }
 
@@ -139,9 +129,7 @@ class WorseParameterCompletor extends AbstractParameterCompletor implements Tole
 
                 if ($variableTypeClass && $parameterType->isClass() && $variableTypeClass->isInstanceOf($parameterType->className())) {
                     return true;
-                    
                 }
-
             }
         }
         return false;

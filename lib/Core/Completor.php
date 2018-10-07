@@ -2,9 +2,12 @@
 
 namespace Phpactor\Completion\Core;
 
-use Phpactor\Completion\Core\CanComplete;
+use Generator;
 
 interface Completor
 {
-    public function complete(string $source, int $byteOffset): Response;
+    /**
+     * @return Generator & iterable<Suggestion>
+     */
+    public function complete(string $source, int $byteOffset): Generator;
 }

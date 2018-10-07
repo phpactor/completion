@@ -2,13 +2,14 @@
 
 namespace Phpactor\Completion\Bridge\TolerantParser;
 
+use Generator;
 use Microsoft\PhpParser\Node;
-use Phpactor\Completion\Bridge\TolerantParser\Qualifier\Qualifier;
-use Phpactor\Completion\Core\Completor;
-use Phpactor\Completion\Core\Response;
-use Phpactor\Completion\Core\Suggestions;
+use Phpactor\Completion\Core\Suggestion;
 
 interface TolerantCompletor
 {
-    public function complete(Node $node, string $source, int $offset): Response;
+    /**
+     * @return Generator & iterable<Suggestion>
+     */
+    public function complete(Node $node, string $source, int $offset): Generator;
 }

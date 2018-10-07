@@ -2,11 +2,10 @@
 
 namespace Phpactor\Completion\Bridge\TolerantParser;
 
+use Generator;
 use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Parser;
 use Phpactor\Completion\Core\Completor;
-use Phpactor\Completion\Core\Response;
-use Phpactor\Completion\Core\Suggestions;
 use Phpactor\Completion\Core\Util\OffsetHelper;
 
 class ChainTolerantCompletor implements Completor
@@ -30,7 +29,7 @@ class ChainTolerantCompletor implements Completor
         $this->tolerantCompletors = $tolerantCompletors;
     }
 
-    public function complete(string $source, int $byteOffset): Response
+    public function complete(string $source, int $byteOffset): Generator
     {
         $truncatedSource = $this->truncateSource($source, $byteOffset);
 
@@ -38,8 +37,6 @@ class ChainTolerantCompletor implements Completor
             // the parser requires the byte offset, not the char offset
             strlen($truncatedSource)
         );
-
-        $response = Response::new();
 
         foreach ($this->tolerantCompletors as $tolerantCompletor) {
             $completionNode = $node;
@@ -52,10 +49,10 @@ class ChainTolerantCompletor implements Completor
                 continue;
             }
 
-            $response->merge($tolerantCompletor->complete($completionNode, $source, $byteOffset));
+            foreach ($tolerantCompletor->complete($completionNode, $source, $byteOffset) as $suggestion) {
+                yield $suggestion;
+            }
         }
-
-        return $response;
     }
 
     private function truncateSource(string $source, int $byteOffset)

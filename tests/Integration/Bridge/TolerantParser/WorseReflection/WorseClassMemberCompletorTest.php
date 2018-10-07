@@ -2,24 +2,12 @@
 
 namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseReflection;
 
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
-use Phpactor\WorseReflection\Core\Logger\ArrayLogger;
-use Phpactor\WorseReflection\Core\SourceCodeLocator\StringSourceLocator;
-use Phpactor\WorseReflection\Core\SourceCode;
 use Phpactor\WorseReflection\ReflectorBuilder;
-use Phpactor\Completion\Core\ChainCompletor;
-use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseClassMemberCompletor;
-use Phpactor\Completion\Tests\Integration\CompletorTestCase;
 use Generator;
-use Phpactor\Completion\Core\Completor;
-use Phpactor\TestUtils\ExtractOffset;
-use PhpBench\Benchmark\Metadata\Annotations\Subject;
-use PhpBench\Benchmark\Metadata\Annotations\Iterations;
-use PhpBench\Benchmark\Metadata\Annotations\Revs;
 
 class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
 {
@@ -297,13 +285,13 @@ EOT
         , [
             [
                 'type' => Suggestion::TYPE_CONSTANT,
-                'name' => 'FOOBAR',
-                'short_description' => 'const FOOBAR',
+                'name' => 'BARFOO',
+                'short_description' => 'const BARFOO',
             ],
             [
                 'type' => Suggestion::TYPE_CONSTANT,
-                'name' => 'BARFOO',
-                'short_description' => 'const BARFOO',
+                'name' => 'FOOBAR',
+                'short_description' => 'const FOOBAR',
             ],
         ],
     ];
@@ -454,73 +442,6 @@ EOT
                 'name' => 'goodbye',
             ],
         ]];
-    }
-
-    /**
-     * @dataProvider provideErrors
-     */
-    public function testErrors(string $source, array $expected)
-    {
-        $this->assertCompletionErrors($source, $expected);
-    }
-
-    public function provideErrors()
-    {
-        yield [
-            <<<'EOT'
-<?php
-
-$asd = 'asd';
-$asd-><>
-EOT
-        ,[
-                'Cannot complete members on scalar value (string)',
-            ]
-        ];
-
-        yield [
-            <<<'EOT'
-<?php
-
-$asd-><>
-EOT
-        ,
-            [
-                'Variable "asd" is undefined',
-            ]
-        ];
-
-        yield [
-            <<<'EOT'
-<?php
-
-$asd = new BooBar();
-$asd-><>
-EOT
-        ,
-            [
-                'Could not find class "BooBar"',
-            ]
-        ];
-
-        yield 'non existing property' => [
-            <<<'EOT'
-<?php
-
-class Foobar
-{
-    public $foobar;
-}
-
-$foobar = new Foobar();
-$foobar->barbar-><>;
-EOT
-        ,
-            [
-                'Class "Foobar" has no properties named "barbar"',
-            ]
-        ];
-
     }
 
     /**

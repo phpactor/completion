@@ -2,7 +2,6 @@
 
 namespace Phpactor\Completion\Tests\Integration;
 
-use Generator;
 use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\FunctionFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\MethodFormatter;
@@ -13,11 +12,9 @@ use Phpactor\Completion\Bridge\WorseReflection\Formatter\PropertyFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\TypeFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\TypesFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\VariableFormatter;
-use Phpactor\Completion\Adapter\WorseReflection\Formatter\VariableWithNodeFormatter;
 use Phpactor\Completion\Core\Completor;
-use Phpactor\Completion\Core\Response;
+use Phpactor\Completion\Core\Suggestion;
 use Phpactor\TestUtils\ExtractOffset;
-use Phpactor\WorseReflection\ReflectorBuilder;
 
 abstract class CompletorTestCase extends TestCase
 {
@@ -41,24 +38,17 @@ abstract class CompletorTestCase extends TestCase
     {
         list($source, $offset) = ExtractOffset::fromSource($source);
         $completor = $this->createCompletor($source);
-        $result = $completor->complete($source, $offset);
+        $suggestions = iterator_to_array($completor->complete($source, $offset));
+        usort($suggestions, function (Suggestion $suggestion1, Suggestion $suggestion2) {
+            return $suggestion1->name() <=> $suggestion2->name();
+        });
 
-        $actual = $result->suggestions()->toArray();
-
-        $this->assertCount(count($expected), $actual);
+        $this->assertCount(count($expected), $suggestions);
         foreach ($expected as $index => $expectedSuggestion) {
-            $this->assertArraySubset($expectedSuggestion, $actual[$index]);
+            $this->assertArraySubset($expectedSuggestion, $suggestions[$index]->toArray());
         }
 
-        $this->assertCount(count($expected), $actual);
-    }
-
-    protected function assertCompletionErrors(string $source, array $expected)
-    {
-        list($source, $offset) = ExtractOffset::fromSource($source);
-        $completor = $this->createCompletor($source);
-        $results = $completor->complete($source, $offset);
-        $this->assertEquals($expected, $results->issues()->toArray());
+        $this->assertCount(count($expected), $suggestions);
     }
 
     public function assertCouldNotComplete(string $source)
@@ -67,7 +57,6 @@ abstract class CompletorTestCase extends TestCase
         $completor = $this->createCompletor($source);
         $result = $completor->complete($source, $offset);
 
-        $this->assertEquals(Response::new(), $result);
+        $this->assertEmpty(iterator_to_array($result));
     }
-
 }

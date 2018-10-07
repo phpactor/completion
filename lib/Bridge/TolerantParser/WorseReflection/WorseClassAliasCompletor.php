@@ -2,6 +2,7 @@
 
 namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
+use Generator;
 use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\ResolvedName;
 use Phpactor\Completion\Bridge\TolerantParser\Qualifier\ClassQualifier;
@@ -9,10 +10,7 @@ use Phpactor\Completion\Bridge\TolerantParser\Qualifier\Qualifier;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifiable;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifier;
-use Phpactor\Completion\Core\Formatter\ObjectFormatter;
-use Phpactor\Completion\Core\Response;
 use Phpactor\Completion\Core\Suggestion;
-use Phpactor\Completion\Core\Suggestions;
 use Phpactor\WorseReflection\Reflector;
 
 class WorseClassAliasCompletor implements TolerantCompletor, TolerantQualifiable
@@ -32,10 +30,9 @@ class WorseClassAliasCompletor implements TolerantCompletor, TolerantQualifiable
         $this->reflector = $reflector;
     }
 
-    public function complete(Node $node, string $source, int $offset): Response
+    public function complete(Node $node, string $source, int $offset): Generator
     {
         $namespaceImports = $node->getImportTablesForCurrentScope()[0];
-        $suggestions = [];
 
         /** @var ResolvedName $resolvedName */
         foreach ($namespaceImports as $alias => $resolvedName) {
@@ -50,7 +47,7 @@ class WorseClassAliasCompletor implements TolerantCompletor, TolerantQualifiable
                 continue;
             }
 
-            $suggestions[] = Suggestion::createWithOptions(
+            yield Suggestion::createWithOptions(
                 $alias,
                 [
                     'type' => Suggestion::TYPE_CLASS,
@@ -58,7 +55,6 @@ class WorseClassAliasCompletor implements TolerantCompletor, TolerantQualifiable
                 ]
             );
         }
-        return Response::fromSuggestions(Suggestions::fromSuggestions($suggestions));
     }
 
     public function qualifier(): TolerantQualifier

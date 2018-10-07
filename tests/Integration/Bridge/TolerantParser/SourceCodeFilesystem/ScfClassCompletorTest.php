@@ -214,6 +214,5 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                 ],
             ],
         ];
-
     }
 }

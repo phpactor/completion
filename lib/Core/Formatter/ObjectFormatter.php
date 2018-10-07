@@ -2,11 +2,7 @@
 
 namespace Phpactor\Completion\Core\Formatter;
 
-use Microsoft\PhpParser\Node;
-use Phpactor\WorseReflection\Core\Inference\SymbolContext;
-use Phpactor\WorseReflection\Core\Inference\Variable;
 use RuntimeException;
-use Phpactor\Completion\Core\Formatter\Formatter;
 
 class ObjectFormatter
 {
