@@ -7,7 +7,7 @@ use Generator;
 interface Completor
 {
     /**
-     * return Generator<Suggestion>
+     * @return Generator & iterable<Suggestion>
      */
     public function complete(string $source, int $byteOffset): Generator;
 }
