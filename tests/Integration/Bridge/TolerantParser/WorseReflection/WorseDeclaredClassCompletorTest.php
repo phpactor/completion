@@ -24,7 +24,7 @@ class WorseDeclaredClassCompletorTest extends TolerantCompletorTestCase
             ->addSource($source)
             ->build();
 
-        return new WorseDeclaredClassCompletor($reflector);
+        return new WorseDeclaredClassCompletor($reflector, $this->formatter());
     }
 
     /**
@@ -41,14 +41,14 @@ class WorseDeclaredClassCompletorTest extends TolerantCompletorTestCase
             <<<'EOT'
 <?php
 
-$class = new ArrayObject<>
+$class = new Exception<>
 EOT
         ,
             [
                 [
                     'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'ArrayObject',
-                    'short_description' => 'ArrayObject(array $array)',
+                    'name' => 'Exception',
+                    'short_description' => 'Exception(string $message = \'\', int $code = 0, Throwable $previous = NULL)',
                 ]
             ]
         ];
