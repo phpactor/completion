@@ -50,7 +50,23 @@ EOT
                     'name' => 'Exception',
                     'short_description' => 'Exception(string $message = \'\', int $code = 0, Throwable $previous = NULL)',
                 ]
-            ]
+            ],
+        ];
+
+        yield 'interfaces' => [
+            <<<'EOT'
+<?php
+
+$class = new ArrayAccess<>
+EOT
+        ,
+            [
+                [
+                    'type' => Suggestion::TYPE_INTERFACE,
+                    'name' => 'ArrayAccess',
+                    'short_description' => 'ArrayAccess',
+                ]
+            ],
         ];
     }
 }
