@@ -12,6 +12,7 @@ use Phpactor\Completion\Bridge\TolerantParser\Qualifier\ClassQualifier;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifiable;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifier;
+use Phpactor\Completion\Core\Range;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Filesystem\Domain\FilePath as ScfFilePath;
 use Phpactor\Filesystem\Domain\Filesystem;
@@ -77,6 +78,7 @@ class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
                     'type' => Suggestion::TYPE_CLASS,
                     'short_description' => $best->__toString(),
                     'class_import' => $this->getClassNameForImport($best, $imports, $currentNamespace),
+                    'range' => $this->getRange($node, $offset),
                 ]
             );
         }
@@ -113,5 +115,14 @@ class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
         return null !== $currentNamespaceDefinition && null !== $currentNamespaceDefinition->name
             ? $currentNamespaceDefinition->name->getText()
             : null;
+    }
+
+    private function getRange(Node $node, int $offset)
+    {
+        if ($node instanceof QualifiedName) {
+            return new Range($node->getStart(), $node->getEndPosition());
+        }
+
+        return new Range($offset, $offset);
     }
 }

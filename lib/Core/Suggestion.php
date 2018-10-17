@@ -106,7 +106,8 @@ class Suggestion
             $options['type'],
             $options['short_description'],
             $options['class_import'],
-            $options['label']
+            $options['label'],
+            $options['range']
         );
     }
 
@@ -118,6 +119,7 @@ class Suggestion
             'label' => $this->label(),
             'short_description' => $this->shortDescription(),
             'class_import' => $this->classImport(),
+            'range' => $this->range,
 
             // deprecated: in favour of short_description, to be removed
             // after 0.10.0
