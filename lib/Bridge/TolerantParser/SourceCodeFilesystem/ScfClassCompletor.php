@@ -30,20 +30,14 @@ class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
     private $fileToClass;
 
     /**
-     * @var int
-     */
-    private $limit;
-
-    /**
      * @var ClassQualifier
      */
     private $qualifier;
 
-    public function __construct(Filesystem $filesystem, FileToClass $fileToClass, int $limit = 100)
+    public function __construct(Filesystem $filesystem, FileToClass $fileToClass)
     {
         $this->filesystem = $filesystem;
         $this->fileToClass = $fileToClass;
-        $this->limit = $limit;
         $this->qualifier = new ClassQualifier();
     }
 
@@ -83,10 +77,6 @@ class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
                     'class_import' => $this->getClassNameForImport($best, $imports, $currentNamespace),
                 ]
             );
-
-            if (++$count >= $this->limit) {
-                break;
-            }
         }
     }
 
