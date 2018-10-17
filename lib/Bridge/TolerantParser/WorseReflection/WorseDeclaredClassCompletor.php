@@ -37,8 +37,14 @@ class WorseDeclaredClassCompletor implements TolerantCompletor, TolerantQualifia
      */
     public function complete(Node $node, string $source, int $offset): Generator
     {
-        $classes = get_declared_classes();
+        $classes = array_merge(
+            get_declared_classes(),
+            get_declared_interfaces(),
+            get_declared_traits()
+        );
+
         $classes = array_filter($classes, function ($class) use ($node) {
+            $class = basename(str_replace('\\', '/', $class));
             return 0 === strpos($class, $node->getText());
         });
 
@@ -50,7 +56,7 @@ class WorseDeclaredClassCompletor implements TolerantCompletor, TolerantQualifia
             }
 
             yield Suggestion::createWithOptions(
-                $class,
+                $reflectionClass->name()->short(),
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'short_description' => $this->formatter->format($reflectionClass),
