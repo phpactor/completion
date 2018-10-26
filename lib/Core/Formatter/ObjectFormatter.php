@@ -2,6 +2,7 @@
 
 namespace Phpactor\Completion\Core\Formatter;
 
+use Phpactor\Completion\Core\Exception\CouldNotFormat;
 use RuntimeException;
 
 class ObjectFormatter
@@ -31,7 +32,7 @@ class ObjectFormatter
             return $formatter->format($this, $object);
         }
 
-        throw new RuntimeException(sprintf(
+        throw new CouldNotFormat(sprintf(
             'Do not know how to format "%s"',
             get_class($object)
         ));
