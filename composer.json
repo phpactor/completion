@@ -10,12 +10,12 @@
         }
     ],
     "require": {
-        "phpactor/worse-reflection": "^1.0@dev",
-        "phpbench/phpbench": "^1.0@dev",
-        "phpactor/source-code-filesystem": "^1.0@dev",
-        "phpactor/class-to-file": "^1.0@dev"
+        "phpactor/worse-reflection": "dev-master",
+        "phpactor/source-code-filesystem": "dev-master",
+        "phpactor/class-to-file": "dev-master"
     },
     "require-dev": {
+        "phpbench/phpbench": "^1.0@dev",
         "phpunit/phpunit": "^7.0",
         "phpactor/test-utils": "^1.0@dev",
         "phpstan/phpstan": "^0.10.0@dev",
