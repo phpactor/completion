@@ -26,6 +26,7 @@ class SuggestionTest extends TestCase
 
         $this->assertEquals('c', $suggestion->type());
         $this->assertEquals('hello', $suggestion->name());
+        $this->assertEquals('hello', $suggestion->label());
         $this->assertEquals('Foobar', $suggestion->shortDescription());
         $this->assertEquals('Namespace\\Foobar', $suggestion->classImport());
     }

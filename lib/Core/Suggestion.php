@@ -50,16 +50,23 @@ class Suggestion
      */
     private $classImport;
 
+    /**
+     * @var string
+     */
+    private $label;
+
     private function __construct(
         string $name,
         string $type = null,
         string $shortDescription = null,
-        string $classImport = null
+        string $classImport = null,
+        string $label = null
     ) {
         $this->type = $type;
         $this->name = $name;
         $this->shortDescription = $shortDescription;
         $this->classImport = $classImport;
+        $this->label = $label ?: $name;
     }
 
     public static function create(string $name)
@@ -98,6 +105,7 @@ class Suggestion
         return [
             'type' => $this->type(),
             'name' => $this->name(),
+            'label' => $this->label(),
             'short_description' => $this->shortDescription(),
             'class_import' => $this->classImport(),
 
@@ -134,5 +142,10 @@ class Suggestion
     public function classImport()
     {
         return $this->classImport;
+    }
+
+    public function label(): string
+    {
+        return $this->label;
     }
 }
