@@ -22,12 +22,20 @@ class SuggestionTest extends TestCase
             'type' => 'c',
             'short_description' => 'Foobar',
             'class_import' => 'Namespace\\Foobar',
+            'label' => 'hallo',
         ]);
 
         $this->assertEquals('c', $suggestion->type());
         $this->assertEquals('hello', $suggestion->name());
-        $this->assertEquals('hello', $suggestion->label());
+        $this->assertEquals('hallo', $suggestion->label());
         $this->assertEquals('Foobar', $suggestion->shortDescription());
         $this->assertEquals('Namespace\\Foobar', $suggestion->classImport());
+    }
+
+    public function testDefaults()
+    {
+        $suggestion = Suggestion::create('hello');
+        $this->assertEquals('hello', $suggestion->name());
+        $this->assertEquals('hello', $suggestion->label());
     }
 }

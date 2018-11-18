@@ -80,6 +80,7 @@ class Suggestion
             'short_description' => '',
             'type' => null,
             'class_import' => null,
+            'label' => null,
         ];
 
         if ($diff = array_diff(array_keys($options), array_keys($defaults))) {
@@ -96,7 +97,8 @@ class Suggestion
             $name,
             $options['type'],
             $options['short_description'],
-            $options['class_import']
+            $options['class_import'],
+            $options['label']
         );
     }
 
