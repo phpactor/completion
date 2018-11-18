@@ -3,7 +3,6 @@
 namespace Phpactor\Completion\Core\Formatter;
 
 use Phpactor\Completion\Core\Exception\CouldNotFormat;
-use RuntimeException;
 
 class ObjectFormatter
 {

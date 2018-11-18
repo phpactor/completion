@@ -4,7 +4,6 @@ namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseRefle
 
 use Generator;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
-use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseClassAliasCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseDeclaredClassCompletor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;

@@ -2,7 +2,6 @@
 
 namespace Phpactor\Completion\Tests\Unit\Bridge\TolerantParser;
 
-use Generator;
 use Microsoft\PhpParser\Node;
 use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Bridge\TolerantParser\LimitingCompletor;

@@ -2,8 +2,6 @@
 
 namespace Phpactor\Completion\Core;
 
-use Phpactor\Completion\Core\TypedCompletor;
-
 class TypedCompletorRegistry
 {
     /**

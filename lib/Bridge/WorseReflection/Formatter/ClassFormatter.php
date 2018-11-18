@@ -23,7 +23,8 @@ class ClassFormatter implements Formatter
 
         if ($class->methods()->has('__construct')) {
             $info[] = '(';
-            $info[] = $formatter->format($class->methods()
+            $info[] = $formatter->format(
+                $class->methods()
                 ->get('__construct')
                 ->parameters()
             );
