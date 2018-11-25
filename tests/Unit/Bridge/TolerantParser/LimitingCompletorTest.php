@@ -5,7 +5,9 @@ namespace Phpactor\Completion\Tests\Unit\Bridge\TolerantParser;
 use Microsoft\PhpParser\Node;
 use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Bridge\TolerantParser\LimitingCompletor;
+use Phpactor\Completion\Bridge\TolerantParser\Qualifier\AlwaysQualfifier;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
+use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifiable;
 use Phpactor\Completion\Core\Suggestion;
 use Prophecy\Prophecy\ObjectProphecy;
 
@@ -87,6 +89,26 @@ class LimitingCompletorTest extends TestCase
         );
 
         $this->assertCount(2, $suggestions);
+    }
+
+    public function testQualifiesNonQualifiableCompletors()
+    {
+        $completor = $this->create(10);
+        $node = $this->prophesize(Node::class);
+
+        $qualified = $completor->qualifier()->couldComplete($node->reveal());
+        $this->assertSame($node->reveal(), $qualified);
+    }
+
+    public function testPassesThroughToInnerQualifier()
+    {
+        $node = $this->prophesize(Node::class);
+        $this->innerCompletor->willImplement(TolerantQualifiable::class);
+        $this->innerCompletor->qualifier()->willReturn(new AlwaysQualfifier())->shouldBeCalled();
+        $completor = $this->create(10);
+
+        $qualified = $completor->qualifier()->couldComplete($node->reveal());
+        $this->assertSame($node->reveal(), $qualified);
     }
 
     private function create(int $limit): LimitingCompletor

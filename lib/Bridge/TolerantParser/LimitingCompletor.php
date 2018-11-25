@@ -4,11 +4,12 @@ namespace Phpactor\Completion\Bridge\TolerantParser;
 
 use Generator;
 use Microsoft\PhpParser\Node;
+use Phpactor\Completion\Bridge\TolerantParser\Qualifier\AlwaysQualfifier;
 
-class LimitingCompletor implements TolerantCompletor
+class LimitingCompletor implements TolerantCompletor, TolerantQualifiable
 {
     /**
-     * @var TolerantCompletor
+     * @var TolerantCompletor|TolerantQualifiable
      */
     private $completor;
 
@@ -28,13 +29,24 @@ class LimitingCompletor implements TolerantCompletor
      */
     public function complete(Node $node, string $source, int $offset): Generator
     {
+        /** @var TolerantCompletor $completor */
+        $completor = $this->completor;
         $count = 0;
-        foreach ($this->completor->complete($node, $source, $offset) as $suggestion) {
+        foreach ($completor->complete($node, $source, $offset) as $suggestion) {
             yield $suggestion;
 
             if (++$count === $this->limit) {
                 break;
             }
         }
+    }
+
+    public function qualifier(): TolerantQualifier
+    {
+        if (!$this->completor instanceof TolerantQualifiable) {
+            return new AlwaysQualfifier();
+        }
+
+        return $this->completor->qualifier();
     }
 }
