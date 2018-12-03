@@ -35,7 +35,7 @@ abstract class CompletorBenchCase
      */
     public function benchComplete($params)
     {
-        $this->completor->complete($this->source, $this->offset);
+        iterator_to_array($this->completor->complete($this->source, $this->offset));
     }
 
     public function provideComplete()

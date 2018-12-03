@@ -442,6 +442,45 @@ EOT
                 'name' => 'goodbye',
             ],
         ]];
+
+        yield 'instance member on static method' => [
+            <<<'EOT'
+<?php
+
+class BarBar {
+    public static function hello() {}
+    public function goodbye() {}
+}
+
+BarBar::<>
+
+EOT
+        , [
+            [
+                'type' => Suggestion::TYPE_METHOD,
+                'name' => 'hello',
+            ],
+        ]];
+
+        yield 'instance member on static method' => [
+            <<<'EOT'
+<?php
+
+class BarBar {
+    public function hello() {}
+    public static function goodbye() {}
+}
+
+$bar = new BarBar();
+$bar-><>
+
+EOT
+        , [
+            [
+                'type' => Suggestion::TYPE_METHOD,
+                'name' => 'hello',
+            ],
+        ]];
     }
 
     /**
