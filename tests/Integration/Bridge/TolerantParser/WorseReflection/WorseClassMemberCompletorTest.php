@@ -429,7 +429,7 @@ class BarBar {
 }
 
 class Foobar {
-    public static function goodbye(): BarBar {}
+    public function goodbye(): BarBar {}
 }
 
 $foobar = Foobar::goodbye()
