@@ -462,7 +462,7 @@ EOT
             ],
         ]];
 
-        yield 'instance member on static method' => [
+        yield 'shows static member on instance method' => [
             <<<'EOT'
 <?php
 
@@ -476,6 +476,10 @@ $bar-><>
 
 EOT
         , [
+            [
+                'type' => Suggestion::TYPE_METHOD,
+                'name' => 'goodbye',
+            ],
             [
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'hello',

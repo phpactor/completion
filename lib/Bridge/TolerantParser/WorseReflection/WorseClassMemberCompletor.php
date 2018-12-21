@@ -113,10 +113,6 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
                 continue;
             }
 
-            if (false === $static && $method->isStatic()) {
-                continue;
-            }
-
             yield Suggestion::createWithOptions($method->name(), [
                 'type' => Suggestion::TYPE_METHOD,
                 'short_description' => $this->formatter->format($method),
