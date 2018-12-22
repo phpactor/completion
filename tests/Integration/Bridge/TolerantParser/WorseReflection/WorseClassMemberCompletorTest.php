@@ -182,14 +182,14 @@ $foobar::<>
 EOT
         , [
             [
+                'type' => Suggestion::TYPE_PROPERTY,
+                'name' => '$foo',
+                'short_description' => 'pub static $foo',
+            ],
+            [
                 'type' => Suggestion::TYPE_CONSTANT,
                 'name' => 'class',
                 'short_description' => 'Foobar',
-            ],
-            [
-                'type' => Suggestion::TYPE_PROPERTY,
-                'name' => 'foo',
-                'short_description' => 'pub static $foo',
             ],
         ]
     ];
@@ -214,20 +214,15 @@ $foobar->me::<>
 EOT
         , [
             [
+                'type' => Suggestion::TYPE_PROPERTY,
+                'name' => '$foo',
+                'short_description' => 'pub static $foo',
+            ],
+            [
                 'type' => Suggestion::TYPE_CONSTANT,
                 'name' => 'class',
                 'short_description' => 'Foobar',
             ],
-            [
-                'type' => Suggestion::TYPE_PROPERTY,
-                'name' => 'foo',
-                'short_description' => 'pub static $foo',
-            ],
-            [
-                'type' => Suggestion::TYPE_PROPERTY,
-                'name' => 'me',
-                'short_description' => 'pub $me: Foobar',
-            ]
         ]
     ];
 
@@ -242,13 +237,13 @@ class Foobar
 }
 
 $foobar = new Foobar();
-$foobar::f<>
+$foobar::$f<>
 
 EOT
         , [
             [
                 'type' => Suggestion::TYPE_PROPERTY,
-                'name' => 'foobar',
+                'name' => '$foobar',
                 'short_description' => 'pub static $foobar',
             ]
         ]
@@ -503,6 +498,26 @@ EOT
             [
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'hello',
+            ],
+        ]];
+
+        yield 'static property' => [
+            <<<'EOT'
+<?php
+
+class BarBar {
+    /** @var Foo */
+    public static $foo;
+}
+
+BarBar::$f<>
+
+EOT
+        , [
+            [
+                'type' => Suggestion::TYPE_PROPERTY,
+                'name' => '$foo',
+                'short_description' => 'pub static $foo: Foo',
             ],
         ]];
     }

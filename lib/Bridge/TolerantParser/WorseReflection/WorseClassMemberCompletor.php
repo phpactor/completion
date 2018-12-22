@@ -4,6 +4,7 @@ namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
 use Generator;
 use Microsoft\PhpParser\Node;
+use Microsoft\PhpParser\Node\Expression\Variable;
 use Microsoft\PhpParser\Token;
 use Phpactor\Completion\Bridge\TolerantParser\Qualifier\ClassMemberQualifier;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
@@ -13,6 +14,7 @@ use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Inference\SymbolContext;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionClass;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionMethod;
+use Phpactor\WorseReflection\Core\Reflection\ReflectionProperty;
 use Phpactor\WorseReflection\Core\Type;
 use Phpactor\WorseReflection\Reflector;
 use Phpactor\Completion\Core\Suggestion;
@@ -58,6 +60,10 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
         assert($node instanceof MemberAccessExpression || $node instanceof ScopedPropertyAccessExpression);
 
         $memberName = $node->memberName;
+
+        if ($memberName instanceof Variable) {
+            $memberName = $memberName->name;
+        }
 
         if (!$memberName instanceof Token) {
             return;
@@ -127,11 +133,22 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
         }
 
         if ($classReflection instanceof ReflectionClass) {
+            /** @var ReflectionProperty $property */
             foreach ($classReflection->properties() as $property) {
                 if ($publicOnly && false === $property->visibility()->isPublic()) {
                     continue;
                 }
-                yield Suggestion::createWithOptions($property->name(), [
+
+                if ($static && false === $property->isStatic()) {
+                    continue;
+                }
+
+                $name = $property->name();
+                if ($static) {
+                    $name = '$' . $name;
+                }
+
+                yield Suggestion::createWithOptions($name, [
                     'type' => Suggestion::TYPE_PROPERTY,
                     'short_description' => $this->formatter->format($property),
                 ]);
