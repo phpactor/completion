@@ -92,6 +92,13 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
             return;
         }
 
+        if ($static) {
+            yield Suggestion::createWithOptions('class', [
+                'type' => Suggestion::TYPE_CONSTANT,
+                'short_description' => $type->className(),
+            ]);
+        }
+
         try {
             $classReflection = $this->reflector->reflectClassLike($type->className()->full());
         } catch (NotFound $e) {

@@ -182,10 +182,15 @@ $foobar::<>
 EOT
         , [
             [
+                'type' => Suggestion::TYPE_CONSTANT,
+                'name' => 'class',
+                'short_description' => 'Foobar',
+            ],
+            [
                 'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'foo',
                 'short_description' => 'pub static $foo',
-            ]
+            ],
         ]
     ];
 
@@ -209,6 +214,11 @@ $foobar->me::<>
 EOT
         , [
             [
+                'type' => Suggestion::TYPE_CONSTANT,
+                'name' => 'class',
+                'short_description' => 'Foobar',
+            ],
+            [
                 'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'foo',
                 'short_description' => 'pub static $foo',
@@ -221,7 +231,7 @@ EOT
         ]
     ];
 
-        yield 'Partially completed' => [
+        yield 'Partially completed 3' => [
             <<<'EOT'
 <?php
 
@@ -237,7 +247,7 @@ $foobar::f<>
 EOT
         , [
             [
-                'type' => Suggestion::TYPE_METHOD,
+                'type' => Suggestion::TYPE_PROPERTY,
                 'name' => 'foobar',
                 'short_description' => 'pub static $foobar',
             ]
@@ -292,6 +302,11 @@ EOT
                 'type' => Suggestion::TYPE_CONSTANT,
                 'name' => 'FOOBAR',
                 'short_description' => 'const FOOBAR',
+            ],
+            [
+                'type' => Suggestion::TYPE_CONSTANT,
+                'name' => 'class',
+                'short_description' => 'Foobar',
             ],
         ],
     ];
@@ -456,6 +471,11 @@ BarBar::<>
 
 EOT
         , [
+            [
+                'type' => Suggestion::TYPE_CONSTANT,
+                'name' => 'class',
+                'short_description' => 'BarBar',
+            ],
             [
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'hello',
