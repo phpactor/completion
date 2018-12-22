@@ -2,3 +2,4 @@ parameters:
   ignoreErrors:
     - '#ReflectionMethodCollection::get\(\) invoked with 1 parameter, 0 required#'
     - '#ReflectionFunctionLike will always evaluate to false#'
+    - '#Instanceof between Microsoft\\PhpParser\\Token and Microsoft\\PhpParser\\Node\\Expression\\Variable will always evaluate#'
