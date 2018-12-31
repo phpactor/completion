@@ -10,6 +10,8 @@ use Microsoft\PhpParser\Node\QualifiedName;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\Completion\Core\Suggestion;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocument;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Name;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionFunction;
@@ -33,7 +35,7 @@ class WorseFunctionCompletor implements TolerantCompletor
         $this->formatter = $formatter;
     }
 
-    public function complete(Node $node, string $source, int $offset): Generator
+    public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
         if (false === $node instanceof QualifiedName) {
             return;

@@ -16,6 +16,8 @@ use Phpactor\Completion\Bridge\WorseReflection\Formatter\VariableFormatter;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\TestUtils\ExtractOffset;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocumentBuilder;
 
 abstract class CompletorTestCase extends TestCase
 {
@@ -40,7 +42,10 @@ abstract class CompletorTestCase extends TestCase
     {
         list($source, $offset) = ExtractOffset::fromSource($source);
         $completor = $this->createCompletor($source);
-        $suggestions = iterator_to_array($completor->complete($source, $offset));
+        $suggestions = iterator_to_array($completor->complete(
+            TextDocumentBuilder::create($source)->language('php')->build(),
+            ByteOffset::fromInt($offset)
+        ));
         usort($suggestions, function (Suggestion $suggestion1, Suggestion $suggestion2) {
             return $suggestion1->name() <=> $suggestion2->name();
         });
@@ -57,7 +62,10 @@ abstract class CompletorTestCase extends TestCase
     {
         list($source, $offset) = ExtractOffset::fromSource($source);
         $completor = $this->createCompletor($source);
-        $result = $completor->complete($source, $offset);
+        $result = $completor->complete(
+            TextDocumentBuilder::create($source)->language('php')->build(),
+            ByteOffset::fromInt($offset)
+        );
 
         $this->assertEmpty(iterator_to_array($result));
     }

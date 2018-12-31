@@ -7,6 +7,8 @@ use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Parser;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Util\OffsetHelper;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocument;
 
 class ChainTolerantCompletor implements Completor
 {
@@ -29,9 +31,9 @@ class ChainTolerantCompletor implements Completor
         $this->tolerantCompletors = $tolerantCompletors;
     }
 
-    public function complete(string $source, int $byteOffset): Generator
+    public function complete(TextDocument $source, ByteOffset $byteOffset): Generator
     {
-        $truncatedSource = $this->truncateSource($source, $byteOffset);
+        $truncatedSource = $this->truncateSource((string) $source, $byteOffset->toInt());
 
         $node = $this->parser->parseSourceFile($truncatedSource)->getDescendantNodeAtPosition(
             // the parser requires the byte offset, not the char offset

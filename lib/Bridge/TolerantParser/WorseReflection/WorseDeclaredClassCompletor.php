@@ -10,6 +10,8 @@ use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifiable;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifier;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\Completion\Core\Suggestion;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocument;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Reflector\ClassReflector;
 
@@ -34,7 +36,7 @@ class WorseDeclaredClassCompletor implements TolerantCompletor, TolerantQualifia
     /**
      * {@inheritDoc}
      */
-    public function complete(Node $node, string $source, int $offset): Generator
+    public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
         $classes = get_declared_classes();
         $classes = array_filter($classes, function ($class) use ($node) {

@@ -15,6 +15,8 @@ use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifier;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Filesystem\Domain\FilePath as ScfFilePath;
 use Phpactor\Filesystem\Domain\Filesystem;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocument;
 use SplFileInfo;
 
 class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
@@ -46,7 +48,7 @@ class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
         return new ClassQualifier();
     }
 
-    public function complete(Node $node, string $source, int $offset): Generator
+    public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
         $files = $this->filesystem->fileList()->phpFiles();
 
@@ -81,7 +83,7 @@ class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
     }
 
     /**
-     * @return string|null
+     * @return TextDocument|null
      */
     private function getClassNameForImport($candidate, array $imports, string $currentNamespace = null)
     {

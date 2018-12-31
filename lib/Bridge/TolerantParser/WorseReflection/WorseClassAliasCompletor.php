@@ -11,6 +11,8 @@ use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifiable;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifier;
 use Phpactor\Completion\Core\Suggestion;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocument;
 use Phpactor\WorseReflection\Reflector;
 
 class WorseClassAliasCompletor implements TolerantCompletor, TolerantQualifiable
@@ -30,7 +32,7 @@ class WorseClassAliasCompletor implements TolerantCompletor, TolerantQualifiable
         $this->reflector = $reflector;
     }
 
-    public function complete(Node $node, string $source, int $offset): Generator
+    public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
         $namespaceImports = $node->getImportTablesForCurrentScope()[0];
 

@@ -5,6 +5,8 @@ namespace Phpactor\Completion\Bridge\TolerantParser;
 use Generator;
 use Microsoft\PhpParser\Node;
 use Phpactor\Completion\Bridge\TolerantParser\Qualifier\AlwaysQualfifier;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocument;
 
 class LimitingCompletor implements TolerantCompletor, TolerantQualifiable
 {
@@ -27,7 +29,7 @@ class LimitingCompletor implements TolerantCompletor, TolerantQualifiable
     /**
      * {@inheritDoc}
      */
-    public function complete(Node $node, string $source, int $offset): Generator
+    public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
         /** @var TolerantCompletor $completor */
         $completor = $this->completor;

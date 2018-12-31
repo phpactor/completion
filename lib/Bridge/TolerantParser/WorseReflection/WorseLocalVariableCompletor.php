@@ -6,6 +6,8 @@ use Generator;
 use Microsoft\PhpParser\Node;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\Helper\VariableCompletionHelper;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocument;
 use Phpactor\WorseReflection\Reflector;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
@@ -38,7 +40,7 @@ class WorseLocalVariableCompletor implements TolerantCompletor
         $this->variableCompletionHelper = $variableCompletionHelper ?: new VariableCompletionHelper($reflector);
     }
 
-    public function complete(Node $node, string $source, int $offset): Generator
+    public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
         if (false === $this->couldComplete($node, $source, $offset)) {
             return;
@@ -55,7 +57,7 @@ class WorseLocalVariableCompletor implements TolerantCompletor
         }
     }
 
-    private function couldComplete(Node $node = null, string $source, int $offset): bool
+    private function couldComplete(Node $node = null, TextDocument $source, ByteOffset $offset): bool
     {
         if (null === $node) {
             return false;

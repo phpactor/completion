@@ -3,11 +3,13 @@
 namespace Phpactor\Completion\Core;
 
 use Generator;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocument;
 
 interface Completor
 {
     /**
      * @return Generator & iterable<Suggestion>
      */
-    public function complete(string $source, int $byteOffset): Generator;
+    public function complete(TextDocument $source, ByteOffset $byteOffset): Generator;
 }

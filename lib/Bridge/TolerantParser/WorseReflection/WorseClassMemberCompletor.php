@@ -10,6 +10,8 @@ use Phpactor\Completion\Bridge\TolerantParser\Qualifier\ClassMemberQualifier;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifiable;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifier;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocument;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Inference\SymbolContext;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionClass;
@@ -46,7 +48,7 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
         return new ClassMemberQualifier();
     }
 
-    public function complete(Node $node, string $source, int $offset): Generator
+    public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
         if ($node instanceof MemberAccessExpression) {
             $offset = $node->arrowToken->getFullStart();

@@ -9,13 +9,15 @@ use Phpactor\Completion\Bridge\TolerantParser\Qualifier\AlwaysQualfifier;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifiable;
 use Phpactor\Completion\Core\Suggestion;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocument;
+use Phpactor\TextDocument\TextDocumentBuilder;
 use Prophecy\Prophecy\ObjectProphecy;
 
 class LimitingCompletorTest extends TestCase
 {
     const EXAMPLE_SOURCE = '<?php';
     const EXAMPLE_OFFSET = 15;
-
 
     /**
      * @var ObjectProphecy
@@ -37,8 +39,8 @@ class LimitingCompletorTest extends TestCase
     {
         $this->innerCompletor->complete(
             $this->node->reveal(),
-            self::EXAMPLE_SOURCE,
-            self::EXAMPLE_OFFSET
+            $this->textDocument(self::EXAMPLE_SOURCE),
+            ByteOffset::fromInt(self::EXAMPLE_OFFSET)
         )->will(function () {
             return;
             yield;
@@ -46,8 +48,8 @@ class LimitingCompletorTest extends TestCase
 
         $suggestions = $this->create(10)->complete(
             $this->node->reveal(),
-            self::EXAMPLE_SOURCE,
-            self::EXAMPLE_OFFSET
+            $this->textDocument(self::EXAMPLE_SOURCE),
+            ByteOffset::fromInt(self::EXAMPLE_OFFSET)
         );
 
         $this->assertCount(0, $suggestions);
@@ -65,8 +67,8 @@ class LimitingCompletorTest extends TestCase
 
         $suggestions = $this->create(10)->complete(
             $this->node->reveal(),
-            self::EXAMPLE_SOURCE,
-            self::EXAMPLE_OFFSET
+            $this->textDocument(self::EXAMPLE_SOURCE),
+            ByteOffset::fromInt(self::EXAMPLE_OFFSET)
         );
 
         $this->assertCount(3, $suggestions);
@@ -84,8 +86,8 @@ class LimitingCompletorTest extends TestCase
 
         $suggestions = $this->create(2)->complete(
             $this->node->reveal(),
-            self::EXAMPLE_SOURCE,
-            self::EXAMPLE_OFFSET
+            $this->textDocument(self::EXAMPLE_SOURCE),
+            ByteOffset::fromInt(self::EXAMPLE_OFFSET)
         );
 
         $this->assertCount(2, $suggestions);
@@ -125,12 +127,17 @@ class LimitingCompletorTest extends TestCase
     {
         $this->innerCompletor->complete(
             $this->node->reveal(),
-            self::EXAMPLE_SOURCE,
-            self::EXAMPLE_OFFSET
+            $this->textDocument(self::EXAMPLE_SOURCE),
+            ByteOffset::fromInt(self::EXAMPLE_OFFSET)
         )->will(function () use ($suggestions) {
             foreach ($suggestions as $suggestion) {
                 yield $suggestion;
             }
         });
+    }
+
+    private function textDocument(string $document): TextDocument
+    {
+        return TextDocumentBuilder::create($document)->build();
     }
 }

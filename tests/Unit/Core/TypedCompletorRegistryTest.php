@@ -7,6 +7,8 @@ use Phpactor\Completion\Core\ChainCompletor;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\TypedCompletor;
 use Phpactor\Completion\Core\TypedCompletorRegistry;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocumentBuilder;
 
 class TypedCompletorRegistryTest extends TestCase
 {
@@ -19,10 +21,16 @@ class TypedCompletorRegistryTest extends TestCase
         ]);
         $completorForType = $registry->completorForType('cucumber');
 
-        $completor->complete('foo', 123)->shouldBeCalled();
+        $completor->complete(
+            TextDocumentBuilder::create('foo')->build(),
+            ByteOffset::fromInt(123)
+        )->shouldBeCalled();
 
         $this->assertInstanceOf(ChainCompletor::class, $completorForType);
 
-        iterator_to_array($completorForType->complete('foo', 123));
+        iterator_to_array($completorForType->complete(
+            TextDocumentBuilder::create('foo')->build(),
+            ByteOffset::fromInt(123)
+        ));
     }
 }
