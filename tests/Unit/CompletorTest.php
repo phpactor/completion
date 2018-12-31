@@ -5,6 +5,9 @@ namespace Phpactor\Completion\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Core\ChainCompletor;
 use Phpactor\Completion\Core\Completor;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocument;
+use Phpactor\TextDocument\TextDocumentBuilder;
 use Prophecy\Prophecy\ObjectProphecy;
 use Phpactor\Completion\Core\Suggestion;
 
@@ -15,8 +18,8 @@ class CompletorTest extends TestCase
      */
     private $completor1;
 
-    const TEST_SOURCE = 'test source';
-    const TEST_OFFSET = 1234;
+    const EXAMPLE_SOURCE = 'test source';
+    const EXAMPLE_OFFSET = 1234;
 
     public function setUp()
     {
@@ -26,7 +29,7 @@ class CompletorTest extends TestCase
     public function testEmptyGeneratorWithNoCompletors()
     {
         $completor = $this->create([]);
-        $suggestions = $completor->complete(self::TEST_SOURCE, self::TEST_OFFSET);
+        $suggestions = $completor->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET));
 
         $this->assertCount(0, $suggestions);
     }
@@ -37,14 +40,14 @@ class CompletorTest extends TestCase
             $this->completor1->reveal()
         ]);
 
-        $this->completor1->complete(self::TEST_SOURCE, self::TEST_OFFSET)
+        $this->completor1->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET))
             ->shouldBeCalled()
             ->will(function () {
                 return;
                 yield;
             });
 
-        $suggestions = iterator_to_array($completor->complete(self::TEST_SOURCE, self::TEST_OFFSET));
+        $suggestions = iterator_to_array($completor->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET)));
 
         $this->assertCount(0, $suggestions);
     }
@@ -59,7 +62,7 @@ class CompletorTest extends TestCase
             $this->completor1->reveal()
         ]);
 
-        $this->completor1->complete(self::TEST_SOURCE, self::TEST_OFFSET)
+        $this->completor1->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET))
             ->shouldBeCalled()
             ->will(function () use ($expected) {
                 foreach ($expected as $suggestion) {
@@ -67,7 +70,7 @@ class CompletorTest extends TestCase
                 }
             });
 
-        $suggestions = iterator_to_array($completor->complete(self::TEST_SOURCE, self::TEST_OFFSET));
+        $suggestions = iterator_to_array($completor->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET)));
 
         $this->assertEquals($expected, $suggestions);
     }
@@ -78,5 +81,10 @@ class CompletorTest extends TestCase
     public function create(array $completors): ChainCompletor
     {
         return new ChainCompletor($completors);
+    }
+
+    private function textDocument(string $document): TextDocument
+    {
+        return TextDocumentBuilder::create($document)->build();
     }
 }

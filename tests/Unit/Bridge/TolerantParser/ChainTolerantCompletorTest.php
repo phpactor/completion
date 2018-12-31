@@ -11,6 +11,8 @@ use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifiable;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifier;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\TestUtils\ExtractOffset;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocumentBuilder;
 use Prophecy\Argument;
 
 class ChainTolerantCompletorTest extends TestCase
@@ -53,7 +55,10 @@ class ChainTolerantCompletorTest extends TestCase
     public function testEmptyResponseWithNoCompletors()
     {
         $completor = $this->create([]);
-        $suggestions = $completor->complete('<?php ', 1);
+        $suggestions = $completor->complete(
+            TextDocumentBuilder::create('<?php ')->build(),
+            ByteOffset::fromInt(1)
+        );
         $this->assertCount(0, $suggestions);
     }
 
@@ -65,13 +70,16 @@ class ChainTolerantCompletorTest extends TestCase
 
         $this->completor1->complete(
             Argument::type(Node::class),
-            '<?php ',
-            1
+            TextDocumentBuilder::create('<?php ')->build(),
+            ByteOffset::fromInt(1)
         )->will(function () {
             yield Suggestion::create('foo');
         });
 
-        $suggestions = $completor->complete('<?php ', 1);
+        $suggestions = $completor->complete(
+            TextDocumentBuilder::create('<?php ')->build(),
+            ByteOffset::fromInt(1)
+        );
         $this->assertCount(1, $suggestions);
     }
 
@@ -108,7 +116,10 @@ EOT
             return;
         });
 
-        $completor->complete($source, $offset);
+        $completor->complete(
+            TextDocumentBuilder::create($source)->build(),
+            ByteOffset::fromInt($offset)
+        );
         $this->addToAssertionCount(1);
     }
 
@@ -128,14 +139,17 @@ EOT
 
         $this->qualifiableCompletor1->complete(
             Argument::type(Node::class),
-            '<?php ',
-            1
+            TextDocumentBuilder::create('<?php ')->build(),
+            ByteOffset::fromInt(1)
         )->will(function () {
             yield Suggestion::create('foo');
         });
         $this->qualifiableCompletor2->complete(Argument::cetera())->shouldNotBeCalled();
 
-        $suggestions = $completor->complete('<?php ', 1);
+        $suggestions = $completor->complete(
+            TextDocumentBuilder::create('<?php ')->build(),
+            ByteOffset::fromInt(1)
+        );
         $this->assertCount(1, $suggestions);
     }
 

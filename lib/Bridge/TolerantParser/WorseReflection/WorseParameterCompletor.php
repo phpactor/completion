@@ -14,6 +14,8 @@ use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 use Microsoft\PhpParser\Node\Expression\Variable;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocument;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Inference\Variable as WorseVariable;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionFunctionLike;
@@ -22,7 +24,7 @@ use Phpactor\WorseReflection\Core\Type;
 
 class WorseParameterCompletor extends AbstractParameterCompletor implements TolerantCompletor
 {
-    public function complete(Node $node, string $source, int $offset): Generator
+    public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
         // Tolerant parser _seems_ to resolve f.e. offset 74 as the qualified
         // name of the node, when it is actually the open bracket. If it is a qualified

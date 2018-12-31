@@ -3,6 +3,8 @@
 namespace Phpactor\Completion\Core;
 
 use Generator;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocument;
 
 class ChainCompletor implements Completor
 {
@@ -19,7 +21,7 @@ class ChainCompletor implements Completor
         $this->completors = $completors;
     }
 
-    public function complete(string $source, int $offset): Generator
+    public function complete(TextDocument $source, ByteOffset $offset): Generator
     {
         foreach ($this->completors as $completor) {
             foreach ($completor->complete($source, $offset) as $suggestion) {

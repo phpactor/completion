@@ -10,9 +10,10 @@
         }
     ],
     "require": {
-        "phpactor/worse-reflection": "dev-master",
+        "phpactor/worse-reflection": "~0.2",
         "phpactor/source-code-filesystem": "dev-master",
-        "phpactor/class-to-file": "dev-master"
+        "phpactor/class-to-file": "dev-master",
+        "phpactor/text-document": "^1.0@dev"
     },
     "require-dev": {
         "phpbench/phpbench": "^1.0@dev",
@@ -33,7 +34,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.1.x-dev"
+            "dev-master": "0.2.x-dev"
         }
     }
 }

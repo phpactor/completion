@@ -5,6 +5,7 @@ namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection\Helper;
 use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Node\Expression\AssignmentExpression;
 use Microsoft\PhpParser\Node\Expression\Variable as ParserVariable;
+use Phpactor\TextDocument\ByteOffset;
 use Phpactor\WorseReflection\Core\Inference\Frame;
 use Phpactor\WorseReflection\Core\Inference\Variable;
 use Phpactor\WorseReflection\Reflector;
@@ -24,14 +25,14 @@ class VariableCompletionHelper
     /**
      * @return Variable[]
      */
-    public function variableCompletions(Node $node, string $source, int $offset): array
+    public function variableCompletions(Node $node, string $source, ByteOffset $offset): array
     {
         $partialMatch = '';
         if ($node instanceof ParserVariable) {
             $partialMatch = $node->getText();
         }
 
-        $offset = $this->offsetToReflect($node, $offset);
+        $offset = $this->offsetToReflect($node, $offset->toInt());
         $reflectionOffset = $this->reflector->reflectOffset($source, $offset);
         $frame = $reflectionOffset->frame();
 

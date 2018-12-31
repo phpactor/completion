@@ -5,11 +5,13 @@ namespace Phpactor\Completion\Bridge\TolerantParser;
 use Generator;
 use Microsoft\PhpParser\Node;
 use Phpactor\Completion\Core\Suggestion;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocument;
 
 interface TolerantCompletor
 {
     /**
      * @return Generator & iterable<Suggestion>
      */
-    public function complete(Node $node, string $source, int $offset): Generator;
+    public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator;
 }
