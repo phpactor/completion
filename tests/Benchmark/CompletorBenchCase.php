@@ -4,6 +4,8 @@ namespace Phpactor\Completion\Tests\Benchmark;
 
 use Phpactor\Completion\Core\Completor;
 use Phpactor\TestUtils\ExtractOffset;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocumentBuilder;
 
 abstract class CompletorBenchCase
 {
@@ -35,7 +37,10 @@ abstract class CompletorBenchCase
      */
     public function benchComplete($params)
     {
-        iterator_to_array($this->completor->complete($this->source, $this->offset));
+        iterator_to_array($this->completor->complete(
+            TextDocumentBuilder::create($this->source)->build(),
+            ByteOffset::fromInt($this->offset)
+        ));
     }
 
     public function provideComplete()
