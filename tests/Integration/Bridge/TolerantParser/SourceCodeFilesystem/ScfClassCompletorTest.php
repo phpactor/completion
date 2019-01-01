@@ -39,7 +39,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Alphabet',
                     'short_description' => 'Test\Name\Alphabet',
-                    'range' => Range::fromStartAndEnd(27, 27),
+                    'range' => [ 27, 27 ],
                 ],
                 [
                     'type' => Suggestion::TYPE_CLASS,
@@ -66,7 +66,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'Clapping',
                     'short_description' => 'Test\Name\Clapping',
-                    'range' => Range::fromStartAndEnd(27, 29),
+                    'range' => [ 27, 29 ],
                 ],
             ],
         ];

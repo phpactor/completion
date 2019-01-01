@@ -119,7 +119,7 @@ class Suggestion
             'label' => $this->label(),
             'short_description' => $this->shortDescription(),
             'class_import' => $this->classImport(),
-            'range' => $this->range,
+            'range' => $this->range ? $this->range->toArray() : null,
 
             // deprecated: in favour of short_description, to be removed
             // after 0.10.0

@@ -39,4 +39,9 @@ class Range
     {
         return $this->byteEnd;
     }
+
+    public function toArray()
+    {
+        return [ $this->byteStart->toInt(), $this->byteEnd->toInt() ];
+    }
 }
