@@ -117,10 +117,10 @@ class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
             : null;
     }
 
-    private function getRange(Node $node, int $offset)
+    private function getRange(Node $node, ByteOffset $offset): Range
     {
         if ($node instanceof QualifiedName) {
-            return new Range($node->getStart(), $node->getEndPosition());
+            return Range::fromStartAndEnd($node->getStart(), $node->getEndPosition());
         }
 
         return new Range($offset, $offset);

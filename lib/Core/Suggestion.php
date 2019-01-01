@@ -150,14 +150,13 @@ class Suggestion
         return $this->classImport;
     }
 
-<<<<<<< HEAD
     public function label(): string
     {
         return $this->label;
-=======
+    }
+
     public function range(): ?Range
     {
         return $this->range;
->>>>>>> adds Range to suggestion
     }
 }

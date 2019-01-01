@@ -2,32 +2,41 @@
 
 namespace Phpactor\Completion\Core;
 
+use Phpactor\TextDocument\ByteOffset;
+
 class Range
 {
     /**
-     * @var int
+     * @var ByteOffset
      */
     private $byteStart;
 
     /**
-     * @var int
+     * @var ByteOffset
      */
     private $byteEnd;
 
-    public function __construct(int $byteStart, int $byteEnd)
+    public function __construct(ByteOffset $byteStart, ByteOffset $byteEnd)
     {
         $this->byteStart = $byteStart;
         $this->byteEnd = $byteEnd;
     }
 
-    public function start(): int
+    public static function fromStartAndEnd(int $byteStart, int $byteEnd)
+    {
+        return new self(
+            ByteOffset::fromInt($byteStart),
+            ByteOffset::fromInt($byteEnd)
+        );
+    }
+
+    public function start(): ByteOffset
     {
         return $this->byteStart;
     }
 
-    public function end(): int
+    public function end(): ByteOffset
     {
         return $this->byteEnd;
     }
-
 }
