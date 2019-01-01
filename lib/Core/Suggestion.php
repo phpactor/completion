@@ -55,18 +55,25 @@ class Suggestion
      */
     private $label;
 
+    /**
+     * @var Range|null
+     */
+    private $range;
+
     private function __construct(
         string $name,
-        string $type = null,
-        string $shortDescription = null,
-        string $classImport = null,
-        string $label = null
+        ?string $type = null,
+        ?string $shortDescription = null,
+        ?string $classImport = null,
+        ?string $label = null,
+        ?Range $range = null
     ) {
         $this->type = $type;
         $this->name = $name;
         $this->shortDescription = $shortDescription;
         $this->classImport = $classImport;
         $this->label = $label ?: $name;
+        $this->range = $range;
     }
 
     public static function create(string $name)
@@ -81,6 +88,7 @@ class Suggestion
             'type' => null,
             'class_import' => null,
             'label' => null,
+            'range' => null,
         ];
 
         if ($diff = array_diff(array_keys($options), array_keys($defaults))) {
@@ -98,7 +106,8 @@ class Suggestion
             $options['type'],
             $options['short_description'],
             $options['class_import'],
-            $options['label']
+            $options['label'],
+            $options['range']
         );
     }
 
@@ -110,6 +119,7 @@ class Suggestion
             'label' => $this->label(),
             'short_description' => $this->shortDescription(),
             'class_import' => $this->classImport(),
+            'range' => $this->range,
 
             // deprecated: in favour of short_description, to be removed
             // after 0.10.0
@@ -130,18 +140,12 @@ class Suggestion
         return $this->name;
     }
 
-    /**
-     * @return string|null
-     */
-    public function shortDescription()
+    public function shortDescription(): ?string
     {
         return $this->shortDescription;
     }
 
-    /**
-     * @return string|null
-     */
-    public function classImport()
+    public function classImport(): ?string
     {
         return $this->classImport;
     }
@@ -149,5 +153,10 @@ class Suggestion
     public function label(): string
     {
         return $this->label;
+    }
+
+    public function range(): ?Range
+    {
+        return $this->range;
     }
 }
