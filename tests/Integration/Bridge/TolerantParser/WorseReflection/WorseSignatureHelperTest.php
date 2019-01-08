@@ -101,5 +101,35 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                 null
             )
         ];
+
+        yield 'static method call' => [
+            '<?php class Foo { static function hello(string $foo, int $bar) {} }; Foo::hello(<>',
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'pub hello(string $foo, int $bar)',
+                    [
+                        new ParameterInformation('foo', 'string $foo'),
+                        new ParameterInformation('bar', 'int $bar'),
+                    ]
+                )],
+                0,
+                null
+            )
+        ];
+
+        yield 'static method call, 2nd active' => [
+            '<?php class Foo { static function hello(string $foo, int $bar) {} }; Foo::hello("hello",<>',
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'pub hello(string $foo, int $bar)',
+                    [
+                        new ParameterInformation('foo', 'string $foo'),
+                        new ParameterInformation('bar', 'int $bar'),
+                    ]
+                )],
+                1,
+                null
+            )
+        ];
     }
 }
