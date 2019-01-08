@@ -2,6 +2,7 @@
 
 namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
+use Microsoft\PhpParser\Node\DelimitedList\ArgumentExpressionList;
 use Microsoft\PhpParser\Node\Expression\CallExpression;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Microsoft\PhpParser\Parser;
@@ -49,13 +50,24 @@ class WorseSignatureHelper implements SignatureHelper
     ): SignatureHelp
     {
         $rootNode = $this->parser->parseSourceFile($textDocument->__toString());
-        $node = $rootNode->getDescendantNodeAtPosition($offset->toInt());
+        $nodeAtPosition = $node = $rootNode->getDescendantNodeAtPosition($offset->toInt());
 
-        if (!$node instanceof CallExpression) {
-            throw new CouldNotHelpWithSignature(sprintf('Could not provide signature for AST node of type "%s"', get_class($node)));
+        if (!$nodeAtPosition instanceof CallExpression) {
+            $node = $node->getFirstAncestor(CallExpression::class);
+        }
+
+        if (null === $node) {
+            throw new CouldNotHelpWithSignature(sprintf('Could not provide signature for AST node of type "%s"', get_class($nodeAtPosition)));
+        }
+
+        $position = 0;
+        if ($nodeAtPosition instanceof ArgumentExpressionList) {
+            $text = $nodeAtPosition->getText();
+            $position = substr_count($text, ',');
         }
 
         $callable = $node->callableExpression;
+
         if ($callable instanceof QualifiedName) {
             $signatures = [];
             $name = $callable->__toString();
@@ -72,7 +84,7 @@ class WorseSignatureHelper implements SignatureHelper
             $formatted = $this->formatter->format($functionReflection);
             $signatures[] = new SignatureInformation($formatted, $parameters);
 
-            return new SignatureHelp($signatures, 0);
+            return new SignatureHelp($signatures, $position);
         }
     }
 }
