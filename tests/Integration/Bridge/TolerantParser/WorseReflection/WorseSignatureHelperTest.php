@@ -7,31 +7,33 @@ use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseSignatureHelp
 use Phpactor\Completion\Core\Exception\CouldNotHelpWithSignature;
 use Phpactor\Completion\Core\SignatureHelp;
 use Phpactor\Completion\Core\SignatureInformation;
+use Phpactor\Completion\Tests\Integration\CompletorTestCase;
+use Phpactor\Completion\Tests\Integration\IntegrationTestCase;
 use Phpactor\TestUtils\ExtractOffset;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocumentBuilder;
 use Phpactor\WorseReflection\ReflectorBuilder;
 
-class WorseSignatureHelperTest extends TestCase
+class WorseSignatureHelperTest extends IntegrationTestCase
 {
     /**
      * @dataProvider provideSignatureHelper
      */
     public function testSignatureHelper(string $source, ?SignatureHelp $expected)
     {
+        if ($expected === null) {
+            $this->expectException(CouldNotHelpWithSignature::class);
+        }
+
         [ $source, $offset ] = ExtractOffset::fromSource($source);
         $reflector = ReflectorBuilder::create()->addSource($source)->build();
 
-        $helper = new WorseSignatureHelper($reflector);
+        $helper = new WorseSignatureHelper($reflector, $this->formatter());
 
-        try {
-            $help = $helper->signatureHelp(
-                TextDocumentBuilder::create($source)->language('php')->build(),
-                ByteOffset::fromInt($offset)
-            );
-        } catch (CouldNotHelpWithSignature $couldNotHelp) {
-            $help = null;
-        }
+        $help = $helper->signatureHelp(
+            TextDocumentBuilder::create($source)->language('php')->build(),
+            ByteOffset::fromInt($offset)
+        );
 
         $this->assertEquals($expected, $help);
     }
@@ -44,7 +46,7 @@ class WorseSignatureHelperTest extends TestCase
         ];
 
         yield 'function signature with no parameters' => [
-            '<?php function hello() {}; hello<>(',
+            '<?php function hello() {}; hello(<>',
             new SignatureHelp(
                 [new SignatureInformation(
                     'hello()',
