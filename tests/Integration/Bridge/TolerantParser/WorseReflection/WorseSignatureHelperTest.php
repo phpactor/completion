@@ -131,5 +131,25 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                 null
             )
         ];
+
+        yield 'static method call, on variable' => [
+            '<?php $foo = "Foo"; $foo::hello("hello",<>',
+            null
+        ];
+
+        yield 'instance method' => [
+            '<?php class Foo { function hello(string $foo, int $bar) {} }; $foo = new Foo(); $foo->hello(<>',
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'pub hello(string $foo, int $bar)',
+                    [
+                        new ParameterInformation('foo', 'string $foo'),
+                        new ParameterInformation('bar', 'int $bar'),
+                    ]
+                )],
+                1,
+                null
+            )
+        ];
     }
 }

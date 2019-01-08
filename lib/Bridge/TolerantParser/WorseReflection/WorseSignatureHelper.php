@@ -77,6 +77,12 @@ class WorseSignatureHelper implements SignatureHelper
         }
 
         if ($callable instanceof ScopedPropertyAccessExpression) {
+            $scopeResolutionQualifier = $callable->scopeResolutionQualifier;
+
+            if (!$scopeResolutionQualifier instanceof QualifiedName) {
+                throw new CouldNotHelpWithSignature(sprintf('Static calls only supported with qualified names'));
+            }
+
             $class = $callable->scopeResolutionQualifier->getResolvedName();
             $reflectionClass = $this->reflector->reflectClass($class->__toString());
             $memberName = $callable->memberName->getText($node->getFileContents());
