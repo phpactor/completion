@@ -24,7 +24,7 @@ class SignatureInformation
      */
     private $documentation;
 
-    private function __construct(string $label, array $parameters, string $documentation = null)
+    public function __construct(string $label, array $parameters, string $documentation = null)
     {
         $this->label = $label;
         $this->documentation = $documentation;

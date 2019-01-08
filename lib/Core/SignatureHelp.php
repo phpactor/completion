@@ -15,14 +15,14 @@ final class SignatureHelp
     private $activeSignature;
 
     /**
-     * @var int
+     * @var int|null
      */
     private $activeParameter;
 
     public function __construct(
         array $signatures = [],
         $activeSignature,
-        int $activeParameter
+        ?int $activeParameter = null
     )
     {
         $this->signatures = $signatures;
@@ -30,7 +30,7 @@ final class SignatureHelp
         $this->activeParameter = $activeParameter;
     }
 
-    public function activeParameter(): int
+    public function activeParameter(): ?int
     {
         return $this->activeParameter;
     }
