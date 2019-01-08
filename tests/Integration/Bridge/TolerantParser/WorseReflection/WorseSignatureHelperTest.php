@@ -5,6 +5,7 @@ namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseRefle
 use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseSignatureHelper;
 use Phpactor\Completion\Core\Exception\CouldNotHelpWithSignature;
+use Phpactor\Completion\Core\ParameterInformation;
 use Phpactor\Completion\Core\SignatureHelp;
 use Phpactor\Completion\Core\SignatureInformation;
 use Phpactor\Completion\Tests\Integration\CompletorTestCase;
@@ -51,6 +52,20 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                 [new SignatureInformation(
                     'hello()',
                     []
+                )],
+                0,
+                null
+            )
+        ];
+
+        yield 'function with parameter' => [
+            '<?php function hello(string $foo) {}; hello(<>',
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'hello(string $foo)',
+                    [
+                        new ParameterInformation('foo', 'string $foo'),
+                    ]
                 )],
                 0,
                 null

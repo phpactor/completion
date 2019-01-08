@@ -66,7 +66,7 @@ class WorseSignatureHelper implements SignatureHelper
             /** @var ReflectionParameter $parameter */
             foreach ($functionReflection->parameters() as $parameter) {
                 $formatted = $this->formatter->format($parameter);
-                $parameter = new ParameterInformation($parameter->name(), $formatted);
+                $parameters[] = new ParameterInformation($parameter->name(), $formatted);
             }
 
             $formatted = $this->formatter->format($functionReflection);
