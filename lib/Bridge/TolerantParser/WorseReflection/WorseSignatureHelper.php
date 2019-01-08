@@ -8,6 +8,7 @@ use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Microsoft\PhpParser\Parser;
+use Microsoft\PhpParser\Token;
 use Phpactor\Completion\Core\Exception\CouldNotHelpWithSignature;
 use Phpactor\Completion\Core\Formatter\Formatter;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
@@ -59,11 +60,12 @@ class WorseSignatureHelper implements SignatureHelper
         if (!$nodeAtPosition instanceof CallExpression) {
             $node = $node->getFirstAncestor(CallExpression::class);
         }
-        assert($node instanceof CallExpression);
 
-        if (null === $node) {
+        if (is_null($node)) {
             throw new CouldNotHelpWithSignature(sprintf('Could not provide signature for AST node of type "%s"', get_class($nodeAtPosition)));
         }
+
+        assert($node instanceof CallExpression);
 
         $position = 0;
         if ($nodeAtPosition instanceof ArgumentExpressionList) {
@@ -71,6 +73,7 @@ class WorseSignatureHelper implements SignatureHelper
             $position = substr_count($text, ',');
         }
 
+        /** @var Node $callable */
         $callable = $node->callableExpression;
 
         if ($callable instanceof QualifiedName) {
@@ -94,9 +97,16 @@ class WorseSignatureHelper implements SignatureHelper
 
             $containerType = $symbolContext->containerType();
 
+            if (null === $containerType) {
+                throw new CouldNotHelpWithSignature(sprintf(
+                    'Could not determine container type for: "%s"',
+                    $symbolContext->symbol()->name()
+                ));
+            }
+
             if (!$containerType->isClass()) {
                 throw new CouldNotHelpWithSignature(sprintf(
-                    'Could not determine container type for member: "%s"',
+                    'Container type is not a class: "%s"',
                     $symbolContext->symbol()->name()
                 ));
             }
@@ -143,9 +153,17 @@ class WorseSignatureHelper implements SignatureHelper
             throw new CouldNotHelpWithSignature(sprintf('Static calls only supported with qualified names'));
         }
         
-        $class = $callable->scopeResolutionQualifier->getResolvedName();
-        $reflectionClass = $this->reflector->reflectClass($class->__toString());
-        $memberName = $callable->memberName->getText($node->getFileContents());
+        $class = $scopeResolutionQualifier->getResolvedName();
+
+        $reflectionClass = $this->reflector->reflectClass((string) $class);
+
+        $memberName = $callable->memberName;
+
+        if (!$memberName instanceof Token) {
+            throw new CouldNotHelpWithSignature('Variable member names not supported');
+        }
+
+        $memberName = $memberName->getText($node->getFileContents());
         $reflectionMethod = $reflectionClass->methods()->get($memberName);
         
         return $this->createSignatureHelp($reflectionMethod, $position);
