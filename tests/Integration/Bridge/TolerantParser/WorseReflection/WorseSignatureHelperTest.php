@@ -71,5 +71,20 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                 null
             )
         ];
+
+        yield 'function with parameters' => [
+            '<?php function hello(string $foo, int $bar) {}; hello(<>',
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'hello(string $foo, int $bar)',
+                    [
+                        new ParameterInformation('foo', 'string $foo'),
+                        new ParameterInformation('bar', 'int $bar'),
+                    ]
+                )],
+                0,
+                null
+            )
+        ];
     }
 }
