@@ -147,7 +147,7 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                         new ParameterInformation('bar', 'int $bar'),
                     ]
                 )],
-                1,
+                0,
                 null
             )
         ];

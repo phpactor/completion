@@ -4,6 +4,7 @@ namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
 use Microsoft\PhpParser\Node\DelimitedList\ArgumentExpressionList;
 use Microsoft\PhpParser\Node\Expression\CallExpression;
+use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Microsoft\PhpParser\Parser;
@@ -77,21 +78,36 @@ class WorseSignatureHelper implements SignatureHelper
         }
 
         if ($callable instanceof ScopedPropertyAccessExpression) {
-            $scopeResolutionQualifier = $callable->scopeResolutionQualifier;
+            return $this->signatureHelpForScopedPropertyAccess($callable, $node, $position);
+        }
 
-            if (!$scopeResolutionQualifier instanceof QualifiedName) {
-                throw new CouldNotHelpWithSignature(sprintf('Static calls only supported with qualified names'));
+        if ($callable instanceof MemberAccessExpression) {
+            $reflectionOffset = $this->reflector->reflectOffset($textDocument, $offset->toInt());
+            $symbolContext = $reflectionOffset->symbolContext();
+
+            if ($symbolContext->symbol()->symbolType() !== Symbol::METHOD) {
+                throw new CouldNotHelpWithSignature(sprintf(
+                    'Could not provide signature member type "%s"',
+                    $symbolContext->symbol()->symbolType()
+                ));
             }
 
-            $class = $callable->scopeResolutionQualifier->getResolvedName();
-            $reflectionClass = $this->reflector->reflectClass($class->__toString());
-            $memberName = $callable->memberName->getText($node->getFileContents());
-            $reflectionMethod = $reflectionClass->methods()->get($memberName);
+            $containerType = $symbolContext->containerType();
+
+            if (!$containerType->isClass()) {
+                throw new CouldNotHelpWithSignature(sprintf(
+                    'Could not determine container type for member: "%s"',
+                    $symbolContext->symbol()->name()
+                ));
+            }
+
+            $reflectionClass = $this->reflector->reflectClass($containerType->className());
+            $reflectionMethod = $reflectionClass->methods()->get($symbolContext->symbol()->name());
 
             return $this->createSignatureHelp($reflectionMethod, $position);
         }
 
-        throw new CouldNotHelpWithSignature(sprintf('Could not provide signature for AST node of type "%s"', get_class($nodeAtPosition)));
+        throw new CouldNotHelpWithSignature(sprintf('Could not provide signature for AST node of type "%s"', get_class($callable)));
     }
 
     private function signatureHelpForFunction(QualifiedName $callable, int $position): SignatureHelp
@@ -117,5 +133,21 @@ class WorseSignatureHelper implements SignatureHelper
         $signatures[] = new SignatureInformation($formatted, $parameters);
         
         return new SignatureHelp($signatures, $position);
+    }
+
+    private function signatureHelpForScopedPropertyAccess(ScopedPropertyAccessExpression $callable, CallExpression $node, int $position)
+    {
+        $scopeResolutionQualifier = $callable->scopeResolutionQualifier;
+        
+        if (!$scopeResolutionQualifier instanceof QualifiedName) {
+            throw new CouldNotHelpWithSignature(sprintf('Static calls only supported with qualified names'));
+        }
+        
+        $class = $callable->scopeResolutionQualifier->getResolvedName();
+        $reflectionClass = $this->reflector->reflectClass($class->__toString());
+        $memberName = $callable->memberName->getText($node->getFileContents());
+        $reflectionMethod = $reflectionClass->methods()->get($memberName);
+        
+        return $this->createSignatureHelp($reflectionMethod, $position);
     }
 }
