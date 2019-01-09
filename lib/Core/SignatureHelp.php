@@ -2,7 +2,7 @@
 
 namespace Phpactor\Completion\Core;
 
-final class SignatureHelp
+class SignatureHelp
 {
     /**
      * @var SignatureInformation[]
