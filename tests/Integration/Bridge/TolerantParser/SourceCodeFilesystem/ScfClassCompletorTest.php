@@ -6,7 +6,6 @@ use Generator;
 use Phpactor\ClassFileConverter\Adapter\Simple\SimpleFileToClass;
 use Phpactor\Completion\Bridge\TolerantParser\SourceCodeFilesystem\ScfClassCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
-use Phpactor\Completion\Core\Range;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
 use Phpactor\Filesystem\Adapter\Simple\SimpleFilesystem;
