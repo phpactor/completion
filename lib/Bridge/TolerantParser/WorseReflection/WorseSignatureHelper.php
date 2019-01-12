@@ -69,7 +69,7 @@ class WorseSignatureHelper implements SignatureHelper
             $position = substr_count($text, ',');
         }
 
-        /** @var Node $callable */
+        /** @var Node|QualfifiedName $callable */
         $callable = $node->callableExpression;
 
         if ($callable instanceof QualifiedName) {
@@ -81,7 +81,7 @@ class WorseSignatureHelper implements SignatureHelper
         }
 
         if ($callable instanceof MemberAccessExpression) {
-            $reflectionOffset = $this->reflector->reflectOffset($textDocument, $offset->toInt());
+            $reflectionOffset = $this->reflector->reflectOffset($textDocument, $callable->getEndPosition());
             $symbolContext = $reflectionOffset->symbolContext();
 
             if ($symbolContext->symbol()->symbolType() !== Symbol::METHOD) {
