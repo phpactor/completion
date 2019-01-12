@@ -10,7 +10,7 @@ use Psr\Log\LoggerInterface;
 class ChainSignatureHelper implements SignatureHelper
 {
     /**
-     * @var SignatureHelpHelper[]
+     * @var SignatureHelper[]
      */
     private $helpers = [];
 
@@ -30,14 +30,14 @@ class ChainSignatureHelper implements SignatureHelper
     public function signatureHelp(
         TextDocument $document,
         ByteOffset $offset
-    ): SignatureHelp
-    {
+    ): SignatureHelp {
         foreach ($this->helpers as $helper) {
             try {
                 return $helper->signatureHelp($document, $offset);
             } catch (CouldNotHelpWithSignature $couldNotHelp) {
                 $this->logger->debug(sprintf(
-                    'Could not provide signature: "%s"', $couldNotHelp->getMessage()
+                    'Could not provide signature: "%s"',
+                    $couldNotHelp->getMessage()
                 ));
             }
         }

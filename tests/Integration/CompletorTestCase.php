@@ -2,7 +2,6 @@
 
 namespace Phpactor\Completion\Tests\Integration;
 
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\TestUtils\ExtractOffset;

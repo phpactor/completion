@@ -23,8 +23,7 @@ class SignatureHelp
         array $signatures = [],
         $activeSignature,
         ?int $activeParameter = null
-    )
-    {
+    ) {
         $this->signatures = $signatures;
         $this->activeSignature = $activeSignature;
         $this->activeParameter = $activeParameter;

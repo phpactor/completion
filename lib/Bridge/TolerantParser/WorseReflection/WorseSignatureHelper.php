@@ -10,7 +10,6 @@ use Microsoft\PhpParser\Node\QualifiedName;
 use Microsoft\PhpParser\Parser;
 use Microsoft\PhpParser\Token;
 use Phpactor\Completion\Core\Exception\CouldNotHelpWithSignature;
-use Phpactor\Completion\Core\Formatter\Formatter;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\Completion\Core\ParameterInformation;
 use Phpactor\Completion\Core\SignatureHelp;
@@ -19,10 +18,8 @@ use Phpactor\Completion\Core\SignatureInformation;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
 use Phpactor\WorseReflection\Core\Inference\Symbol;
-use Phpactor\WorseReflection\Core\Reflection\ReflectionFunction;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionFunctionLike;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
-use Phpactor\WorseReflection\Core\Reflector\SourceCodeReflector;
 use Phpactor\WorseReflection\Reflector;
 
 class WorseSignatureHelper implements SignatureHelper
@@ -52,8 +49,7 @@ class WorseSignatureHelper implements SignatureHelper
     public function signatureHelp(
         TextDocument $textDocument,
         ByteOffset $offset
-    ): SignatureHelp
-    {
+    ): SignatureHelp {
         $rootNode = $this->parser->parseSourceFile($textDocument->__toString());
         $nodeAtPosition = $node = $rootNode->getDescendantNodeAtPosition($offset->toInt());
 
