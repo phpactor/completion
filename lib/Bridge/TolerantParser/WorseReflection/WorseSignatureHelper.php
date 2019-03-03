@@ -160,7 +160,7 @@ class WorseSignatureHelper implements SignatureHelper
         }
 
         $memberName = $memberName->getText($node->getFileContents());
-        $reflectionMethod = $reflectionClass->methods()->get($memberName);
+        $reflectionMethod = $reflectionClass->methods()->get((string) $memberName);
         
         return $this->createSignatureHelp($reflectionMethod, $position);
     }
