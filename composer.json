@@ -12,9 +12,9 @@
     "require": {
         "php": "^7.1",
         "phpactor/worse-reflection": "~0.2",
-        "phpactor/source-code-filesystem": "dev-master",
-        "phpactor/class-to-file": "dev-master",
-        "phpactor/text-document": "^1.0@dev"
+        "phpactor/source-code-filesystem": "~0.1",
+        "phpactor/class-to-file": "~0.3",
+        "phpactor/text-document": "^1.0"
     },
     "require-dev": {
         "phpbench/phpbench": "^1.0@dev",
@@ -35,7 +35,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.2.x-dev"
+            "dev-master": "0.3.x-dev"
         }
     }
 }
