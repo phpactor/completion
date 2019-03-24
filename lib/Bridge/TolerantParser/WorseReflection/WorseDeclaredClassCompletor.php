@@ -13,6 +13,7 @@ use Phpactor\Completion\Core\Suggestion;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
+use Phpactor\WorseReflection\Core\Name;
 use Phpactor\WorseReflection\Core\Reflector\ClassReflector;
 
 class WorseDeclaredClassCompletor implements TolerantCompletor, TolerantQualifiable
@@ -40,7 +41,8 @@ class WorseDeclaredClassCompletor implements TolerantCompletor, TolerantQualifia
     {
         $classes = get_declared_classes();
         $classes = array_filter($classes, function ($class) use ($node) {
-            return 0 === strpos($class, $node->getText());
+            $name = Name::fromString($class);
+            return 0 === strpos($name->short(), $node->getText());
         });
 
         foreach ($classes as $class) {
