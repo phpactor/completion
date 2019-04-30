@@ -164,5 +164,20 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                 null
             )
         ];
+
+        yield 'instance from an interface' => [
+            '<?php interface Foo { function hello(string $foo, int $bar): void }; function (Foo $foo) { $foo->hello(<>',
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'pub hello(string $foo, int $bar): void',
+                    [
+                        new ParameterInformation('foo', 'string $foo'),
+                        new ParameterInformation('bar', 'int $bar'),
+                    ]
+                )],
+                0,
+                null
+            )
+        ];
     }
 }

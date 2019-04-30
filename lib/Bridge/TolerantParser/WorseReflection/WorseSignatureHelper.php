@@ -107,7 +107,7 @@ class WorseSignatureHelper implements SignatureHelper
                 ));
             }
 
-            $reflectionClass = $this->reflector->reflectClass($containerType->className());
+            $reflectionClass = $this->reflector->reflectClassLike($containerType->className());
             $reflectionMethod = $reflectionClass->methods()->get($symbolContext->symbol()->name());
 
             return $this->createSignatureHelp($reflectionMethod, $position);
@@ -120,7 +120,7 @@ class WorseSignatureHelper implements SignatureHelper
     {
         $name = $callable->__toString();
         $functionReflection = $this->reflector->reflectFunction($name);
-        
+
         return $this->createSignatureHelp($functionReflection, $position);
     }
 
@@ -128,27 +128,27 @@ class WorseSignatureHelper implements SignatureHelper
     {
         $signatures = [];
         $parameters = [];
-        
+
         /** @var ReflectionParameter $parameter */
         foreach ($functionReflection->parameters() as $parameter) {
             $formatted = $this->formatter->format($parameter);
             $parameters[] = new ParameterInformation($parameter->name(), $formatted);
         }
-        
+
         $formatted = $this->formatter->format($functionReflection);
         $signatures[] = new SignatureInformation($formatted, $parameters);
-        
+
         return new SignatureHelp($signatures, $position);
     }
 
     private function signatureHelpForScopedPropertyAccess(ScopedPropertyAccessExpression $callable, CallExpression $node, int $position)
     {
         $scopeResolutionQualifier = $callable->scopeResolutionQualifier;
-        
+
         if (!$scopeResolutionQualifier instanceof QualifiedName) {
             throw new CouldNotHelpWithSignature(sprintf('Static calls only supported with qualified names'));
         }
-        
+
         $class = $scopeResolutionQualifier->getResolvedName();
 
         $reflectionClass = $this->reflector->reflectClass((string) $class);
@@ -161,7 +161,7 @@ class WorseSignatureHelper implements SignatureHelper
 
         $memberName = $memberName->getText($node->getFileContents());
         $reflectionMethod = $reflectionClass->methods()->get((string) $memberName);
-        
+
         return $this->createSignatureHelp($reflectionMethod, $position);
     }
 }
