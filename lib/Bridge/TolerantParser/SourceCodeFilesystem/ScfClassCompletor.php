@@ -71,16 +71,17 @@ class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
                 continue;
             }
 
-            $best = $candidates->best();
-            yield Suggestion::createWithOptions(
-                $best->name(),
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'short_description' => $best->__toString(),
-                    'class_import' => $this->getClassNameForImport($best, $imports, $currentNamespace),
-                    'range' => $this->getRange($node, $offset),
-                ]
-            );
+            foreach ($candidates->getIterator() as $candidate) {
+                yield Suggestion::createWithOptions(
+                    $candidate->name(),
+                    [
+                        'type' => Suggestion::TYPE_CLASS,
+                        'short_description' => $candidate->__toString(),
+                        'class_import' => $this->getClassNameForImport($candidate, $imports, $currentNamespace),
+                        'range' => $this->getRange($node, $offset),
+                    ]
+                );
+            }
         }
     }
 
