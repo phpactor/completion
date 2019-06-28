@@ -71,7 +71,7 @@ class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
                 continue;
             }
 
-            foreach ($candidates->getIterator() as $candidate) {
+            foreach ($candidates as $candidate) {
                 yield Suggestion::createWithOptions(
                     $candidate->name(),
                     [
