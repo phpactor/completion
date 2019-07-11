@@ -1,5 +1,6 @@
-/vendor/
+/vendor
+/tests/Workspace
+/tests/Assets/workspace
+/phpbench.json
 /composer.lock
-/phpunit.xml
-/composer.phar
 /.php_cs.cache

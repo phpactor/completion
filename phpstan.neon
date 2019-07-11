@@ -1,4 +1,9 @@
+includes:
+    - vendor/phpstan/phpstan/conf/config.level7.neon
+
 parameters:
-  ignoreErrors:
-    - '#ReflectionFunctionLike will always evaluate to false#'
-    - '#Instanceof between Microsoft\\PhpParser\\Token and Microsoft\\PhpParser\\Node\\Expression\\Variable will always evaluate#'
+    ignoreErrors:
+        
+    paths:
+        - lib
+

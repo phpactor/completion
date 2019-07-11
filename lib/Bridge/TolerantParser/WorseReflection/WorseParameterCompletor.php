@@ -67,10 +67,6 @@ class WorseParameterCompletor extends AbstractParameterCompletor implements Tole
             return;
         }
 
-        if (null === $reflectionFunctionLike) {
-            return;
-        }
-
         foreach ($this->populateResponse($callableExpression, $reflectionFunctionLike, $variables) as $suggestion) {
             yield $suggestion;
         }

@@ -1,10 +1,11 @@
 language: php
 
-sudo: false
-
 php:
     - 7.1
     - 7.2
+    - 7.3
+    
+sudo: false
 
 cache:
     directories:
@@ -14,6 +15,7 @@ before_script:
     - composer install
 
 script:
+    - ./vendor/bin/php-cs-fixer fix --dry-run
+    - ./vendor/bin/phpstan analyse lib -c phpstan.neon
     - ./vendor/bin/phpunit
-    - ./vendor/bin/phpbench run
-    - ./vendor/bin/phpstan analyse --level=7 lib
+    
