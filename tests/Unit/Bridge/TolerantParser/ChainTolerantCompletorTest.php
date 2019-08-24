@@ -102,7 +102,7 @@ class A
 $a = new A;
 $<>
 EOT
-    );
+        );
 
         // the parser node passed to the tolerant completor should be the one
         // at the requested char offset
