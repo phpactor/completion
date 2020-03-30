@@ -27,9 +27,10 @@ class WorseClassAliasCompletor implements TolerantCompletor, TolerantQualifiable
      */
     private $qualifier;
 
-    public function __construct(Reflector $reflector)
+    public function __construct(Reflector $reflector, ?ClassQualifier $qualifier = null)
     {
         $this->reflector = $reflector;
+        $this->qualifier = $qualifier ?: new ClassQualifier();
     }
 
     public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
@@ -61,6 +62,6 @@ class WorseClassAliasCompletor implements TolerantCompletor, TolerantQualifiable
 
     public function qualifier(): TolerantQualifier
     {
-        return new ClassQualifier();
+        return $this->qualifier;
     }
 }

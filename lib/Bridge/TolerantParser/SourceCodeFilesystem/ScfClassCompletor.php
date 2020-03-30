@@ -37,16 +37,16 @@ class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
      */
     private $qualifier;
 
-    public function __construct(Filesystem $filesystem, FileToClass $fileToClass)
+    public function __construct(Filesystem $filesystem, FileToClass $fileToClass, ?ClassQualifier $qualifier = null)
     {
         $this->filesystem = $filesystem;
         $this->fileToClass = $fileToClass;
-        $this->qualifier = new ClassQualifier();
+        $this->qualifier = $qualifier ?: new ClassQualifier();
     }
 
     public function qualifier(): TolerantQualifier
     {
-        return new ClassQualifier();
+        return $this->qualifier;
     }
 
     public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator

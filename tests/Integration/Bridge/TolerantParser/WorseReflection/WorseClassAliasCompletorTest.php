@@ -3,6 +3,7 @@
 namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseReflection;
 
 use Generator;
+use Phpactor\Completion\Bridge\TolerantParser\Qualifier\ClassQualifier;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseClassAliasCompletor;
 use Phpactor\Completion\Core\Suggestion;
@@ -14,7 +15,7 @@ class WorseClassAliasCompletorTest extends TolerantCompletorTestCase
     protected function createTolerantCompletor(string $source): TolerantCompletor
     {
         $reflector = ReflectorBuilder::create()->addSource($source)->build();
-        return new WorseClassAliasCompletor($reflector);
+        return new WorseClassAliasCompletor($reflector, new ClassQualifier(0));
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\SourceCode
 
 use Generator;
 use Phpactor\ClassFileConverter\Adapter\Simple\SimpleFileToClass;
+use Phpactor\Completion\Bridge\TolerantParser\Qualifier\ClassQualifier;
 use Phpactor\Completion\Bridge\TolerantParser\SourceCodeFilesystem\ScfClassCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Core\Suggestion;
@@ -18,7 +19,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
         $filesystem = new SimpleFilesystem(FilePath::fromString(__DIR__ . '/files'));
         $fileToClass = new SimpleFileToClass();
 
-        return new ScfClassCompletor($filesystem, $fileToClass);
+        return new ScfClassCompletor($filesystem, $fileToClass, new ClassQualifier(0));
     }
 
     /**
