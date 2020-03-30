@@ -17,6 +17,10 @@ class ClassQualifier implements TolerantQualifier
 {
     public function couldComplete(Node $node): ?Node
     {
+        if (strlen($node->getText()) < 3) {
+            return null;
+        }
+
         if ($node instanceof QualifiedName) {
             return $node;
         }
