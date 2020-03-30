@@ -4,8 +4,6 @@ includes:
 parameters:
     inferPrivatePropertyTypeFromConstructor: true
     ignoreErrors:
-        - '{Instanceof between .*Token.* will always}'
-        
     paths:
         - lib
 
