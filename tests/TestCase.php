@@ -4,7 +4,7 @@
 // when all packages are using PHPUnit 9 these can be removed
 
 namespace DMS\PHPUnitExtensions\ArraySubset{
-    if (!class_exists(ArraySubsetAsserts::class)) {
+    if (!trait_exists(ArraySubsetAsserts::class)) {
         trait ArraySubsetAsserts
         {
         }
@@ -12,7 +12,7 @@ namespace DMS\PHPUnitExtensions\ArraySubset{
 }
 
 namespace Prophecy\PhpUnit {
-    if (!class_exists(ProphecyTrait::class)) {
+    if (!trait_exists(ProphecyTrait::class)) {
         trait ProphecyTrait
         {
         }
