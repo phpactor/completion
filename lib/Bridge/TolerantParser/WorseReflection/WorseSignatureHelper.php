@@ -69,7 +69,6 @@ class WorseSignatureHelper implements SignatureHelper
             $position = substr_count($text, ',');
         }
 
-        /** @var Node|QualfifiedName $callable */
         $callable = $node->callableExpression;
 
         if ($callable instanceof QualifiedName) {
@@ -124,7 +123,7 @@ class WorseSignatureHelper implements SignatureHelper
         return $this->createSignatureHelp($functionReflection, $position);
     }
 
-    private function createSignatureHelp(ReflectionFunctionLike $functionReflection, int $position)
+    private function createSignatureHelp(ReflectionFunctionLike $functionReflection, int $position): SignatureHelp
     {
         $signatures = [];
         $parameters = [];
@@ -141,7 +140,7 @@ class WorseSignatureHelper implements SignatureHelper
         return new SignatureHelp($signatures, $position);
     }
 
-    private function signatureHelpForScopedPropertyAccess(ScopedPropertyAccessExpression $callable, CallExpression $node, int $position)
+    private function signatureHelpForScopedPropertyAccess(ScopedPropertyAccessExpression $callable, CallExpression $node, int $position): SignatureHelp
     {
         $scopeResolutionQualifier = $callable->scopeResolutionQualifier;
 

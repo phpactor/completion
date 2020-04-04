@@ -7,7 +7,6 @@ use LanguageServerProtocol\Position;
 use LanguageServerProtocol\SignatureHelp;
 use LanguageServerProtocol\TextDocumentIdentifier;
 use LanguageServerProtocol\TextDocumentItem;
-use Phpactor\Completion\Tests\Integration\Extension\IntegrationTestCase;
 use Phpactor\LanguageServer\Core\Rpc\ResponseMessage;
 
 class LanguageServerCompletionExtensionTest extends IntegrationTestCase

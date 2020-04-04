@@ -2,6 +2,7 @@
 
 namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
+use Generator;
 use LogicException;
 use Microsoft\PhpParser\MissingToken;
 use Microsoft\PhpParser\Node;
@@ -46,7 +47,7 @@ abstract class AbstractParameterCompletor
         $this->variableCompletionHelper = $variableCompletionHelper ?: new VariableCompletionHelper($reflector);
     }
 
-    protected function populateResponse(Node $callableExpression, ReflectionFunctionLike $functionLikeReflection, array $variables)
+    protected function populateResponse(Node $callableExpression, ReflectionFunctionLike $functionLikeReflection, array $variables): Generator
     {
         // function has no parameters, return empty handed
         if ($functionLikeReflection->parameters()->count() === 0) {
@@ -85,7 +86,7 @@ abstract class AbstractParameterCompletor
         }
     }
 
-    private function paramIndex(Node $node)
+    private function paramIndex(Node $node): int
     {
         $argumentList = $this->argumentListFromNode($node);
 
@@ -118,7 +119,7 @@ abstract class AbstractParameterCompletor
         return $index;
     }
 
-    private function isVariableValidForParameter(WorseVariable $variable, ReflectionParameter $parameter)
+    private function isVariableValidForParameter(WorseVariable $variable, ReflectionParameter $parameter): bool
     {
         if ($parameter->inferredTypes()->best() == Type::undefined()) {
             return true;
@@ -146,14 +147,13 @@ abstract class AbstractParameterCompletor
         return false;
     }
 
-    private function reflectedParameter(ReflectionFunctionLike $reflectionFunctionLike, $paramIndex)
+    private function reflectedParameter(ReflectionFunctionLike $reflectionFunctionLike, int $paramIndex): ReflectionParameter
     {
         $reflectedIndex = 1;
         /** @var ReflectionParameter $parameter */
         foreach ($reflectionFunctionLike->parameters() as $parameter) {
             if ($reflectedIndex == $paramIndex) {
                 return $parameter;
-                break;
             }
             $reflectedIndex++;
         }
@@ -161,7 +161,7 @@ abstract class AbstractParameterCompletor
         throw new LogicException(sprintf('Could not find parameter for index "%s"', $paramIndex));
     }
 
-    private function numberOfArgumentsExceedParameterArity(ReflectionFunctionLike $reflectionFunctionLike, $paramIndex)
+    private function numberOfArgumentsExceedParameterArity(ReflectionFunctionLike $reflectionFunctionLike, int $paramIndex): bool
     {
         return $reflectionFunctionLike->parameters()->count() < $paramIndex;
     }

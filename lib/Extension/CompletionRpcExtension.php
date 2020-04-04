@@ -6,7 +6,6 @@ use Phpactor\Container\Container;
 use Phpactor\Container\ContainerBuilder;
 use Phpactor\Container\Extension;
 use Phpactor\Completion\Extension\Rpc\CompleteHandler;
-use Phpactor\Completion\Extension\CompletionExtension;
 use Phpactor\Extension\Rpc\RpcExtension;
 use Phpactor\MapResolver\Resolver;
 

@@ -57,7 +57,7 @@ class ChainTolerantCompletor implements Completor
         }
     }
 
-    private function truncateSource(string $source, int $byteOffset)
+    private function truncateSource(string $source, int $byteOffset): string
     {
         // truncate source at byte offset - we don't want the rest of the source
         // file contaminating the completion (for example `$foo($<>\n    $bar =
@@ -74,7 +74,7 @@ class ChainTolerantCompletor implements Completor
         return $truncatedSource;
     }
 
-    private function filterNonQualifyingClasses(Node $node)
+    private function filterNonQualifyingClasses(Node $node): array
     {
         return array_filter($this->tolerantCompletors, function (TolerantCompletor $completor) use ($node) {
             if (!$completor instanceof TolerantQualifiable) {

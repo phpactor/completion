@@ -8,12 +8,12 @@ use Phpactor\WorseReflection\Core\Reflection\ReflectionClass;
 
 class ClassFormatter implements Formatter
 {
-    public function canFormat($object): bool
+    public function canFormat(object $object): bool
     {
         return $object instanceof ReflectionClass;
     }
 
-    public function format(ObjectFormatter $formatter, $class): string
+    public function format(ObjectFormatter $formatter, object $class): string
     {
         assert($class instanceof ReflectionClass);
 

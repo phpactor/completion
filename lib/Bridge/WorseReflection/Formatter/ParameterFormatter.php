@@ -8,12 +8,12 @@ use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 
 class ParameterFormatter implements Formatter
 {
-    public function canFormat($object): bool
+    public function canFormat(object $object): bool
     {
         return $object instanceof ReflectionParameter;
     }
 
-    public function format(ObjectFormatter $formatter, $object): string
+    public function format(ObjectFormatter $formatter, object $object): string
     {
         assert($object instanceof ReflectionParameter);
 

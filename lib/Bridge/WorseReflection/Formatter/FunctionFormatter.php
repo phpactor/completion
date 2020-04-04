@@ -8,12 +8,12 @@ use Phpactor\WorseReflection\Core\Reflection\ReflectionFunction;
 
 class FunctionFormatter implements Formatter
 {
-    public function canFormat($object): bool
+    public function canFormat(object $object): bool
     {
         return $object instanceof ReflectionFunction;
     }
 
-    public function format(ObjectFormatter $formatter, $function): string
+    public function format(ObjectFormatter $formatter, object $function): string
     {
         assert($function instanceof ReflectionFunction);
 
@@ -23,7 +23,6 @@ class FunctionFormatter implements Formatter
 
         $paramInfos = [];
 
-        /** @var ReflectionParameter $parameter */
         foreach ($function->parameters() as $parameter) {
             $paramInfos[] = $formatter->format($parameter);
         }
