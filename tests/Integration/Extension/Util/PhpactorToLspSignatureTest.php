@@ -4,11 +4,11 @@ namespace Phpactor\Completion\Tests\Integration\Extension\Util;
 
 use LanguageServerProtocol\SignatureHelp as LspSignatureHelp;
 use LanguageServerProtocol\SignatureInformation as LspSignatureInformation;
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Core\ParameterInformation;
 use Phpactor\Completion\Core\SignatureHelp;
 use Phpactor\Completion\Core\SignatureInformation;
 use Phpactor\Completion\Extension\Util\PhpactorToLspSignature;
+use Phpactor\Completion\Tests\TestCase;
 
 class PhpactorToLspSignatureTest extends TestCase
 {

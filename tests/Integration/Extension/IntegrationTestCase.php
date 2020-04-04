@@ -2,8 +2,8 @@
 
 namespace Phpactor\Completion\Tests\Integration\Extension;
 
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Extension\CompletionExtension;
+use Phpactor\Completion\Tests\TestCase;
 use Phpactor\Container\PhpactorContainer;
 use Phpactor\Completion\Extension\LanguageServerCompletionExtension;
 use Phpactor\Extension\LanguageServer\LanguageServerExtension;

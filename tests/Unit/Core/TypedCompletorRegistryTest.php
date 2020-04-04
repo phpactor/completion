@@ -2,11 +2,11 @@
 
 namespace Phpactor\Completion\Tests\Unit\Core;
 
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Core\ChainCompletor;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\TypedCompletor;
 use Phpactor\Completion\Core\TypedCompletorRegistry;
+use Phpactor\Completion\Tests\TestCase;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocumentBuilder;
 

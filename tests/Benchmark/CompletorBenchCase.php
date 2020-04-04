@@ -19,7 +19,7 @@ abstract class CompletorBenchCase
 
     abstract protected function create(string $source): Completor;
 
-    public function setUp($params)
+    protected function setUp($params): void
     {
         $source = file_get_contents(__DIR__ . '/' . $params['source']);
         list($source, $offset) = ExtractOffset::fromSource($source);

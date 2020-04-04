@@ -4,12 +4,12 @@ namespace Phpactor\Completion\Tests\Unit\Bridge\TolerantParser;
 
 use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Parser;
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Bridge\TolerantParser\ChainTolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifiable;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifier;
 use Phpactor\Completion\Core\Suggestion;
+use Phpactor\Completion\Tests\TestCase;
 use Phpactor\TestUtils\ExtractOffset;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocumentBuilder;
@@ -40,7 +40,7 @@ class ChainTolerantCompletorTest extends TestCase
      */
     private $qualifier2;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->completor1 = $this->prophesize(TolerantCompletor::class);
         $this->qualifiableCompletor1 = $this->prophesize(TolerantCompletor::class)

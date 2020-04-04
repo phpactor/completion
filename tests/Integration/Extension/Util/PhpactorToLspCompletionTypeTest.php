@@ -2,9 +2,9 @@
 
 namespace Phpactor\Completion\Tests\Integration\Extension\Util;
 
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Extension\Util\PhpactorToLspCompletionType;
+use Phpactor\Completion\Tests\TestCase;
 use ReflectionClass;
 
 class PhpactorToLspCompletionTypeTest extends TestCase

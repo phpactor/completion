@@ -6,10 +6,10 @@ use LanguageServerProtocol\Position;
 use LanguageServerProtocol\SignatureHelp as LspSignatureHelp;
 use LanguageServerProtocol\TextDocumentIdentifier;
 use LanguageServerProtocol\TextDocumentItem;
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Core\SignatureHelp;
 use Phpactor\Completion\Core\SignatureHelper;
 use Phpactor\Completion\Extension\LanguageServer\SignatureHelpHandler;
+use Phpactor\Completion\Tests\TestCase;
 use Phpactor\LanguageServer\Core\Rpc\ResponseMessage;
 use Phpactor\LanguageServer\Core\Session\Workspace;
 use Phpactor\LanguageServer\Test\HandlerTester;
@@ -35,7 +35,7 @@ class SignatureHelpHandlerTest extends TestCase
      */
     private $workspace;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->document = new TextDocumentItem();
         $this->document->uri = self::IDENTIFIER;

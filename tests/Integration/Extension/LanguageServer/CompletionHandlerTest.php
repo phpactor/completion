@@ -9,7 +9,6 @@ use LanguageServerProtocol\Position;
 use LanguageServerProtocol\Range;
 use LanguageServerProtocol\TextDocumentItem;
 use LanguageServerProtocol\TextEdit;
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Range as PhpactorRange;
 use Phpactor\Completion\Core\Suggestion;
@@ -17,6 +16,7 @@ use Phpactor\Completion\Core\TypedCompletor;
 use Phpactor\Completion\Core\TypedCompletorRegistry;
 use Phpactor\Completion\Extension\LanguageServer\CompletionHandler;
 use Phpactor\Completion\Extension\Util\SuggestionNameFormatter;
+use Phpactor\Completion\Tests\TestCase;
 use Phpactor\LanguageServer\Core\Rpc\ResponseMessage;
 use Phpactor\LanguageServer\Core\Session\Workspace;
 use Phpactor\LanguageServer\Test\HandlerTester;
@@ -36,7 +36,7 @@ class CompletionHandlerTest extends TestCase
     private $position;
 
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->document = new TextDocumentItem();
         $this->document->uri = '/test';

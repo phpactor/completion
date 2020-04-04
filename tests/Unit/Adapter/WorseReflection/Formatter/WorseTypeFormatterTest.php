@@ -2,9 +2,9 @@
 
 namespace Phpactor\Completion\Tests\Unit\Adapter\WorseReflection\Formatter;
 
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\TypeFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\TypesFormatter;
+use Phpactor\Completion\Tests\TestCase;
 use Phpactor\WorseReflection\Core\Types;
 use Phpactor\WorseReflection\Core\Type;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
@@ -44,11 +44,6 @@ class WorseTypeFormatterTest extends TestCase
         yield 'typed array' => [
             Types::fromTypes([Type::array('string')]),
             'string[]',
-        ];
-
-        yield 'generic' => [
-            Types::fromTypes([Type::collection('Collection', 'Item')]),
-            'Collection<Item>',
         ];
 
         yield 'generic' => [

@@ -2,7 +2,7 @@
 
 namespace Phpactor\Completion\Tests\Integration\Extension;
 
-use PHPUnit\Framework\TestCase;
+use Phpactor\Completion\Tests\TestCase;
 use Phpactor\Container\PhpactorContainer;
 use Phpactor\Extension\Logger\LoggingExtension;
 use Phpactor\Completion\Extension\CompletionRpcExtension;

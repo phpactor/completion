@@ -2,9 +2,9 @@
 
 namespace Phpactor\Completion\Tests\Unit\Core;
 
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Core\Range;
 use Phpactor\Completion\Core\Suggestion;
+use Phpactor\Completion\Tests\TestCase;
 use RuntimeException;
 
 class SuggestionTest extends TestCase

@@ -2,7 +2,7 @@
 
 namespace Phpactor\Completion\Tests\Integration;
 
-use PHPUnit\Framework\TestCase;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\ClassFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\FunctionFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\MethodFormatter;
@@ -13,9 +13,12 @@ use Phpactor\Completion\Bridge\WorseReflection\Formatter\PropertyFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\TypeFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\TypesFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\VariableFormatter;
+use Phpactor\Completion\Tests\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class IntegrationTestCase extends TestCase
 {
+
     protected function formatter(): ObjectFormatter
     {
         return new ObjectFormatter([

@@ -3,6 +3,7 @@
     "minimum-stability": "dev",
     "description": "Completion library for Worse Reflection",
     "license": "MIT",
+    "prefer-stable": true,
     "authors": [
         {
             "name": "Daniel Leech",
@@ -14,14 +15,23 @@
         "phpactor/worse-reflection": "~0.2",
         "phpactor/source-code-filesystem": "~0.1",
         "phpactor/class-to-file": "~0.3",
-        "phpactor/text-document": "^1.0"
+        "phpactor/text-document": "^1.0",
+        "dms/phpunit-arraysubset-asserts": "dev-master"
     },
     "require-dev": {
-        "phpbench/phpbench": "^1.0@dev",
-        "phpunit/phpunit": "~7.0",
-        "phpactor/test-utils": "^1.0@dev",
-        "phpstan/phpstan": "~0.11.0",
-        "friendsofphp/php-cs-fixer": "~2.15.0"
+        "phpbench/phpbench": "^1.0",
+        "phpunit/phpunit": "~9.0",
+        "phpactor/test-utils": "^1.0",
+        "phpstan/phpstan": "~0.12.0",
+        "friendsofphp/php-cs-fixer": "~2.15.0",
+
+        "phpactor/container": "^1.0",
+        "phpactor/logging-extension": "~0.1",
+        "phpactor/rpc-extension": "~0.1",
+        "phpactor/worse-reflection-extension": "~0.2",
+        "phpactor/source-code-filesystem-extension": "~0.1",
+        "phpactor/language-server-extension": "~0.2",
+        "phpspec/prophecy-phpunit": "dev-master"
     },
     "autoload": {
         "psr-4": {

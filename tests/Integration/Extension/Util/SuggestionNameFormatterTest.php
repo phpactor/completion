@@ -4,7 +4,7 @@ namespace Phpactor\Completion\Tests\Integration\Extension\Util;
 
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Extension\Util\SuggestionNameFormatter;
-use PHPUnit\Framework\TestCase;
+use Phpactor\Completion\Tests\TestCase;
 
 class SuggestionNameFormatterTest extends TestCase
 {

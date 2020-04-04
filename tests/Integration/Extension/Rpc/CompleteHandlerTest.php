@@ -2,12 +2,12 @@
 
 namespace Phpactor\Completion\Tests\Integration\Extension\Rpc;
 
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\TypedCompletor;
 use Phpactor\Completion\Core\TypedCompletorRegistry;
 use Phpactor\Completion\Extension\Rpc\CompleteHandler;
+use Phpactor\Completion\Tests\TestCase;
 use Phpactor\Extension\Rpc\Response\ReturnResponse;
 use Phpactor\Extension\Rpc\Test\HandlerTester;
 use Phpactor\TextDocument\ByteOffset;
@@ -21,7 +21,7 @@ class CompleteHandlerTest extends TestCase
      */
     private $completor;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->completor = $this->prophesize(Completor::class);
         $this->registry = new TypedCompletorRegistry([

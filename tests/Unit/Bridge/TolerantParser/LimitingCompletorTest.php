@@ -3,12 +3,12 @@
 namespace Phpactor\Completion\Tests\Unit\Bridge\TolerantParser;
 
 use Microsoft\PhpParser\Node;
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Bridge\TolerantParser\LimitingCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\Qualifier\AlwaysQualfifier;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifiable;
 use Phpactor\Completion\Core\Suggestion;
+use Phpactor\Completion\Tests\TestCase;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
 use Phpactor\TextDocument\TextDocumentBuilder;
@@ -29,7 +29,7 @@ class LimitingCompletorTest extends TestCase
      */
     private $node;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->innerCompletor = $this->prophesize(TolerantCompletor::class);
         $this->node = $this->prophesize(Node::class);

@@ -2,13 +2,13 @@
 
 namespace Phpactor\Completion\Tests\Integration\Extension;
 
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Formatter\Formatter;
 use Phpactor\Completion\Core\SignatureHelp;
 use Phpactor\Completion\Core\SignatureHelper;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Extension\CompletionExtension;
+use Phpactor\Completion\Tests\TestCase;
 use Phpactor\Container\Container;
 use Phpactor\Container\PhpactorContainer;
 use Phpactor\Extension\Logger\LoggingExtension;
@@ -39,7 +39,7 @@ class CompletionExtensionTest extends TestCase
      */
     private $signatureHelper1;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->completor1 = $this->prophesize(Completor::class);
         $this->signatureHelper1 = $this->prophesize(SignatureHelper::class);

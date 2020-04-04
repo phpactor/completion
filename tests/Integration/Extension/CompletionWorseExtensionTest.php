@@ -2,9 +2,9 @@
 
 namespace Phpactor\Completion\Tests\Integration\Extension;
 
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Extension\CompletionExtension;
+use Phpactor\Completion\Tests\TestCase;
 use Phpactor\Container\PhpactorContainer;
 use Phpactor\Extension\Logger\LoggingExtension;
 use Phpactor\Extension\ClassToFile\ClassToFileExtension;
