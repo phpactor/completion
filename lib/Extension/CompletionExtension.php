@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpactor\Extension\Completion;
+namespace Phpactor\Completion\Extension;
 
 use Phpactor\Completion\Core\ChainSignatureHelper;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
