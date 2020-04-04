@@ -29,7 +29,9 @@
         "phpactor/rpc-extension": "~0.1",
         "phpactor/worse-reflection-extension": "~0.2",
         "phpactor/source-code-filesystem-extension": "~0.1",
-        "phpactor/language-server-extension": "~0.2"
+        "phpactor/language-server": "~0.3",
+        "dms/phpunit-arraysubset-asserts": "dev-master",
+        "phpspec/prophecy-phpunit": "dev-master"
     },
     "autoload": {
         "psr-4": {
