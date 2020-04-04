@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpactor\Completion\Extension\Handler;
+namespace Phpactor\Completion\Extension\LanguageServer;
 
 use Generator;
 use LanguageServerProtocol\Position;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpactor\Completion\Tests\Integration\Extension\Handler;
+namespace Phpactor\Completion\Tests\Integration\Extension\LanguageServer;
 
 use LanguageServerProtocol\Position;
 use LanguageServerProtocol\SignatureHelp as LspSignatureHelp;
@@ -9,7 +9,7 @@ use LanguageServerProtocol\TextDocumentItem;
 use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Core\SignatureHelp;
 use Phpactor\Completion\Core\SignatureHelper;
-use Phpactor\Completion\Extension\Handler\SignatureHelpHandler;
+use Phpactor\Completion\Extension\LanguageServer\SignatureHelpHandler;
 use Phpactor\LanguageServer\Core\Rpc\ResponseMessage;
 use Phpactor\LanguageServer\Core\Session\Workspace;
 use Phpactor\LanguageServer\Test\HandlerTester;

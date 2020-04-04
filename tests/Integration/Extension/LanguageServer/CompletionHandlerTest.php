@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpactor\Completion\Tests\Integration\Extension\Handler;
+namespace Phpactor\Completion\Tests\Integration\Extension\LanguageServer;
 
 use Generator;
 use LanguageServerProtocol\CompletionItem;
@@ -15,7 +15,7 @@ use Phpactor\Completion\Core\Range as PhpactorRange;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\TypedCompletor;
 use Phpactor\Completion\Core\TypedCompletorRegistry;
-use Phpactor\Completion\Extension\Handler\CompletionHandler;
+use Phpactor\Completion\Extension\LanguageServer\CompletionHandler;
 use Phpactor\Completion\Extension\Util\SuggestionNameFormatter;
 use Phpactor\LanguageServer\Core\Rpc\ResponseMessage;
 use Phpactor\LanguageServer\Core\Session\Workspace;

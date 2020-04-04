@@ -5,10 +5,10 @@ namespace Phpactor\Completion\Extension;
 use Phpactor\Container\Container;
 use Phpactor\Container\ContainerBuilder;
 use Phpactor\Container\Extension;
-use Phpactor\Completion\Extension\Handler\SignatureHelpHandler;
+use Phpactor\Completion\Extension\LanguageServer\SignatureHelpHandler;
 use Phpactor\Completion\Extension\Util\SuggestionNameFormatter;
 use Phpactor\Extension\LanguageServer\LanguageServerExtension;
-use Phpactor\Completion\Extension\Handler\CompletionHandler;
+use Phpactor\Completion\Extension\LanguageServer\CompletionHandler;
 use Phpactor\MapResolver\Resolver;
 
 class LanguageServerCompletionExtension implements Extension
