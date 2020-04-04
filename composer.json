@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "php": "^7.2",
+        "php": "^7.3",
         "phpactor/worse-reflection": "~0.2",
         "phpactor/source-code-filesystem": "~0.1",
         "phpactor/class-to-file": "~0.3",
