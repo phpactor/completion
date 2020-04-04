@@ -41,8 +41,8 @@ $container = PhpactorContainer::fromExtensions([
     WorseReflectionExtension::PARAM_ENABLE_CACHE => true,
     LoggingExtension::PARAM_ENABLED => true,
     LoggingExtension::PARAM_LEVEL => 'debug',
-    LanguageServerExtension::PARAM_WELCOME_MESSAGE => 'Indexer test server',
     LoggingExtension::PARAM_PATH=> 'php://stderr',
+    LanguageServerExtension::PARAM_WELCOME_MESSAGE => 'Completion Test Application',
 ]);
 
 $application = new Application();
