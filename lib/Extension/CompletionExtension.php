@@ -37,7 +37,7 @@ class CompletionExtension implements Extension
         $this->registerCompletion($container);
     }
 
-    private function registerCompletion(ContainerBuilder $container)
+    private function registerCompletion(ContainerBuilder $container): void
     {
         $container->register(self::SERVICE_REGISTRY, function (Container $container) {
             $completors = [];

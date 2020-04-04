@@ -49,7 +49,7 @@ class SignatureInformation
         return $this->label;
     }
 
-    private function add(ParameterInformation $parameter)
+    private function add(ParameterInformation $parameter): void
     {
         $this->parameters[] = $parameter;
     }

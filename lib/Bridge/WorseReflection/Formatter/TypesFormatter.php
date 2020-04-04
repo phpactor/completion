@@ -8,7 +8,7 @@ use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 
 class TypesFormatter implements Formatter
 {
-    public function canFormat($object): bool
+    public function canFormat(object $object): bool
     {
         return $object instanceof Types;
     }

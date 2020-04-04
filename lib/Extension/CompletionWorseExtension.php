@@ -54,7 +54,7 @@ class CompletionWorseExtension implements Extension
         ]);
     }
 
-    private function registerCompletion(ContainerBuilder $container)
+    private function registerCompletion(ContainerBuilder $container): void
     {
         $container->register('completion_worse.completor.tolerant.chain', function (Container $container) {
             $completors = [];
@@ -142,7 +142,7 @@ class CompletionWorseExtension implements Extension
         }, [ CompletionExtension::TAG_FORMATTER => []]);
     }
 
-    private function registerSignatureHelper(ContainerBuilder $container)
+    private function registerSignatureHelper(ContainerBuilder $container): void
     {
         $container->register('completion_worse.signature_helper', function (Container $container) {
             return new WorseSignatureHelper(

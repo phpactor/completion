@@ -1,9 +1,10 @@
-includes:
-    - vendor/phpstan/phpstan/conf/config.level7.neon
-
 parameters:
+    level: 7
     inferPrivatePropertyTypeFromConstructor: true
     ignoreErrors:
+        - '{Instanceof between .*Microsoft.* will always}'
     paths:
         - lib
+
+    checkMissingIterableValueType: false
 

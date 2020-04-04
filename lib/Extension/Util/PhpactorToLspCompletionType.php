@@ -7,47 +7,47 @@ use Phpactor\Completion\Core\Suggestion;
 
 class PhpactorToLspCompletionType
 {
-    public static function fromPhpactorType(?string $suggestionType)
+    public static function fromPhpactorType(?string $suggestionType): ?int
     {
-        switch ($suggestionType):
-            case Suggestion::TYPE_METHOD:
-                return CompletionItemKind::METHOD;
+        switch ($suggestionType) {
+        case Suggestion::TYPE_METHOD:
+            return CompletionItemKind::METHOD;
         case Suggestion::TYPE_FUNCTION:
-                return CompletionItemKind::FUNCTION;
+            return CompletionItemKind::FUNCTION;
         case Suggestion::TYPE_CONSTRUCTOR:
-                return CompletionItemKind::CONSTRUCTOR;
+            return CompletionItemKind::CONSTRUCTOR;
         case Suggestion::TYPE_FIELD:
-                return CompletionItemKind::FIELD;
+            return CompletionItemKind::FIELD;
         case Suggestion::TYPE_VARIABLE:
-                return CompletionItemKind::VARIABLE;
+            return CompletionItemKind::VARIABLE;
         case Suggestion::TYPE_CLASS:
-                return CompletionItemKind::CLASS_;
+            return CompletionItemKind::CLASS_;
         case Suggestion::TYPE_INTERFACE:
-                return CompletionItemKind::INTERFACE;
+            return CompletionItemKind::INTERFACE;
         case Suggestion::TYPE_MODULE:
-                return CompletionItemKind::MODULE;
+            return CompletionItemKind::MODULE;
         case Suggestion::TYPE_PROPERTY:
-                return CompletionItemKind::PROPERTY;
+            return CompletionItemKind::PROPERTY;
         case Suggestion::TYPE_UNIT:
-                return CompletionItemKind::UNIT;
+            return CompletionItemKind::UNIT;
         case Suggestion::TYPE_VALUE:
-                return CompletionItemKind::VALUE;
+            return CompletionItemKind::VALUE;
         case Suggestion::TYPE_ENUM:
-                return CompletionItemKind::ENUM;
+            return CompletionItemKind::ENUM;
         case Suggestion::TYPE_KEYWORD:
-                return CompletionItemKind::KEYWORD;
+            return CompletionItemKind::KEYWORD;
         case Suggestion::TYPE_SNIPPET:
-                return CompletionItemKind::KEYWORD;
+            return CompletionItemKind::KEYWORD;
         case Suggestion::TYPE_COLOR:
-                return CompletionItemKind::COLOR;
+            return CompletionItemKind::COLOR;
         case Suggestion::TYPE_FILE:
-                return CompletionItemKind::FILE;
+            return CompletionItemKind::FILE;
         case Suggestion::TYPE_REFERENCE:
-                return CompletionItemKind::REFERENCE;
+            return CompletionItemKind::REFERENCE;
         case Suggestion::TYPE_CONSTANT:
-                return 21; // not currently in the LSP protocol library
+            return 21; // not currently in the LSP protocol library
         default:
-                return null;
-        endswitch;
+            return null;
+        }
     }
 }

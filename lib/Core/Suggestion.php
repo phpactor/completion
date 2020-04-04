@@ -76,7 +76,7 @@ class Suggestion
         $this->range = $range;
     }
 
-    public static function create(string $name)
+    public static function create(string $name): self
     {
         return new self($name);
     }
