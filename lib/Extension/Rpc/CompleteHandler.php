@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpactor\Completion\Extension\Handler;
+namespace Phpactor\Completion\Extension\Rpc;
 
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\TypedCompletorRegistry;
