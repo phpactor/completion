@@ -1,3 +1,5 @@
+/.phpunit.result.cache
+/cache
 /vendor
 /tests/Workspace
 /tests/Assets/workspace

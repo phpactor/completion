@@ -6,6 +6,7 @@ use Generator;
 use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Microsoft\PhpParser\ResolvedName;
+use Phpactor\ClassFileConverter\Domain\ClassName;
 use Phpactor\ClassFileConverter\Domain\FilePath;
 use Phpactor\ClassFileConverter\Domain\FileToClass;
 use Phpactor\Completion\Bridge\TolerantParser\Qualifier\ClassQualifier;
@@ -85,10 +86,7 @@ class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
         }
     }
 
-    /**
-     * @return TextDocument|null
-     */
-    private function getClassNameForImport($candidate, array $imports, string $currentNamespace = null)
+    private function getClassNameForImport(ClassName $candidate, array $imports, string $currentNamespace = null): ?string
     {
         $candidateNamespace = $candidate->namespace();
 

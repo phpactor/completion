@@ -9,12 +9,12 @@ use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
 
 class MethodFormatter implements Formatter
 {
-    public function canFormat($object): bool
+    public function canFormat(object $object): bool
     {
         return $object instanceof ReflectionMethod;
     }
 
-    public function format(ObjectFormatter $formatter, $method): string
+    public function format(ObjectFormatter $formatter, object $method): string
     {
         assert($method instanceof ReflectionMethod);
 

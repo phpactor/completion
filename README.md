@@ -1,11 +1,15 @@
-Worse Completion
-================
+Phpactor Completion
+===================
 
 [![Build Status](https://travis-ci.org/phpactor/completion.svg?branch=master)](https://travis-ci.org/phpactor/completion)
 
-PHP Code Completion library which uses
-[Phpactor's](https://github.com/phpactor/phpactor) [Worse
-Reflection](https://github.com/phpactor/worse-reflection).
+PHP Code Completion library for [Phpactor](https://github.com/phpactor/phpactor).
+
+This package includes:
+
+- Completion APIs and implementations.
+- Phpactor RPC extension and handlers.
+- Language Server extension and handlers.
 
 Usage
 -----

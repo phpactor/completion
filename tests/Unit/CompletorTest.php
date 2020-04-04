@@ -2,9 +2,9 @@
 
 namespace Phpactor\Completion\Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Core\ChainCompletor;
 use Phpactor\Completion\Core\Completor;
+use Phpactor\Completion\Tests\TestCase;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
 use Phpactor\TextDocument\TextDocumentBuilder;
@@ -21,7 +21,7 @@ class CompletorTest extends TestCase
     const EXAMPLE_SOURCE = 'test source';
     const EXAMPLE_OFFSET = 1234;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->completor1 = $this->prophesize(Completor::class);
     }

@@ -22,12 +22,6 @@ class ClassQualifierTest extends TolerantQualifierTestCase
                 $this->assertNull($node);
             }
         ];
-        yield 'variable with previous accessor' => [
-            '<?php $foobar->hello; $hello<>',
-            function ($node) {
-                $this->assertNull($node);
-            }
-        ];
         yield 'statement with previous member access' => [
             '<?php if ($foobar && $this->foobar) { echo<>',
             function ($node) {

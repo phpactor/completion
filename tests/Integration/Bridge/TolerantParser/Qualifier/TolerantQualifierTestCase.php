@@ -4,8 +4,8 @@ namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\Qualifier;
 
 use Closure;
 use Microsoft\PhpParser\Parser;
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantQualifier;
+use Phpactor\Completion\Tests\TestCase;
 use Phpactor\TestUtils\ExtractOffset;
 
 abstract class TolerantQualifierTestCase extends TestCase

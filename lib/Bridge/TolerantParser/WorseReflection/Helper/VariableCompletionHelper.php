@@ -72,7 +72,7 @@ class VariableCompletionHelper
         return $variables;
     }
 
-    private function offsetToReflect(Node $node, int $offset)
+    private function offsetToReflect(Node $node, int $offset): int
     {
         $parentNode = $node->parent;
         
@@ -89,7 +89,7 @@ class VariableCompletionHelper
         return $offset;
     }
 
-    private function orderedVariablesUntilOffset(Frame $frame, int $offset)
+    private function orderedVariablesUntilOffset(Frame $frame, int $offset): array
     {
         return array_reverse(iterator_to_array($frame->locals()->lessThan($offset)));
     }

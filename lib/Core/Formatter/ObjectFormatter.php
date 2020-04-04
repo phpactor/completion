@@ -21,7 +21,7 @@ class ObjectFormatter
         }
     }
 
-    public function format($object): string
+    public function format(object $object): string
     {
         foreach ($this->formatters as $formatter) {
             if (false === $formatter->canFormat($object)) {
@@ -37,7 +37,7 @@ class ObjectFormatter
         ));
     }
 
-    public function canFormat($object): bool
+    public function canFormat(object $object): bool
     {
         foreach ($this->formatters as $formatter) {
             if ($formatter->canFormat($object)) {
@@ -48,7 +48,7 @@ class ObjectFormatter
         return false;
     }
 
-    private function add(Formatter $formatter)
+    private function add(Formatter $formatter): void
     {
         $this->formatters[] = $formatter;
     }

@@ -47,7 +47,7 @@ class ChainSignatureHelper implements SignatureHelper
         );
     }
 
-    private function add(SignatureHelper $helper)
+    private function add(SignatureHelper $helper): void
     {
         $this->helpers[] = $helper;
     }

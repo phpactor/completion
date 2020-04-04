@@ -2,8 +2,8 @@
 
 namespace Phpactor\Completion\Tests\Unit\Core\Util;
 
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Core\Util\OffsetHelper;
+use Phpactor\Completion\Tests\TestCase;
 use Phpactor\TestUtils\ExtractOffset;
 
 class OffsetHelperTest extends TestCase

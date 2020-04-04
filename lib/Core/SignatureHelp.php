@@ -21,7 +21,7 @@ class SignatureHelp
 
     public function __construct(
         array $signatures = [],
-        $activeSignature,
+        int $activeSignature,
         ?int $activeParameter = null
     ) {
         $this->signatures = $signatures;

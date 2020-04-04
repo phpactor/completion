@@ -2,11 +2,11 @@
 
 namespace Phpactor\Completion\Tests\Unit\Core;
 
-use PHPUnit\Framework\TestCase;
 use Phpactor\Completion\Core\ChainSignatureHelper;
 use Phpactor\Completion\Core\Exception\CouldNotHelpWithSignature;
 use Phpactor\Completion\Core\SignatureHelp;
 use Phpactor\Completion\Core\SignatureHelper;
+use Phpactor\Completion\Tests\TestCase;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocumentBuilder;
 use Psr\Log\LoggerInterface;
@@ -38,7 +38,7 @@ class ChainSignatureHelperTest extends TestCase
      */
     private $help;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->logger = $this->prophesize(LoggerInterface::class);
         $this->helper1 = $this->prophesize(SignatureHelper::class);

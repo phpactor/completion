@@ -3,6 +3,7 @@
     "minimum-stability": "dev",
     "description": "Completion library for Worse Reflection",
     "license": "MIT",
+    "prefer-stable": true,
     "authors": [
         {
             "name": "Daniel Leech",
@@ -10,18 +11,27 @@
         }
     ],
     "require": {
-        "php": "^7.2",
-        "phpactor/worse-reflection": "~0.2",
+        "php": "^7.3",
+        "phpactor/worse-reflection": "~0.4",
         "phpactor/source-code-filesystem": "~0.1",
         "phpactor/class-to-file": "~0.3",
         "phpactor/text-document": "^1.0"
     },
     "require-dev": {
-        "phpbench/phpbench": "^1.0@dev",
-        "phpunit/phpunit": "~7.0",
-        "phpactor/test-utils": "^1.0@dev",
-        "phpstan/phpstan": "~0.11.0",
-        "friendsofphp/php-cs-fixer": "~2.15.0"
+        "phpbench/phpbench": "^1.0",
+        "phpunit/phpunit": "~9.0",
+        "phpactor/test-utils": "^1.0",
+        "phpstan/phpstan": "~0.12.0",
+        "friendsofphp/php-cs-fixer": "~2.15.0",
+        "dms/phpunit-arraysubset-asserts": "dev-master",
+        "phpspec/prophecy-phpunit": "dev-master",
+
+        "phpactor/container": "^1.0",
+        "phpactor/logging-extension": "~0.1",
+        "phpactor/rpc-extension": "~0.1",
+        "phpactor/worse-reflection-extension": "~0.2",
+        "phpactor/source-code-filesystem-extension": "~0.1",
+        "phpactor/language-server-extension": "~0.2"
     },
     "autoload": {
         "psr-4": {
@@ -39,9 +49,16 @@
         }
     },
     "scripts": {
-        "integrate": [
+        "integrate-ci": [
             "vendor/bin/php-cs-fixer fix --dry-run",
             "vendor/bin/phpstan analyse lib -c phpstan.neon",
+            "vendor/bin/phpunit",
+            "bin/completion"
+        ],
+        "integrate": [
+            "vendor/bin/php-cs-fixer fix",
+            "vendor/bin/phpstan analyse lib -c phpstan.neon",
+            "bin/completion",
             "vendor/bin/phpunit"
         ]
     }

@@ -22,7 +22,7 @@ class Range
         $this->byteEnd = $byteEnd;
     }
 
-    public static function fromStartAndEnd(int $byteStart, int $byteEnd)
+    public static function fromStartAndEnd(int $byteStart, int $byteEnd): self
     {
         return new self(
             ByteOffset::fromInt($byteStart),
@@ -40,7 +40,7 @@ class Range
         return $this->byteEnd;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [ $this->byteStart->toInt(), $this->byteEnd->toInt() ];
     }

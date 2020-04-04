@@ -26,7 +26,7 @@ class ClassMemberQualifier implements TolerantQualifier
         return null;
     }
 
-    private function isMemberNode(?Node $node)
+    private function isMemberNode(?Node $node): bool
     {
         if (null === $node) {
             return false;
