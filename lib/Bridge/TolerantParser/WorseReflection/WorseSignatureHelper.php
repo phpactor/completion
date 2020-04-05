@@ -137,7 +137,7 @@ class WorseSignatureHelper implements SignatureHelper
         $formatted = $this->formatter->format($functionReflection);
         $signatures[] = new SignatureInformation($formatted, $parameters);
 
-        return new SignatureHelp($signatures, $position);
+        return new SignatureHelp($signatures, 0, $position);
     }
 
     private function signatureHelpForScopedPropertyAccess(ScopedPropertyAccessExpression $callable, CallExpression $node, int $position): SignatureHelp

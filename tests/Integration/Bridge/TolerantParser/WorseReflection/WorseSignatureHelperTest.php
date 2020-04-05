@@ -66,7 +66,7 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                     ]
                 )],
                 0,
-                null
+                0
             )
         ];
 
@@ -81,7 +81,7 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                     ]
                 )],
                 0,
-                null
+                0
             )
         ];
 
@@ -95,8 +95,8 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                         new ParameterInformation('bar', 'int $bar'),
                     ]
                 )],
-                1,
-                null
+                0,
+                1
             )
         ];
 
@@ -110,8 +110,8 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                         new ParameterInformation('bar', 'int $bar'),
                     ]
                 )],
-                1,
-                null
+                0,
+                1
             )
         ];
 
@@ -126,7 +126,7 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                     ]
                 )],
                 0,
-                null
+                0
             )
         ];
 
@@ -140,8 +140,8 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                         new ParameterInformation('bar', 'int $bar'),
                     ]
                 )],
-                1,
-                null
+                0,
+                1
             )
         ];
 
@@ -161,7 +161,7 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                     ]
                 )],
                 0,
-                null
+                0
             )
         ];
 
@@ -176,7 +176,7 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                     ]
                 )],
                 0,
-                null
+                0
             )
         ];
     }

@@ -27,7 +27,9 @@
         "phpstan/phpstan": "~0.12.0",
         "friendsofphp/php-cs-fixer": "~2.15.0",
         "dms/phpunit-arraysubset-asserts": "dev-master",
-        "phpspec/prophecy-phpunit": "dev-master"
+        "phpspec/prophecy-phpunit": "dev-master",
+        "phpactor/language-server-completion-extension": "^0.1.0",
+        "phpactor/completion-worse-extension": "^0.1.2"
     },
     "autoload": {
         "psr-4": {
