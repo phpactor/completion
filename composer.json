@@ -51,13 +51,11 @@
         "integrate-ci": [
             "vendor/bin/php-cs-fixer fix --dry-run",
             "vendor/bin/phpstan analyse lib -c phpstan.neon",
-            "vendor/bin/phpunit",
-            "bin/completion"
+            "vendor/bin/phpunit"
         ],
         "integrate": [
             "vendor/bin/php-cs-fixer fix",
             "vendor/bin/phpstan analyse lib -c phpstan.neon",
-            "bin/completion",
             "vendor/bin/phpunit"
         ]
     }
