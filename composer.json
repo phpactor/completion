@@ -18,10 +18,7 @@
         "phpactor/text-document": "^1.0",
         "phpactor/container": "^1.0",
         "phpactor/logging-extension": "~0.1",
-        "phpactor/rpc-extension": "~0.1",
-        "phpactor/worse-reflection-extension": "~0.2",
-        "phpactor/source-code-filesystem-extension": "~0.1",
-        "phpactor/language-server": "~0.3"
+        "phpactor/rpc-extension": "~0.1"
     },
     "require-dev": {
         "phpbench/phpbench": "^1.0",
