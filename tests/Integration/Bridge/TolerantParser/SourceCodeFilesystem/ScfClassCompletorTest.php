@@ -11,10 +11,11 @@ use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
 use Phpactor\Filesystem\Adapter\Simple\SimpleFilesystem;
 use Phpactor\Filesystem\Domain\FilePath;
+use Phpactor\TextDocument\TextDocument;
 
 class ScfClassCompletorTest extends TolerantCompletorTestCase
 {
-    protected function createTolerantCompletor(string $source): TolerantCompletor
+    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
     {
         $filesystem = new SimpleFilesystem(FilePath::fromString(__DIR__ . '/files'));
         $fileToClass = new SimpleFileToClass();

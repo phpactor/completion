@@ -7,10 +7,11 @@ use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseConstantCompl
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
 use Generator;
+use Phpactor\TextDocument\TextDocument;
 
 class WorseConstantCompletorTest extends TolerantCompletorTestCase
 {
-    protected function createTolerantCompletor(string $source): TolerantCompletor
+    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
     {
         return new WorseConstantCompletor($this->formatter());
     }

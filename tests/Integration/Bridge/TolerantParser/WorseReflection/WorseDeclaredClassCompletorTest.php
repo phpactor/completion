@@ -7,12 +7,13 @@ use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseDeclaredClassCompletor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
+use Phpactor\TextDocument\TextDocument;
 use Phpactor\WorseReflection\Core\SourceCodeLocator\StubSourceLocator;
 use Phpactor\WorseReflection\ReflectorBuilder;
 
 class WorseDeclaredClassCompletorTest extends TolerantCompletorTestCase
 {
-    protected function createTolerantCompletor(string $source): TolerantCompletor
+    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
     {
         $reflector = ReflectorBuilder::create()
             ->addLocator(new StubSourceLocator(

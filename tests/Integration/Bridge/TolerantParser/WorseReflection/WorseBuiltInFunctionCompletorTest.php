@@ -6,12 +6,13 @@ use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseFunctionCompletor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
+use Phpactor\TextDocument\TextDocument;
 use Phpactor\WorseReflection\ReflectorBuilder;
 use Generator;
 
 class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
 {
-    protected function createTolerantCompletor(string $source): TolerantCompletor
+    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
     {
         $reflector = ReflectorBuilder::create()->addSource($source)->build();
 
