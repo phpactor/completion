@@ -73,7 +73,7 @@ class WorseFunctionCompletor implements TolerantCompletor
         return $this->filterFunctions($functions, $partialName);
     }
 
-    private function reflectedFunctions(string $source): array
+    private function reflectedFunctions(TextDocument $source): array
     {
         $functionNames = [];
         foreach ($this->reflector->reflectFunctionsIn($source) as $function) {

@@ -17,7 +17,7 @@ abstract class CompletorTestCase extends IntegrationTestCase
         list($source, $offset) = ExtractOffset::fromSource($source);
         $completor = $this->createCompletor($source);
         $suggestions = iterator_to_array($completor->complete(
-            TextDocumentBuilder::create($source)->language('php')->build(),
+            TextDocumentBuilder::create($source)->language('php')->uri('file:///tmp/test')->build(),
             ByteOffset::fromInt($offset)
         ));
         usort($suggestions, function (Suggestion $suggestion1, Suggestion $suggestion2) {
