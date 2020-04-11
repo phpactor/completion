@@ -25,12 +25,13 @@ class WorseSignatureHelperTest extends IntegrationTestCase
         }
 
         [ $source, $offset ] = ExtractOffset::fromSource($source);
+        $source = TextDocumentBuilder::create($source)->language('php')->uri('file:///tmp/test')->build();
         $reflector = ReflectorBuilder::create()->addSource($source)->build();
 
         $helper = new WorseSignatureHelper($reflector, $this->formatter());
 
         $help = $helper->signatureHelp(
-            TextDocumentBuilder::create($source)->language('php')->build(),
+            $source,
             ByteOffset::fromInt($offset)
         );
 
