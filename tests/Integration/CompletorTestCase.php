@@ -37,7 +37,7 @@ abstract class CompletorTestCase extends IntegrationTestCase
         list($source, $offset) = ExtractOffset::fromSource($source);
         $completor = $this->createCompletor($source);
         $result = $completor->complete(
-            TextDocumentBuilder::create($source)->language('php')->build(),
+            TextDocumentBuilder::create($source)->language('php')->uri('file:///tmp/test')->build(),
             ByteOffset::fromInt($offset)
         );
 

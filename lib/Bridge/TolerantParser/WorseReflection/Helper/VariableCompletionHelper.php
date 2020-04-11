@@ -6,6 +6,7 @@ use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Node\Expression\AssignmentExpression;
 use Microsoft\PhpParser\Node\Expression\Variable as ParserVariable;
 use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocument;
 use Phpactor\WorseReflection\Core\Inference\Frame;
 use Phpactor\WorseReflection\Core\Inference\Variable;
 use Phpactor\WorseReflection\Reflector;
@@ -25,7 +26,7 @@ class VariableCompletionHelper
     /**
      * @return Variable[]
      */
-    public function variableCompletions(Node $node, string $source, ByteOffset $offset): array
+    public function variableCompletions(Node $node, TextDocument $source, ByteOffset $offset): array
     {
         $partialMatch = '';
         if ($node instanceof ParserVariable) {
