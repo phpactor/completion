@@ -12,7 +12,7 @@ class SuggestionTest extends TestCase
     public function testThrowsExceptionWithInvalidOptions()
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Invalid options for suggestion: "foobar" valid options: "short_description", "type"');
+        $this->expectExceptionMessage('Invalid options for suggestion: "foobar" valid options: "short_description", "documentation", "type"');
 
         Suggestion::createWithOptions('foobar', ['foobar' => 'barfoo']);
     }
@@ -46,6 +46,7 @@ class SuggestionTest extends TestCase
             'type' => 'c',
             'short_description' => 'Foobar',
             'class_import' => 'Namespace\\Foobar',
+            'documentation' => 'foo',
             'label' => 'hallo',
             'range' => Range::fromStartAndEnd(1, 2)
         ]);
@@ -53,6 +54,7 @@ class SuggestionTest extends TestCase
         $this->assertEquals([
             'type' => 'c',
             'short_description' => 'Foobar',
+            'documentation' => 'foo',
             'class_import' => 'Namespace\\Foobar',
             'name' => 'hello',
             'label' => 'hallo',

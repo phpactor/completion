@@ -60,12 +60,18 @@ class Suggestion
      */
     private $range;
 
+    /**
+     * @var string|null
+     */
+    private $documentation;
+
     private function __construct(
         string $name,
         ?string $type = null,
         ?string $shortDescription = null,
         ?string $classImport = null,
         ?string $label = null,
+        ?string $documentation = null,
         ?Range $range = null
     ) {
         $this->type = $type;
@@ -74,6 +80,7 @@ class Suggestion
         $this->classImport = $classImport;
         $this->label = $label ?: $name;
         $this->range = $range;
+        $this->documentation = $documentation;
     }
 
     public static function create(string $name): self
@@ -85,6 +92,7 @@ class Suggestion
     {
         $defaults = [
             'short_description' => '',
+            'documentation' => '',
             'type' => null,
             'class_import' => null,
             'label' => null,
@@ -107,6 +115,7 @@ class Suggestion
             $options['short_description'],
             $options['class_import'],
             $options['label'],
+            $options['documentation'],
             $options['range']
         );
     }
@@ -118,6 +127,7 @@ class Suggestion
             'name' => $this->name(),
             'label' => $this->label(),
             'short_description' => $this->shortDescription(),
+            'documentation' => $this->documentation(),
             'class_import' => $this->classImport(),
             'range' => $this->range ? $this->range->toArray() : null,
 
@@ -158,5 +168,10 @@ class Suggestion
     public function range(): ?Range
     {
         return $this->range;
+    }
+
+    public function documentation(): string
+    {
+        return $this->documentation;
     }
 }

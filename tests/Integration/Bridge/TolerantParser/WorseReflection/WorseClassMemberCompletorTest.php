@@ -166,6 +166,36 @@ $foobar-><>
 EOT
         , [
         ]
+        ];
+
+        yield 'Public method with documentation' => [
+            <<<'EOT'
+<?php
+
+class Foobar
+{
+    /**
+     * Returns a foobar
+     *
+     * @return Foobar|Barbar
+     */
+    public function foo()
+    {
+    }
+}
+
+$foobar = new Foobar();
+$foobar-><>
+
+EOT
+        , [
+            [
+                'type' => Suggestion::TYPE_METHOD,
+                'name' => 'foo',
+                'short_description' => 'pub foo(): Foobar|Barbar',
+                'documentation' => "Returns a foobar\n",
+            ]
+        ]
     ];
 
         yield 'Static property' => [
