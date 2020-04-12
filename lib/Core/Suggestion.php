@@ -170,7 +170,7 @@ class Suggestion
         return $this->range;
     }
 
-    public function documentation(): string
+    public function documentation(): ?string
     {
         return $this->documentation;
     }
