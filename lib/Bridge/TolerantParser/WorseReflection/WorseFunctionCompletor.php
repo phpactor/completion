@@ -60,6 +60,7 @@ class WorseFunctionCompletor implements TolerantCompletor
                 [
                     'type' => Suggestion::TYPE_FUNCTION,
                     'short_description' => $this->formatter->format($functionReflection),
+                    'documentation' => $functionReflection->docblock()->formatted()
                 ]
             );
         }

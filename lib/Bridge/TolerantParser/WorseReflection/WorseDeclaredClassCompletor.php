@@ -57,6 +57,7 @@ class WorseDeclaredClassCompletor implements TolerantCompletor, TolerantQualifia
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'short_description' => $this->formatter->format($reflectionClass),
+                    'documentation' => $reflectionClass->docblock()->formatted()
                 ]
             );
         }
