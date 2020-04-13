@@ -27,4 +27,31 @@ class DedupeCompletorTest extends TestCase
             Suggestion::create('barfoo'),
         ], iterator_to_array($dedupe->complete($source, $offset)));
     }
+
+    public function testDeduplicatesWithShortDescription()
+    {
+        $source = TextDocumentBuilder::create('foobar')->build();
+        $offset = ByteOffset::fromInt(10);
+
+        $inner = new ArrayCompletor([
+            Suggestion::create('foobar'),
+            Suggestion::createWithOptions('barfoo', [
+                'short_description' => 'baf',
+            ]),
+            Suggestion::create('foobar'),
+            Suggestion::createWithOptions('barfoo', [
+                'short_description' => 'bosh',
+            ]),
+        ]);
+        $dedupe = new DedupeCompletor($inner, true);
+        self::assertEquals([
+            Suggestion::create('foobar'),
+            Suggestion::createWithOptions('barfoo', [
+                'short_description' => 'baf',
+            ]),
+            Suggestion::createWithOptions('barfoo', [
+                'short_description' => 'bosh',
+            ]),
+        ], iterator_to_array($dedupe->complete($source, $offset)));
+    }
 }

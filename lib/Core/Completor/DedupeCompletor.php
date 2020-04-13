@@ -14,9 +14,15 @@ class DedupeCompletor implements Completor
      */
     private $innerCompletor;
 
-    public function __construct(Completor $innerCompletor)
+    /**
+     * @var bool
+     */
+    private $matchShortDescription;
+
+    public function __construct(Completor $innerCompletor, bool $matchShortDescription = false)
     {
         $this->innerCompletor = $innerCompletor;
+        $this->matchShortDescription = $matchShortDescription;
     }
 
     /**
@@ -26,10 +32,18 @@ class DedupeCompletor implements Completor
     {
         $seen = [];
         foreach ($this->innerCompletor->complete($source, $byteOffset) as $suggestion) {
-            if (isset($seen[$suggestion->name()])) {
+            $key = $suggestion->name();
+
+            if ($this->matchShortDescription) {
+                $key .= $suggestion->shortDescription();
+            }
+
+            if (isset($seen[$key])) {
                 continue;
             }
-            $seen[$suggestion->name()] = $suggestion;
+
+            $seen[$key] = $suggestion;
+
             yield $suggestion;
         }
     }
