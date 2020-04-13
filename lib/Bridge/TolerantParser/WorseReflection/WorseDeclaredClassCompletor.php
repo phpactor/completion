@@ -53,7 +53,7 @@ class WorseDeclaredClassCompletor implements TolerantCompletor, TolerantQualifia
             }
 
             yield Suggestion::createWithOptions(
-                $class,
+                $reflectionClass->name()->short(),
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'short_description' => $this->formatter->format($reflectionClass),
