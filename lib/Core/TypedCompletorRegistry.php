@@ -10,27 +10,15 @@ class TypedCompletorRegistry
     private $completors;
 
     /**
-     * Map should be from language ID to completors for that language:
+     * Map should be from language ID to completor for that language
+     * (can be a chain completor):
      *
-     * ```
-     * [
-     *     'php' => [
-     *          // php completors
-     *     ],
-     *     'cucumber' => [
-     *          // cucumber completors
-     *     ],
-     * ]
-     * ```
-     *
-     * @param array<string, array<Completor>> $completorMap
+     * @param array<string, Completor> $completorMap
      */
     public function __construct(array $completorMap)
     {
-        foreach ($completorMap as $type => $completors) {
-            foreach ($completors as $completor) {
-                $this->add($type, $completor);
-            }
+        foreach ($completorMap as $type => $completor) {
+            $this->add($type, $completor);
         }
     }
 
@@ -40,14 +28,11 @@ class TypedCompletorRegistry
             return new ChainCompletor([]);
         }
 
-        return new ChainCompletor($this->completors[$type]);
+        return $this->completors[$type];
     }
 
     private function add(string $type, Completor $completor): void
     {
-        if (!isset($this->completors[$type])) {
-            $this->completors[$type] = [];
-        }
-        $this->completors[$type][] = $completor;
+        $this->completors[$type] = $completor;
     }
 }

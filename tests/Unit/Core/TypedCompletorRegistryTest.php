@@ -16,9 +16,7 @@ class TypedCompletorRegistryTest extends TestCase
     {
         $completor = $this->prophesize(Completor::class);
         $registry = new TypedCompletorRegistry([
-            'cucumber' => [
-                $completor->reveal(),
-            ],
+            'cucumber' => $completor->reveal(),
         ]);
         $completorForType = $registry->completorForType('cucumber');
 
@@ -26,6 +24,20 @@ class TypedCompletorRegistryTest extends TestCase
             TextDocumentBuilder::create('foo')->build(),
             ByteOffset::fromInt(123)
         )->shouldBeCalled();
+
+        $this->assertSame($completor->reveal(), $completorForType);
+
+        iterator_to_array($completorForType->complete(
+            TextDocumentBuilder::create('foo')->build(),
+            ByteOffset::fromInt(123)
+        ));
+    }
+
+    public function testEmptyChainCompletorWhenTypeNotConfigured()
+    {
+        $registry = new TypedCompletorRegistry([
+        ]);
+        $completorForType = $registry->completorForType('cucumber');
 
         $this->assertInstanceOf(ChainCompletor::class, $completorForType);
 
