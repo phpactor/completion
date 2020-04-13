@@ -5,17 +5,32 @@ namespace Phpactor\Completion\Core;
 class TypedCompletorRegistry
 {
     /**
-     * @var array<array<Completor>>
+     * @var array<string, Completor>
      */
     private $completors;
 
     /**
-     * @param TypedCompletor[] $completors
+     * Map should be from language ID to completors for that language:
+     *
+     * ```
+     * [
+     *     'php' => [
+     *          // php completors
+     *     ],
+     *     'cucumber' => [
+     *          // cucumber completors
+     *     ],
+     * ]
+     * ```
+     *
+     * @param array<string, array<Completor>> $completorMap
      */
-    public function __construct(array $completors)
+    public function __construct(array $completorMap)
     {
-        foreach ($completors as $completor) {
-            $this->add($completor);
+        foreach ($completorMap as $type => $completors) {
+            foreach ($completors as $completor) {
+                $this->add($type, $completor);
+            }
         }
     }
 
@@ -28,13 +43,11 @@ class TypedCompletorRegistry
         return new ChainCompletor($this->completors[$type]);
     }
 
-    private function add(TypedCompletor $completor): void
+    private function add(string $type, Completor $completor): void
     {
-        foreach ($completor->types() as $type) {
-            if (!isset($this->completors[$type])) {
-                $this->completors[$type] = [];
-            }
-            $this->completors[$type][] = $completor->completor();
+        if (!isset($this->completors[$type])) {
+            $this->completors[$type] = [];
         }
+        $this->completors[$type][] = $completor;
     }
 }

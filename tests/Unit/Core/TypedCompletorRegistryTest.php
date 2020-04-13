@@ -15,9 +15,10 @@ class TypedCompletorRegistryTest extends TestCase
     public function testReturnsCompletorsForAType()
     {
         $completor = $this->prophesize(Completor::class);
-        $typedCompletor = new TypedCompletor($completor->reveal(), [ 'cucumber', 'gherkin' ]);
         $registry = new TypedCompletorRegistry([
-            $typedCompletor
+            'cucumber' => [
+                $completor->reveal(),
+            ],
         ]);
         $completorForType = $registry->completorForType('cucumber');
 
