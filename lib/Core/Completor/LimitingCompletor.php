@@ -6,6 +6,7 @@ use Generator;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
+use RuntimeException;
 
 class LimitingCompletor implements Completor
 {
@@ -24,6 +25,13 @@ class LimitingCompletor implements Completor
     {
         $this->innerCompletor = $innerCompletor;
         $this->limit = $limit;
+
+        if ($limit < 0) {
+            throw new RuntimeException(sprintf(
+                'Limit cannot be less than 0, got %d',
+                $limit
+            ));
+        }
     }
 
     /**
