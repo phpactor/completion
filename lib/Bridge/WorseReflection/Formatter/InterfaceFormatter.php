@@ -16,6 +16,6 @@ class InterfaceFormatter implements Formatter
     public function format(ObjectFormatter $formatter, object $object): string
     {
         assert($object instanceof ReflectionInterface);
-        return sprintf('interface %s', $object->name()->full());
+        return sprintf('%s (interface)', $object->name()->full());
     }
 }

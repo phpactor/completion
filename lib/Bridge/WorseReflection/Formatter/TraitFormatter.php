@@ -16,6 +16,6 @@ class TraitFormatter implements Formatter
     public function format(ObjectFormatter $formatter, object $object): string
     {
         assert($object instanceof ReflectionTrait);
-        return sprintf('trait %s', $object->name()->full());
+        return sprintf('%s (trait)', $object->name()->full());
     }
 }
