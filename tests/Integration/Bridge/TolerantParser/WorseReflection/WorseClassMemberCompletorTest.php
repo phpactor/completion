@@ -16,7 +16,11 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
     {
         $reflector = ReflectorBuilder::create()->addSource($source)->build();
 
-        return new WorseClassMemberCompletor($reflector, $this->formatter());
+        return new WorseClassMemberCompletor(
+            $reflector,
+            $this->formatter(),
+            $this->snippetFormatter()
+        );
     }
 
     /**
@@ -118,6 +122,7 @@ EOT
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'foo',
                 'short_description' => 'pub foo(string $zzzbar = \'bar\', $def): Barbar',
+                'snippet' => 'foo(${1:\$def})${0}',
             ]
         ]
     ];
@@ -145,6 +150,7 @@ EOT
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'foo',
                 'short_description' => 'pub foo(): Foobar|Barbar',
+                'snippet' => 'foo()',
             ]
         ]
     ];
@@ -194,6 +200,7 @@ EOT
                 'name' => 'foo',
                 'short_description' => 'pub foo(): Foobar|Barbar',
                 'documentation' => "Returns a foobar\n",
+                'snippet' => 'foo()',
             ]
         ]
     ];
@@ -301,6 +308,7 @@ EOT
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'bbb',
                 'short_description' => 'pub bbb()',
+                'snippet' => 'bbb()',
             ]
         ]
     ];
@@ -387,6 +395,7 @@ EOT
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'heyho',
                 'short_description' => 'pub heyho()',
+                'snippet' => 'heyho()',
             ],
         ],
     ];
@@ -409,6 +418,7 @@ EOT
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'method1',
                 'short_description' => 'pub method1()',
+                'snippet' => 'method1()',
             ],
         ],
     ];
@@ -458,6 +468,7 @@ EOT
             [
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'goodbye',
+                'snippet' => 'goodbye()',
             ],
         ]];
 
@@ -481,6 +492,7 @@ EOT
             [
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'goodbye',
+                'snippet' => 'goodbye()',
             ],
         ]];
 
@@ -505,6 +517,7 @@ EOT
             [
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'hello',
+                'snippet' => 'hello()',
             ],
         ]];
 
@@ -525,10 +538,12 @@ EOT
             [
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'goodbye',
+                'snippet' => 'goodbye()',
             ],
             [
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'hello',
+                'snippet' => 'hello()',
             ],
         ]];
 
