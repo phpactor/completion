@@ -17,7 +17,7 @@ class SignatureInformation
     /**
      * @var ParameterInformation[]
      */
-    private $parameters;
+    private $parameters = [];
 
     /**
      * @var string|null
