@@ -17,6 +17,7 @@ use Phpactor\Completion\Core\SignatureHelper;
 use Phpactor\Completion\Core\SignatureInformation;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
+use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Inference\Symbol;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionFunctionLike;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
@@ -106,8 +107,12 @@ class WorseSignatureHelper implements SignatureHelper
                 ));
             }
 
-            $reflectionClass = $this->reflector->reflectClassLike($containerType->className());
-            $reflectionMethod = $reflectionClass->methods()->get($symbolContext->symbol()->name());
+            try {
+                $reflectionClass = $this->reflector->reflectClassLike($containerType->className());
+                $reflectionMethod = $reflectionClass->methods()->get($symbolContext->symbol()->name());
+            } catch (NotFound $notFound) {
+                throw new CouldNotHelpWithSignature($notFound->getMessage(), 0, $notFound);
+            }
 
             return $this->createSignatureHelp($reflectionMethod, $position);
         }

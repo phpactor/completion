@@ -180,5 +180,10 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                 0
             )
         ];
+
+        yield 'non existing method throws exception' => [
+            '<?php interface Foo { function hello(string $foo, int $bar): void }; function (Foo $foo) { $foo->bads(<>',
+            null,
+        ];
     }
 }
