@@ -29,10 +29,19 @@ class WorseFunctionCompletor implements TolerantCompletor
      */
     private $formatter;
 
-    public function __construct(Reflector $reflector, ObjectFormatter $formatter)
-    {
+    /**
+     * @var ObjectFormatter
+     */
+    private $snippetFormatter;
+
+    public function __construct(
+        Reflector $reflector,
+        ObjectFormatter $formatter,
+        ObjectFormatter $snippetFormatter
+    ) {
         $this->reflector = $reflector;
         $this->formatter = $formatter;
+        $this->snippetFormatter = $snippetFormatter;
     }
 
     public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
@@ -60,7 +69,8 @@ class WorseFunctionCompletor implements TolerantCompletor
                 [
                     'type' => Suggestion::TYPE_FUNCTION,
                     'short_description' => $this->formatter->format($functionReflection),
-                    'documentation' => $functionReflection->docblock()->formatted()
+                    'documentation' => $functionReflection->docblock()->formatted(),
+                    'snippet' => $this->snippetFormatter->format($functionReflection),
                 ]
             );
         }
@@ -70,7 +80,7 @@ class WorseFunctionCompletor implements TolerantCompletor
     {
         $functions = get_defined_functions();
         $functions['reflected'] = $reflectedFunctions;
-        
+
         return $this->filterFunctions($functions, $partialName);
     }
 

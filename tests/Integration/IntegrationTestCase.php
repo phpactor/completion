@@ -5,6 +5,7 @@ namespace Phpactor\Completion\Tests\Integration;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\ClassFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\FunctionFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\InterfaceFormatter;
+use Phpactor\Completion\Bridge\WorseReflection\Formatter\FunctionLikeSnippetFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\MethodFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\TraitFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\ParametersFormatter;
@@ -32,6 +33,13 @@ class IntegrationTestCase extends TestCase
             new ClassFormatter(),
             new InterfaceFormatter(),
             new TraitFormatter(),
+        ]);
+    }
+
+    protected function SnippetFormatter(): ObjectFormatter
+    {
+        return new ObjectFormatter([
+            new FunctionLikeSnippetFormatter()
         ]);
     }
 }
