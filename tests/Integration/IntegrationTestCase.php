@@ -36,7 +36,7 @@ class IntegrationTestCase extends TestCase
         ]);
     }
 
-    protected function SnippetFormatter(): ObjectFormatter
+    protected function snippetFormatter(): ObjectFormatter
     {
         return new ObjectFormatter([
             new FunctionLikeSnippetFormatter()
