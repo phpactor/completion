@@ -45,6 +45,11 @@ class WorseSignatureHelperTest extends IntegrationTestCase
             null
         ];
 
+        yield 'not existing function' => [
+            '<?php foobar(<>',
+            null
+        ];
+
         yield 'function signature with no parameters' => [
             '<?php function hello() {}; hello(<>',
             new SignatureHelp(
@@ -129,6 +134,11 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                 0,
                 0
             )
+        ];
+
+        yield 'static method call on non existing class' => [
+            '<?php class Foo::hello(<>',
+            null
         ];
 
         yield 'static method call, 2nd active' => [

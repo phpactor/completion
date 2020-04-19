@@ -160,7 +160,11 @@ class WorseParameterCompletor extends AbstractParameterCompletor implements Tole
         $offset = $this->reflector->reflectOffset($source, $callableExpression->getEndPosition());
 
         if ($containerType = $offset->symbolContext()->containerType()) {
-            $containerClass = $this->reflector->reflectClassLike($containerType->className());
+            try {
+                $containerClass = $this->reflector->reflectClassLike($containerType->className());
+            } catch (NotFound $notFound) {
+                return null;
+            }
             return $containerClass->methods()->get($offset->symbolContext()->symbol()->name());
         }
 

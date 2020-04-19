@@ -17,6 +17,7 @@ use Microsoft\PhpParser\Node\QualifiedName;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\Helper\VariableCompletionHelper;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\Completion\Core\Suggestion;
+use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Inference\Variable as WorseVariable;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionFunctionLike;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
@@ -125,13 +126,15 @@ abstract class AbstractParameterCompletor
             return true;
         }
 
-        $valid = false;
-
         /** @var Type $variableType */
         foreach ($variable->symbolContext()->types() as $variableType) {
             $variableTypeClass = null;
             if ($variableType->isClass()) {
-                $variableTypeClass = $this->reflector->reflectClassLike($variableType->className());
+                try {
+                    $variableTypeClass = $this->reflector->reflectClassLike($variableType->className());
+                } catch (NotFound $e) {
+                    return false;
+                }
             }
 
             foreach ($parameter->inferredTypes() as $parameterType) {

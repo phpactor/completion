@@ -11,6 +11,7 @@ use Microsoft\PhpParser\Node\QualifiedName;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
+use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionClass;
 
 class WorseConstructorCompletor extends AbstractParameterCompletor implements TolerantCompletor
@@ -47,7 +48,11 @@ class WorseConstructorCompletor extends AbstractParameterCompletor implements To
 
         assert($creationExpression instanceof ObjectCreationExpression);
 
-        $reflectionClass = $this->reflectClass($source, $creationExpression);
+        try {
+            $reflectionClass = $this->reflectClass($source, $creationExpression);
+        } catch (NotFound $notFound) {
+            return;
+        }
 
         if (null === $reflectionClass) {
             return;

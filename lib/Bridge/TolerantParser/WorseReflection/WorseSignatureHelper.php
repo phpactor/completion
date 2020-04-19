@@ -123,7 +123,11 @@ class WorseSignatureHelper implements SignatureHelper
     private function signatureHelpForFunction(QualifiedName $callable, int $position): SignatureHelp
     {
         $name = $callable->__toString();
-        $functionReflection = $this->reflector->reflectFunction($name);
+        try {
+            $functionReflection = $this->reflector->reflectFunction($name);
+        } catch (NotFound $notFound) {
+            throw new CouldNotHelpWithSignature($notFound->getMessage());
+        }
 
         return $this->createSignatureHelp($functionReflection, $position);
     }
@@ -155,7 +159,11 @@ class WorseSignatureHelper implements SignatureHelper
 
         $class = $scopeResolutionQualifier->getResolvedName();
 
-        $reflectionClass = $this->reflector->reflectClass((string) $class);
+        try {
+            $reflectionClass = $this->reflector->reflectClass((string) $class);
+        } catch (NotFound $notFound) {
+            throw new CouldNotHelpWithSignature($notFound->getMessage());
+        }
 
         $memberName = $callable->memberName;
 
