@@ -10,7 +10,7 @@ final class PlaceholderTest extends TestCase
     /**
      * @dataProvider providePlaceholders
      */
-    public function testRaw(int $position, ?string $text, string $expected): void
+    public function testRaw(int $position, ?string $text): void
     {
         $this->assertEquals(
             \sprintf('${%d%s}', $position, $text ? ":$text" : null),
@@ -31,10 +31,10 @@ final class PlaceholderTest extends TestCase
 
     public function providePlaceholders(): iterable
     {
-        yield 'No text' => [1, null, '${1}'];
-        yield 'With text' => [3, 'default', '${3:default}'];
-        yield 'With a $' => [3, '$default', '${3:\$default}'];
-        yield 'With a \\' => [3, '\default', '${3:\\\default}'];
-        yield 'With a }' => [3, 'default}', '${3:default\}}'];
+        yield 'no text' => [1, null, '${1}'];
+        yield 'with text' => [3, 'default', '${3:default}'];
+        yield 'with a $' => [3, '$default', '${3:\$default}'];
+        yield 'with a \\' => [3, '\default', '${3:\\\default}'];
+        yield 'with a }' => [3, 'default}', '${3:default\}}'];
     }
 }
