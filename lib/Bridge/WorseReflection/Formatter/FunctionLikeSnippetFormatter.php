@@ -31,7 +31,7 @@ class FunctionLikeSnippetFormatter implements Formatter
         $parameters = $functionLike->parameters();
 
         if (0 === $parameters->count()) {
-            return "$name()";
+            return \sprintf('%s()', $name);
         }
 
         $placeholders = [];
