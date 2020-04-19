@@ -2,23 +2,16 @@
 
 namespace Phpactor\Completion\Tests\Unit\Bridge\WorseReflection\Formatter;
 
-use ArrayIterator;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\FunctionLikeSnippetFormatter;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\Completion\Tests\TestCase;
-use Phpactor\WorseReflection\Core\DefaultValue;
-use Phpactor\WorseReflection\Core\Name;
-use Phpactor\WorseReflection\Core\Reflection\Collection\ReflectionParameterCollection;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionFunction;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionFunctionLike;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionMethod;
-use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
-use Prophecy\PhpUnit\ProphecyTrait;
+use Phpactor\WorseReflection\ReflectorBuilder;
 
 final class FunctionLikeSnippetFormatterTest extends TestCase
 {
-    use ProphecyTrait;
-
     /**
      * @dataProvider provideReflectionToFormat
      */
@@ -33,60 +26,42 @@ final class FunctionLikeSnippetFormatterTest extends TestCase
     public function provideReflectionToFormat(): iterable
     {
         yield 'Function without parameters' => [
-            $this->reflectFunction('func', []),
+            $this->reflectFunction('func()'),
             'func()',
         ];
 
         yield 'Function with mandatory parameters' => [
-            $this->reflectFunction('func', [
-                $this->parameter('test'),
-                $this->parameter('i'),
-            ]),
+            $this->reflectFunction('func(string $test, int $i)'),
             'func(${1:\$test}, ${2:\$i})${0}'
         ];
 
         yield 'Function with mandatory and optional parameters' => [
-            $this->reflectFunction('func', [
-                $this->parameter('test'),
-                $this->parameter('i', true),
-            ]),
+            $this->reflectFunction('func(string $test, int $i = 1)'),
             'func(${1:\$test})${0}'
         ];
 
         yield 'Function with only optional parameters' => [
-            $this->reflectFunction('func', [
-                $this->parameter('test', true),
-                $this->parameter('i', true),
-            ]),
+            $this->reflectFunction('func(?string $test = null, int $i = 1)'),
             'func(${1})${0}'
         ];
 
         yield 'Method without parameters' => [
-            $this->reflectMethod('method', []),
+            $this->reflectMethod('method()'),
             'method()'
         ];
 
         yield 'Method with mandatory parameters' => [
-            $this->reflectFunction('method', [
-                $this->parameter('test'),
-                $this->parameter('i'),
-            ]),
+            $this->reflectMethod('method(string $test, int $i)'),
             'method(${1:\$test}, ${2:\$i})${0}'
         ];
 
         yield 'Method with mandatory and optional parameters' => [
-            $this->reflectFunction('method', [
-                $this->parameter('test'),
-                $this->parameter('i', true),
-            ]),
+            $this->reflectMethod('method(string $test, int $i = 1)'),
             'method(${1:\$test})${0}'
         ];
 
         yield 'Method with only optional parameters' => [
-            $this->reflectFunction('method', [
-                $this->parameter('test', true),
-                $this->parameter('i', true),
-            ]),
+            $this->reflectMethod('method(?string $test = null, int $i = 1)'),
             'method(${1})${0}'
         ];
     }
@@ -98,43 +73,23 @@ final class FunctionLikeSnippetFormatterTest extends TestCase
         ;
     }
 
-    private function parameter(string $name, bool $hasDefaultValue = false)
+    private function reflectFunction(string $functionAsString): ReflectionFunction
     {
-        $defaultValue = $hasDefaultValue
-            ? DefaultValue::fromValue('test')
-            : DefaultValue::undefined()
+        return ReflectorBuilder::create()
+            ->build()
+            ->reflectFunctionsIn(\sprintf('<?php function %s {}', $functionAsString))
+            ->first()
         ;
-
-        $parameter = $this->prophesize(ReflectionParameter::class);
-        $parameter->name()->willReturn($name);
-        $parameter->default()->willReturn($defaultValue);
-
-        return $parameter->reveal();
     }
 
-    private function reflectFunctionLike(
-        string $reflectionFunctionLikeFqcn,
-        string $name,
-        array $parameters = []
-    ): ReflectionFunctionLike {
-        $parameterCollection = $this->prophesize(ReflectionParameterCollection::class);
-        $parameterCollection->getIterator()->willReturn(new ArrayIterator($parameters));
-        $parameterCollection->count()->willReturn(\count($parameters));
-
-        $function = $this->prophesize($reflectionFunctionLikeFqcn);
-        $function->name()->willReturn(Name::fromString($name));
-        $function->parameters()->willReturn($parameterCollection->reveal());
-
-        return $function->reveal();
-    }
-
-    private function reflectFunction(string $name, array $parameters = [])
+    private function reflectMethod(string $methodAsString): ReflectionMethod
     {
-        return $this->reflectFunctionLike(ReflectionFunction::class, $name, $parameters);
-    }
-
-    private function reflectMethod(string $name, array $parameters = [])
-    {
-        return $this->reflectFunctionLike(ReflectionMethod::class, $name, $parameters);
+        return ReflectorBuilder::create()
+            ->build()
+            ->reflectClassesIn(\sprintf('<?php class Foo { public function %s {} }', $methodAsString))
+            ->first()
+            ->methods()
+            ->first()
+        ;
     }
 }
