@@ -65,6 +65,11 @@ class Suggestion
      */
     private $documentation;
 
+    /**
+     * @var string|null
+     */
+    private $snippet;
+
     private function __construct(
         string $name,
         ?string $type = null,
@@ -72,7 +77,8 @@ class Suggestion
         ?string $classImport = null,
         ?string $label = null,
         ?string $documentation = null,
-        ?Range $range = null
+        ?Range $range = null,
+        ?string $snippet = null
     ) {
         $this->type = $type;
         $this->name = $name;
@@ -81,6 +87,7 @@ class Suggestion
         $this->label = $label ?: $name;
         $this->range = $range;
         $this->documentation = $documentation;
+        $this->snippet = $snippet;
     }
 
     public static function create(string $name): self
@@ -97,6 +104,7 @@ class Suggestion
             'class_import' => null,
             'label' => null,
             'range' => null,
+            'snippet' => null
         ];
 
         if ($diff = array_diff(array_keys($options), array_keys($defaults))) {
@@ -116,7 +124,8 @@ class Suggestion
             $options['class_import'],
             $options['label'],
             $options['documentation'],
-            $options['range']
+            $options['range'],
+            $options['snippet']
         );
     }
 
@@ -125,6 +134,7 @@ class Suggestion
         return [
             'type' => $this->type(),
             'name' => $this->name(),
+            'snippet' => $this->snippet(),
             'label' => $this->label(),
             'short_description' => $this->shortDescription(),
             'documentation' => $this->documentation(),
@@ -148,6 +158,11 @@ class Suggestion
     public function name(): string
     {
         return $this->name;
+    }
+
+    public function snippet(): ?string
+    {
+        return $this->snippet;
     }
 
     public function shortDescription(): ?string

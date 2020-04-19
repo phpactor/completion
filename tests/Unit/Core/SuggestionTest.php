@@ -48,7 +48,8 @@ class SuggestionTest extends TestCase
             'class_import' => 'Namespace\\Foobar',
             'documentation' => 'foo',
             'label' => 'hallo',
-            'range' => Range::fromStartAndEnd(1, 2)
+            'range' => Range::fromStartAndEnd(1, 2),
+            'snippet' => null,
         ]);
 
         $this->assertEquals([
@@ -60,6 +61,7 @@ class SuggestionTest extends TestCase
             'label' => 'hallo',
             'range' => [1, 2],
             'info' => 'Foobar',
+            'snippet' => null,
         ], $suggestion->toArray());
     }
 }

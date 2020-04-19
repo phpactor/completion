@@ -37,10 +37,19 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
      */
     private $formatter;
 
-    public function __construct(Reflector $reflector, ObjectFormatter $formatter)
-    {
+    /**
+     * @var ObjectFormatter
+     */
+    private $snippetFormatter;
+
+    public function __construct(
+        Reflector $reflector,
+        ObjectFormatter $formatter,
+        ObjectFormatter $snippetFormatter
+    ) {
         $this->reflector = $reflector;
         $this->formatter = $formatter;
+        $this->snippetFormatter = $snippetFormatter;
     }
 
     public function qualifier(): TolerantQualifier
@@ -131,7 +140,8 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
             yield Suggestion::createWithOptions($method->name(), [
                 'type' => Suggestion::TYPE_METHOD,
                 'short_description' => $this->formatter->format($method),
-                'documentation' => $method->docblock()->formatted()
+                'documentation' => $method->docblock()->formatted(),
+                'snippet' => $this->snippetFormatter->format($method),
             ]);
         }
 

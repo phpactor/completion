@@ -16,7 +16,11 @@ class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
     {
         $reflector = ReflectorBuilder::create()->addSource($source)->build();
 
-        return new WorseFunctionCompletor($reflector, $this->formatter());
+        return new WorseFunctionCompletor(
+            $reflector,
+            $this->formatter(),
+            $this->snippetFormatter()
+        );
     }
 
     /**
@@ -43,6 +47,7 @@ class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_FUNCTION,
                     'name' => 'mystrpos',
                     'short_description' => 'mystrpos($haystack, $needle, $offset = 0): int',
+                    'snippet' => 'mystrpos(${1:\$haystack}, ${2:\$needle})${0}',
                 ]
             ]
         ];
@@ -53,6 +58,7 @@ class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
                     'type' => Suggestion::TYPE_FUNCTION,
                     'name' => 'barfoo',
                     'short_description' => 'foobar\barfoo(): int',
+                    'snippet' => 'barfoo()',
                 ]
             ]
         ];

@@ -41,14 +41,14 @@ class WorseDeclaredClassCompletorTest extends TolerantCompletorTestCase
             <<<'EOT'
 <?php
 
-$class = new Exception<>
+$class = new RangeException<>
 EOT
         ,
             [
                 [
                     'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Exception',
-                    'short_description' => 'Exception(string $message = \'\', int $code = 0, Throwable $previous = NULL)',
+                    'name' => 'RangeException',
+                    'short_description' => 'RangeException(string $message = \'\', int $code = 0, Throwable $previous = NULL)',
                 ]
             ]
         ];
