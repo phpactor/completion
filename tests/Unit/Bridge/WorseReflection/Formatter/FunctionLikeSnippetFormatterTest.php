@@ -22,7 +22,7 @@ final class FunctionLikeSnippetFormatterTest extends TestCase
     /**
      * @dataProvider provideReflectionToFormat
      */
-    public function testFormat(ReflectionFunctionLike $reflection, $expected): void
+    public function testFormat(ReflectionFunctionLike $reflection, string $expected): void
     {
         $this->assertEquals(
             $expected,
