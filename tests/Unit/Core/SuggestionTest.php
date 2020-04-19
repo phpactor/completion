@@ -49,7 +49,7 @@ class SuggestionTest extends TestCase
             'documentation' => 'foo',
             'label' => 'hallo',
             'range' => Range::fromStartAndEnd(1, 2),
-            'snippet' => 'FooBar(${1:\$label})$0', // For test purposes
+            'snippet' => null,
         ]);
 
         $this->assertEquals([
@@ -61,7 +61,7 @@ class SuggestionTest extends TestCase
             'label' => 'hallo',
             'range' => [1, 2],
             'info' => 'Foobar',
-            'snippet' => 'FooBar(${1:\$label})$0'
+            'snippet' => null,
         ], $suggestion->toArray());
     }
 }
