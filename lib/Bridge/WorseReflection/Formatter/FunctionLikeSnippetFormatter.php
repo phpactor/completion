@@ -11,24 +11,24 @@ use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
 
 class FunctionLikeSnippetFormatter implements Formatter
 {
-    public function canFormat(object $function): bool
+    public function canFormat(object $functionLike): bool
     {
-        return $function instanceof ReflectionFunction
-            || $function instanceof ReflectionMethod;
+        return $functionLike instanceof ReflectionFunction
+            || $functionLike instanceof ReflectionMethod;
     }
 
-    public function format(ObjectFormatter $formatter, object $function): string
+    public function format(ObjectFormatter $formatter, object $functionLike): string
     {
         assert(
-            $function instanceof ReflectionFunction
-            || $function instanceof ReflectionMethod
+            $functionLike instanceof ReflectionFunction
+            || $functionLike instanceof ReflectionMethod
         );
 
-        $name = $function instanceof ReflectionFunction
-            ? $function->name()->short()
-            : $function->name()
+        $name = $functionLike instanceof ReflectionFunction
+            ? $functionLike->name()->short()
+            : $functionLike->name()
         ;
-        $parameters = $function->parameters();
+        $parameters = $functionLike->parameters();
 
         if (0 === $parameters->count()) {
             return "$name()";
