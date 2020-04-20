@@ -247,12 +247,12 @@ EOT
         ,
         new SignatureHelp(
             [new SignatureInformation(
-                    'pub __construct(string $foo, int $bar)',
-                    [
+                'pub __construct(string $foo, int $bar)',
+                [
                         new ParameterInformation('foo', 'string $foo'),
                         new ParameterInformation('bar', 'int $bar'),
                     ]
-                )],
+            )],
             0,
             1
         )
