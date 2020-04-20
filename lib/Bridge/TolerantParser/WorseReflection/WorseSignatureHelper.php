@@ -5,6 +5,7 @@ namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 use Microsoft\PhpParser\Node\DelimitedList\ArgumentExpressionList;
 use Microsoft\PhpParser\Node\Expression\CallExpression;
 use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
+use Microsoft\PhpParser\Node\Expression\ObjectCreationExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Microsoft\PhpParser\Parser;
@@ -54,21 +55,24 @@ class WorseSignatureHelper implements SignatureHelper
         $rootNode = $this->parser->parseSourceFile($textDocument->__toString());
         $nodeAtPosition = $node = $rootNode->getDescendantNodeAtPosition($offset->toInt());
 
-        if (!$nodeAtPosition instanceof CallExpression) {
-            $node = $node->getFirstAncestor(CallExpression::class);
+        if (!$nodeAtPosition instanceof CallExpression && !$nodeAtPosition instanceof ObjectCreationExpression) {
+            $node = $node->getFirstAncestor(CallExpression::class, ObjectCreationExpression::class);
         }
 
         if (is_null($node)) {
             throw new CouldNotHelpWithSignature(sprintf('Could not provide signature for AST node of type "%s"', get_class($nodeAtPosition)));
         }
 
-        assert($node instanceof CallExpression);
-
         $position = 0;
         if ($nodeAtPosition instanceof ArgumentExpressionList) {
-            $text = $nodeAtPosition->getText();
-            $position = substr_count($text, ',');
+            $position = substr_count($nodeAtPosition->getText(), ',');
         }
+
+        if ($node instanceof ObjectCreationExpression) {
+            return $this->signatureHelperForObjectCreation($node, $position);
+        }
+
+        assert($node instanceof CallExpression);
 
         $callable = $node->callableExpression;
 
@@ -130,6 +134,31 @@ class WorseSignatureHelper implements SignatureHelper
         }
 
         return $this->createSignatureHelp($functionReflection, $position);
+    }
+
+    private function signatureHelperForObjectCreation(ObjectCreationExpression $node, int $position): SignatureHelp
+    {
+        $name = $node->classTypeDesignator;
+        if (!$name instanceof QualifiedName) {
+            throw new CouldNotHelpWithSignature(sprintf(
+                'Only provide help for qualified names, got "%s"',
+                get_class($name)
+            ));
+        }
+
+        try {
+            $reflectionClass = $this->reflector->reflectClass($name->getNamespacedName()->getFullyQualifiedNameText());
+        } catch (NotFound $notFound) {
+            throw new CouldNotHelpWithSignature($notFound->getMessage());
+        }
+
+        try {
+            $constructor = $reflectionClass->methods()->get('__construct');
+        } catch (NotFound $notFound) {
+            throw new CouldNotHelpWithSignature($notFound->getMessage());
+        }
+
+        return $this->createSignatureHelp($constructor, $position);
     }
 
     private function createSignatureHelp(ReflectionFunctionLike $functionReflection, int $position): SignatureHelp

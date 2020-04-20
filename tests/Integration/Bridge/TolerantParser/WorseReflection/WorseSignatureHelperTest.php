@@ -195,5 +195,39 @@ class WorseSignatureHelperTest extends IntegrationTestCase
             '<?php interface Foo { function hello(string $foo, int $bar): void }; function (Foo $foo) { $foo->bads(<>',
             null,
         ];
+
+        yield 'class no constructor' => [
+            '<?php class Foo {}; new Foo(<>',
+            null
+        ];
+
+        yield 'class with construct' => [
+            '<?php class Foo {public function __construct(string $foo) {}}; new Foo(<>',
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'pub __construct(string $foo)',
+                    [
+                        new ParameterInformation('foo', 'string $foo'),
+                    ]
+                )],
+                0,
+                0
+            )
+        ];
+
+        yield 'class with construct 2nd pos' => [
+            '<?php class Foo {public function __construct(string $foo, int $bar) {}}; new Foo("asd",<>',
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'pub __construct(string $foo, int $bar)',
+                    [
+                        new ParameterInformation('foo', 'string $foo'),
+                        new ParameterInformation('bar', 'int $bar'),
+                    ]
+                )],
+                0,
+                1
+            )
+        ];
     }
 }
