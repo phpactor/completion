@@ -24,22 +24,22 @@ class ConstantFormatterTest extends IntegrationTestCase
     {
         yield 'string' => [
             '<?php namespace Bar {class Foobar {const BAR = "FOO";}}',
-            'const BAR = "FOO"',
+            'BAR = "FOO"',
         ];
 
         yield 'int' => [
             '<?php namespace Bar {class Foobar {const BAR = 123;}}',
-            'const BAR = 123',
+            'BAR = 123',
         ];
 
         yield 'invalid' => [
             '<?php namespace Bar {class Foobar {const BAR}}',
-            'const BAR = null',
+            'BAR = null',
         ];
 
         yield 'array' => [
             '<?php namespace Bar {class Foobar {const BAR=[123]}}',
-            'const BAR = [123]',
+            'BAR = [123]',
         ];
     }
 }

@@ -17,6 +17,6 @@ class ConstantFormatter implements Formatter
     {
         assert($object instanceof ReflectionConstant);
 
-        return sprintf('const %s = %s', $object->name(), json_encode($object->value()));
+        return sprintf('%s = %s', $object->name(), json_encode($object->value()));
     }
 }
