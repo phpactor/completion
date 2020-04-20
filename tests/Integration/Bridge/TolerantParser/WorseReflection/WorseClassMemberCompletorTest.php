@@ -330,12 +330,12 @@ EOT
             [
                 'type' => Suggestion::TYPE_CONSTANT,
                 'name' => 'BARFOO',
-                'short_description' => 'const BARFOO',
+                'short_description' => 'BARFOO = "barfoo"',
             ],
             [
                 'type' => Suggestion::TYPE_CONSTANT,
                 'name' => 'FOOBAR',
-                'short_description' => 'const FOOBAR',
+                'short_description' => 'FOOBAR = "foobar"',
             ],
             [
                 'type' => Suggestion::TYPE_CONSTANT,

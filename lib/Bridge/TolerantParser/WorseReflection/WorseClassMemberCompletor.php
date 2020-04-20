@@ -175,7 +175,8 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
             foreach ($classReflection->constants() as $constant) {
                 yield Suggestion::createWithOptions($constant->name(), [
                     'type' => Suggestion::TYPE_CONSTANT,
-                    'short_description' => 'const ' . $constant->name(),
+                    'short_description' => $this->formatter->format($constant),
+                    'documentation' => $constant->docblock()->formatted(),
                 ]);
             }
         }
