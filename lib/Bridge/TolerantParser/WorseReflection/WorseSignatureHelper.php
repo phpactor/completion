@@ -56,10 +56,10 @@ class WorseSignatureHelper implements SignatureHelper
         $nodeAtPosition = $node = $rootNode->getDescendantNodeAtPosition($offset->toInt());
 
         if (!$nodeAtPosition instanceof CallExpression && !$nodeAtPosition instanceof ObjectCreationExpression) {
-            $node = $node->getFirstAncestor(CallExpression::class, ObjectCreationExpression::class);
+            $node = $node->parent;
         }
 
-        if (is_null($node)) {
+        if (!$node instanceof CallExpression && !$node instanceof ObjectCreationExpression) {
             throw new CouldNotHelpWithSignature(sprintf('Could not provide signature for AST node of type "%s"', get_class($nodeAtPosition)));
         }
 
