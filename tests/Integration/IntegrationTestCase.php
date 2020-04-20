@@ -3,6 +3,7 @@
 namespace Phpactor\Completion\Tests\Integration;
 
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\ClassFormatter;
+use Phpactor\Completion\Bridge\WorseReflection\Formatter\ConstantFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\FunctionFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\InterfaceFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\FunctionLikeSnippetFormatter;
@@ -33,6 +34,7 @@ class IntegrationTestCase extends TestCase
             new ClassFormatter(),
             new InterfaceFormatter(),
             new TraitFormatter(),
+            new ConstantFormatter(),
         ]);
     }
 
