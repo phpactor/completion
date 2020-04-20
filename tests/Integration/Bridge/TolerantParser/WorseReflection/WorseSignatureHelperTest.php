@@ -229,5 +229,33 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                 1
             )
         ];
+
+        yield 'class with namespaced' => [
+            <<<'EOT'
+<?php 
+namespace Bar {
+    class Foo {
+        public function __construct(string $foo, int $bar) 
+        {}
+    }
+};
+namespace Foo {
+
+    new \Bar\Foo("asd",<>
+}
+EOT
+        ,
+        new SignatureHelp(
+            [new SignatureInformation(
+                    'pub __construct(string $foo, int $bar)',
+                    [
+                        new ParameterInformation('foo', 'string $foo'),
+                        new ParameterInformation('bar', 'int $bar'),
+                    ]
+                )],
+            0,
+            1
+        )
+        ];
     }
 }

@@ -146,8 +146,10 @@ class WorseSignatureHelper implements SignatureHelper
             ));
         }
 
+        $offset = $this->reflector->reflectOffset($node->getFileContents(), $name->getStart());
+
         try {
-            $reflectionClass = $this->reflector->reflectClass($name->getNamespacedName()->getFullyQualifiedNameText());
+            $reflectionClass = $this->reflector->reflectClass($offset->symbolContext()->type()->__toString());
         } catch (NotFound $notFound) {
             throw new CouldNotHelpWithSignature($notFound->getMessage());
         }
