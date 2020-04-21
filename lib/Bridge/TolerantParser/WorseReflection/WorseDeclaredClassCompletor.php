@@ -61,6 +61,8 @@ class WorseDeclaredClassCompletor implements TolerantCompletor, TolerantQualifia
                 ]
             );
         }
+
+        return true;
     }
 
     public function qualifier(): TolerantQualifier

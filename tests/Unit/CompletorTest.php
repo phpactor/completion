@@ -32,6 +32,7 @@ class CompletorTest extends TestCase
         $suggestions = $completor->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET));
 
         $this->assertCount(0, $suggestions);
+        $this->assertTrue($suggestions->getReturn());
     }
 
     public function testReturnsEmptyGeneratorWhenCompletorCouldNotComplete()
@@ -43,13 +44,14 @@ class CompletorTest extends TestCase
         $this->completor1->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET))
             ->shouldBeCalled()
             ->will(function () {
-                return;
-                yield;
+                yield from [];
+                return true;
             });
 
-        $suggestions = iterator_to_array($completor->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET)));
+        $suggestions = $completor->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET));
 
         $this->assertCount(0, $suggestions);
+        $this->assertTrue($suggestions->getReturn());
     }
 
     public function testReturnsSuggestionsFromCompletor()
@@ -65,14 +67,68 @@ class CompletorTest extends TestCase
         $this->completor1->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET))
             ->shouldBeCalled()
             ->will(function () use ($expected) {
-                foreach ($expected as $suggestion) {
-                    yield $suggestion;
-                }
+                yield from $expected;
+                return true;
             });
 
-        $suggestions = iterator_to_array($completor->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET)));
+        $suggestions = $completor->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET));
 
-        $this->assertEquals($expected, $suggestions);
+        $this->assertEquals($expected, iterator_to_array($suggestions));
+        $this->assertTrue($suggestions->getReturn());
+    }
+
+    public function testIsCompleteIfAllCompeltorsReturnedEverything()
+    {
+        $otherCompleter = $this->prophesize(Completor::class);
+        $completor = $this->create([
+            $this->completor1->reveal(),
+            $otherCompleter->reveal()
+        ]);
+
+        $this->completor1->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET))
+            ->shouldBeCalled()
+            ->will(function () {
+                yield from [];
+                return true;
+            });
+
+        $otherCompleter->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET))
+            ->shouldBeCalled()
+            ->will(function () {
+                yield from [];
+                return true;
+            });
+
+        $suggestions = $completor->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET));
+
+        $this->assertTrue($suggestions->getReturn());
+    }
+
+    public function testIsNotCompleteIfAllCompeltorsDoesNotReturnEverything()
+    {
+        $otherCompleter = $this->prophesize(Completor::class);
+        $completor = $this->create([
+            $this->completor1->reveal(),
+            $otherCompleter->reveal()
+        ]);
+
+        $this->completor1->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET))
+            ->shouldBeCalled()
+            ->will(function () {
+                yield from [];
+                return false;
+            });
+
+        $otherCompleter->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET))
+            ->shouldBeCalled()
+            ->will(function () {
+                yield from [];
+                return true;
+            });
+
+        $suggestions = $completor->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET));
+
+        $this->assertFalse($suggestions->getReturn());
     }
 
     /**

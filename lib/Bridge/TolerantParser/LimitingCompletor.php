@@ -34,13 +34,16 @@ class LimitingCompletor implements TolerantCompletor, TolerantQualifiable
         /** @var TolerantCompletor $completor */
         $completor = $this->completor;
         $count = 0;
-        foreach ($completor->complete($node, $source, $offset) as $suggestion) {
+        $suggestions = $completor->complete($node, $source, $offset);
+        foreach ($suggestions as $suggestion) {
             yield $suggestion;
 
             if (++$count === $this->limit) {
-                break;
+                return false;
             }
         }
+
+        return $suggestions->getReturn();
     }
 
     public function qualifier(): TolerantQualifier

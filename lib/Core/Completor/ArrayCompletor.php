@@ -27,8 +27,8 @@ class ArrayCompletor implements Completor
      */
     public function complete(TextDocument $source, ByteOffset $byteOffset): Generator
     {
-        foreach ($this->suggestions as $suggestion) {
-            yield $suggestion;
-        }
+        yield from $this->suggestions;
+
+        return true;
     }
 }

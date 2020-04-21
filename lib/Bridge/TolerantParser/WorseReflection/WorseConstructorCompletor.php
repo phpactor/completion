@@ -30,20 +30,20 @@ class WorseConstructorCompletor extends AbstractParameterCompletor implements To
         }
 
         if (!$node instanceof Variable && !$node instanceof ObjectCreationExpression) {
-            return;
+            return true;
         }
 
         $creationExpression = $node instanceof ObjectCreationExpression ? $node : $node->getFirstAncestor(ObjectCreationExpression::class);
 
         if (!$creationExpression || ($creationExpression instanceof ObjectCreationExpression && null === $creationExpression->openParen)) {
-            return;
+            return true;
         }
 
         $variables = $this->variableCompletionHelper->variableCompletions($node, $source, $offset);
 
         // no variables available for completion, return empty handed
         if (empty($variables)) {
-            return;
+            return true;
         }
 
         assert($creationExpression instanceof ObjectCreationExpression);
@@ -51,27 +51,28 @@ class WorseConstructorCompletor extends AbstractParameterCompletor implements To
         try {
             $reflectionClass = $this->reflectClass($source, $creationExpression);
         } catch (NotFound $notFound) {
-            return;
+            return true;
         }
 
         if (null === $reflectionClass) {
-            return;
+            return true;
         }
 
         if (false === $reflectionClass->methods()->has('__construct')) {
-            return;
+            return true;
         }
 
         $reflectionConstruct = $reflectionClass->methods()->get('__construct');
 
         // function has no parameters, return empty handed
         if ($reflectionConstruct->parameters()->count() === 0) {
-            return;
+            return true;
         }
 
-        foreach ($this->populateResponse($creationExpression, $reflectionConstruct, $variables) as $suggestion) {
-            yield $suggestion;
-        }
+        $suggestions = $this->populateResponse($creationExpression, $reflectionConstruct, $variables);
+        yield from $suggestions;
+
+        return $suggestions->getReturn();
     }
 
     /**

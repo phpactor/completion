@@ -23,10 +23,16 @@ class ChainCompletor implements Completor
 
     public function complete(TextDocument $source, ByteOffset $offset): Generator
     {
+        $isComplete = true;
+
         foreach ($this->completors as $completor) {
-            foreach ($completor->complete($source, $offset) as $suggestion) {
-                yield $suggestion;
-            }
+            $suggestions = $completor->complete($source, $offset);
+
+            yield from $suggestions;
+
+            $isComplete = $isComplete && $suggestions->getReturn();
         }
+
+        return $isComplete;
     }
 }

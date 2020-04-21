@@ -31,7 +31,8 @@ class DedupeCompletor implements Completor
     public function complete(TextDocument $source, ByteOffset $byteOffset): Generator
     {
         $seen = [];
-        foreach ($this->innerCompletor->complete($source, $byteOffset) as $suggestion) {
+        $suggestions = $this->innerCompletor->complete($source, $byteOffset);
+        foreach ($suggestions as $suggestion) {
             $key = $suggestion->name();
 
             if ($this->matchShortDescription) {
@@ -46,5 +47,7 @@ class DedupeCompletor implements Completor
 
             yield $suggestion;
         }
+
+        return $suggestions->getReturn();
     }
 }

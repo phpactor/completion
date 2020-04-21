@@ -38,13 +38,13 @@ class WorseParameterCompletor extends AbstractParameterCompletor implements Tole
         }
 
         if (!$node instanceof Variable && !$node instanceof CallExpression) {
-            return;
+            return true;
         }
 
         $callExpression = $node instanceof CallExpression ? $node : $node->getFirstAncestor(CallExpression::class);
 
         if (!$callExpression) {
-            return;
+            return true;
         }
 
         assert($callExpression instanceof CallExpression);
@@ -54,22 +54,23 @@ class WorseParameterCompletor extends AbstractParameterCompletor implements Tole
 
         // no variables available for completion, return empty handed
         if (empty($variables)) {
-            return;
+            return true;
         }
 
         try {
             $reflectionFunctionLike = $this->reflectFunctionLike($source, $callableExpression);
         } catch (NotFound $exception) {
-            return;
+            return true;
         }
 
         if (null === $reflectionFunctionLike) {
-            return;
+            return true;
         }
 
-        foreach ($this->populateResponse($callableExpression, $reflectionFunctionLike, $variables) as $suggestion) {
-            yield $suggestion;
-        }
+        $suggestions = $this->populateResponse($callableExpression, $reflectionFunctionLike, $variables);
+        yield from $suggestions;
+
+        return $suggestions->getReturn();
     }
 
     private function paramIndex(Node $node): int

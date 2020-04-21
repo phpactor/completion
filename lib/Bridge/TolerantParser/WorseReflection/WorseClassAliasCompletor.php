@@ -58,6 +58,8 @@ class WorseClassAliasCompletor implements TolerantCompletor, TolerantQualifiable
                 ]
             );
         }
+
+        return true;
     }
 
     public function qualifier(): TolerantQualifier

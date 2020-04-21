@@ -42,7 +42,7 @@ class LimitingCompletorTest extends TestCase
             $this->textDocument(self::EXAMPLE_SOURCE),
             ByteOffset::fromInt(self::EXAMPLE_OFFSET)
         )->will(function () {
-            return;
+            return true;
             yield;
         });
 
@@ -53,6 +53,7 @@ class LimitingCompletorTest extends TestCase
         );
 
         $this->assertCount(0, $suggestions);
+        $this->assertTrue($suggestions->getReturn());
     }
 
     public function testSomeSuggestions()
@@ -72,6 +73,7 @@ class LimitingCompletorTest extends TestCase
         );
 
         $this->assertCount(3, $suggestions);
+        $this->assertTrue($suggestions->getReturn());
     }
 
     public function testAppliesLimit()
@@ -91,6 +93,27 @@ class LimitingCompletorTest extends TestCase
         );
 
         $this->assertCount(2, $suggestions);
+        $this->assertFalse($suggestions->getReturn());
+    }
+
+    public function testIsNotCompleteWhenInnerCompleterIsNotComplete()
+    {
+        $suggestions = [
+            $this->suggestion('foobar'),
+            $this->suggestion('barfoo'),
+            $this->suggestion('carfoo'),
+        ];
+
+        $this->primeInnerCompletor($suggestions, false);
+
+        $suggestions = $this->create(10)->complete(
+            $this->node->reveal(),
+            $this->textDocument(self::EXAMPLE_SOURCE),
+            ByteOffset::fromInt(self::EXAMPLE_OFFSET)
+        );
+
+        $this->assertCount(3, $suggestions);
+        $this->assertFalse($suggestions->getReturn());
     }
 
     public function testQualifiesNonQualifiableCompletors()
@@ -123,16 +146,17 @@ class LimitingCompletorTest extends TestCase
         return Suggestion::create($name);
     }
 
-    private function primeInnerCompletor(array $suggestions)
+    private function primeInnerCompletor(array $suggestions, bool $isComplete = true)
     {
         $this->innerCompletor->complete(
             $this->node->reveal(),
             $this->textDocument(self::EXAMPLE_SOURCE),
             ByteOffset::fromInt(self::EXAMPLE_OFFSET)
-        )->will(function () use ($suggestions) {
+        )->will(function () use ($suggestions, $isComplete) {
             foreach ($suggestions as $suggestion) {
                 yield $suggestion;
             }
+            return $isComplete;
         });
     }
 
