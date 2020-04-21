@@ -24,9 +24,29 @@ class LimitingCompletorTest extends TestCase
             Suggestion::create('foobar'),
         ]);
         $dedupe = new LimitingCompletor($inner, 2);
+        $suggestions = $dedupe->complete($source, $offset);
         self::assertEquals([
             Suggestion::create('foobar'),
             Suggestion::create('foobar'),
-        ], iterator_to_array($dedupe->complete($source, $offset)));
+        ], iterator_to_array($suggestions));
+        $this->assertFalse($suggestions->getReturn());
+    }
+
+    public function testDoesNotLimitsResults()
+    {
+        $source = TextDocumentBuilder::create('foobar')->build();
+        $offset = ByteOffset::fromInt(10);
+
+        $inner = new ArrayCompletor([
+            Suggestion::create('foobar'),
+            Suggestion::create('foobar'),
+        ]);
+        $dedupe = new LimitingCompletor($inner, 2);
+        $suggestions = $dedupe->complete($source, $offset);
+        self::assertEquals([
+            Suggestion::create('foobar'),
+            Suggestion::create('foobar'),
+        ], iterator_to_array($suggestions));
+        $this->assertTrue($suggestions->getReturn());
     }
 }

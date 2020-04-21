@@ -16,7 +16,7 @@ class WorseConstantCompletor implements TolerantCompletor
     public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
         if (!$node instanceof QualifiedName) {
-            return;
+            return true;
         }
 
         $definedConstants = get_defined_constants();
@@ -35,5 +35,7 @@ class WorseConstantCompletor implements TolerantCompletor
                 );
             }
         }
+
+        return true;
     }
 }

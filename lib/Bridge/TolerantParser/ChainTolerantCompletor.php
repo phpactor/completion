@@ -40,6 +40,8 @@ class ChainTolerantCompletor implements Completor
             strlen($truncatedSource)
         );
 
+        $isComplete = true;
+
         foreach ($this->tolerantCompletors as $tolerantCompletor) {
             $completionNode = $node;
 
@@ -51,10 +53,14 @@ class ChainTolerantCompletor implements Completor
                 continue;
             }
 
-            foreach ($tolerantCompletor->complete($completionNode, $source, $byteOffset) as $suggestion) {
-                yield $suggestion;
-            }
+            $suggestions = $tolerantCompletor->complete($completionNode, $source, $byteOffset);
+
+            yield from $suggestions;
+
+            $isComplete = $isComplete && $suggestions->getReturn();
         }
+
+        return $isComplete;
     }
 
     private function truncateSource(string $source, int $byteOffset): string

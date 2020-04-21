@@ -84,6 +84,8 @@ class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
                 );
             }
         }
+
+        return true;
     }
 
     private function getClassNameForImport(ClassName $candidate, array $imports, string $currentNamespace = null): ?string

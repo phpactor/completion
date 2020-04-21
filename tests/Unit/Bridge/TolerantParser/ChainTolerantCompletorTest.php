@@ -60,6 +60,7 @@ class ChainTolerantCompletorTest extends TestCase
             ByteOffset::fromInt(1)
         );
         $this->assertCount(0, $suggestions);
+        $this->assertTrue($suggestions->getReturn());
     }
 
     public function testCallsCompletors()
@@ -74,6 +75,7 @@ class ChainTolerantCompletorTest extends TestCase
             ByteOffset::fromInt(1)
         )->will(function () {
             yield Suggestion::create('foo');
+            return false;
         });
 
         $suggestions = $completor->complete(
@@ -81,6 +83,7 @@ class ChainTolerantCompletorTest extends TestCase
             ByteOffset::fromInt(1)
         );
         $this->assertCount(1, $suggestions);
+        $this->assertFalse($suggestions->getReturn());
     }
 
     public function testPassesCorrectByteOffsetToParser()
@@ -143,6 +146,7 @@ EOT
             ByteOffset::fromInt(1)
         )->will(function () {
             yield Suggestion::create('foo');
+            return true;
         });
         $this->qualifiableCompletor2->complete(Argument::cetera())->shouldNotBeCalled();
 
@@ -151,6 +155,7 @@ EOT
             ByteOffset::fromInt(1)
         );
         $this->assertCount(1, $suggestions);
+        $this->assertTrue($suggestions->getReturn());
     }
 
     private function create(array $completors): ChainTolerantCompletor

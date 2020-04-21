@@ -22,10 +22,12 @@ class DedupeCompletorTest extends TestCase
             Suggestion::create('foobar'),
         ]);
         $dedupe = new DedupeCompletor($inner);
+        $suggestions = $dedupe->complete($source, $offset);
         self::assertEquals([
             Suggestion::create('foobar'),
             Suggestion::create('barfoo'),
-        ], iterator_to_array($dedupe->complete($source, $offset)));
+        ], iterator_to_array($suggestions));
+        $this->assertTrue($suggestions->getReturn());
     }
 
     public function testDeduplicatesWithShortDescription()
@@ -44,6 +46,7 @@ class DedupeCompletorTest extends TestCase
             ]),
         ]);
         $dedupe = new DedupeCompletor($inner, true);
+        $suggestions = $dedupe->complete($source, $offset);
         self::assertEquals([
             Suggestion::create('foobar'),
             Suggestion::createWithOptions('barfoo', [
@@ -52,6 +55,7 @@ class DedupeCompletorTest extends TestCase
             Suggestion::createWithOptions('barfoo', [
                 'short_description' => 'bosh',
             ]),
-        ], iterator_to_array($dedupe->complete($source, $offset)));
+        ], iterator_to_array($suggestions));
+        $this->assertTrue($suggestions->getReturn());
     }
 }

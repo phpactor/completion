@@ -12,14 +12,15 @@ abstract class CompletorTestCase extends IntegrationTestCase
 {
     abstract protected function createCompletor(string $source): Completor;
 
-    protected function assertComplete(string $source, array $expected)
+    protected function assertComplete(string $source, array $expected, bool $isComplete = true): void
     {
         list($source, $offset) = ExtractOffset::fromSource($source);
         $completor = $this->createCompletor($source);
-        $suggestions = iterator_to_array($completor->complete(
+        $suggestionGenerator = $completor->complete(
             TextDocumentBuilder::create($source)->language('php')->uri('file:///tmp/test')->build(),
             ByteOffset::fromInt($offset)
-        ));
+        );
+        $suggestions = iterator_to_array($suggestionGenerator);
         usort($suggestions, function (Suggestion $suggestion1, Suggestion $suggestion2) {
             return $suggestion1->name() <=> $suggestion2->name();
         });
@@ -30,17 +31,19 @@ abstract class CompletorTestCase extends IntegrationTestCase
         }
 
         $this->assertCount(count($expected), $suggestions);
+        $this->assertEquals($isComplete, $suggestionGenerator->getReturn());
     }
 
-    public function assertCouldNotComplete(string $source)
+    public function assertCouldNotComplete(string $source): void
     {
         list($source, $offset) = ExtractOffset::fromSource($source);
         $completor = $this->createCompletor($source);
-        $result = $completor->complete(
+        $suggestions = $completor->complete(
             TextDocumentBuilder::create($source)->language('php')->uri('file:///tmp/test')->build(),
             ByteOffset::fromInt($offset)
         );
 
-        $this->assertEmpty(iterator_to_array($result));
+        $this->assertEmpty(iterator_to_array($suggestions));
+        $this->assertTrue($suggestions->getReturn());
     }
 }

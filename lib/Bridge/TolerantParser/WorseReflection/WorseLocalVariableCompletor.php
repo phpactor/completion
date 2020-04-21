@@ -43,7 +43,7 @@ class WorseLocalVariableCompletor implements TolerantCompletor
     public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
         if (false === $this->couldComplete($node, $source, $offset)) {
-            return;
+            return true;
         }
 
         foreach ($this->variableCompletionHelper->variableCompletions($node, $source, $offset) as $local) {
@@ -55,6 +55,8 @@ class WorseLocalVariableCompletor implements TolerantCompletor
                 ]
             );
         }
+
+        return true;
     }
 
     private function couldComplete(Node $node = null, TextDocument $source, ByteOffset $offset): bool

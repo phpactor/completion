@@ -47,15 +47,15 @@ class WorseFunctionCompletor implements TolerantCompletor
     public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
         if (false === $node instanceof QualifiedName) {
-            return;
+            return true;
         }
 
         if ($node->parent instanceof MethodDeclaration) {
-            return;
+            return true;
         }
 
         if ($node->parent instanceof Parameter) {
-            return;
+            return true;
         }
 
         $functionNames = $this->reflectedFunctions($source);
@@ -74,6 +74,8 @@ class WorseFunctionCompletor implements TolerantCompletor
                 ]
             );
         }
+
+        return true;
     }
 
     private function definedNamesFor(array $reflectedFunctions, string $partialName): Generator

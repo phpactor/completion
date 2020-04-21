@@ -52,13 +52,13 @@ abstract class AbstractParameterCompletor
     {
         // function has no parameters, return empty handed
         if ($functionLikeReflection->parameters()->count() === 0) {
-            return;
+            return true;
         }
 
         $paramIndex = $this->paramIndex($callableExpression);
 
         if ($this->numberOfArgumentsExceedParameterArity($functionLikeReflection, $paramIndex)) {
-            return;
+            return true;
         }
 
         $parameter = $this->reflectedParameter($functionLikeReflection, $paramIndex);
@@ -85,6 +85,8 @@ abstract class AbstractParameterCompletor
                 ]
             );
         }
+
+        return true;
     }
 
     private function paramIndex(Node $node): int

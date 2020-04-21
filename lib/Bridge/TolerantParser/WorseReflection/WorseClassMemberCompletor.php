@@ -77,7 +77,7 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
         }
 
         if (!$memberName instanceof Token) {
-            return;
+            return true;
         }
 
         $partialMatch = (string) $memberName->getText($node->getFileContents());
@@ -97,6 +97,8 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
                 yield $suggestion;
             }
         }
+
+        return true;
     }
 
     private function populateSuggestions(SymbolContext $symbolContext, Type $type, bool $static): Generator

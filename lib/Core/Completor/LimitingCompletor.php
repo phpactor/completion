@@ -20,7 +20,6 @@ class LimitingCompletor implements Completor
      */
     private $limit;
 
-
     public function __construct(Completor $innerCompletor, int $limit = 32)
     {
         $this->innerCompletor = $innerCompletor;
@@ -40,11 +39,14 @@ class LimitingCompletor implements Completor
     public function complete(TextDocument $source, ByteOffset $byteOffset): Generator
     {
         $count = 0;
-        foreach ($this->innerCompletor->complete($source, $byteOffset) as $suggestion) {
+        $suggestions = $this->innerCompletor->complete($source, $byteOffset);
+        foreach ($suggestions as $suggestion) {
             if ($count++ >= $this->limit) {
-                break;
+                return false;
             }
             yield $suggestion;
         }
+
+        return $suggestions->getReturn();
     }
 }
