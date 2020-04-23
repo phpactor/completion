@@ -106,6 +106,120 @@ class WorseSignatureHelperTest extends IntegrationTestCase
             )
         ];
 
+        yield 'function with parameters, 2nd active and already filled' => [
+            '<?php function hello(string $foo, int $bar) {}; hello("hello", $test<>',
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'hello(string $foo, int $bar)',
+                    [
+                        new ParameterInformation('foo', 'string $foo'),
+                        new ParameterInformation('bar', 'int $bar'),
+                    ]
+                )],
+                0,
+                1
+            )
+        ];
+
+        yield 'function with parameters, 2nd active within other nodes' => [
+            '<?php function hello(string $foo, int $bar) {}; hello("hello", [1, [<>]]',
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'hello(string $foo, int $bar)',
+                    [
+                        new ParameterInformation('foo', 'string $foo'),
+                        new ParameterInformation('bar', 'int $bar'),
+                    ]
+                )],
+                0,
+                1
+            )
+        ];
+
+        yield 'function with parameters, 2nd active on multiple lines' => [
+            <<<'EOT'
+<?php
+function hello(string $foo, int $bar) {};
+hello(
+    "hello",
+    <>
+);
+EOT,
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'hello(string $foo, int $bar)',
+                    [
+                        new ParameterInformation('foo', 'string $foo'),
+                        new ParameterInformation('bar', 'int $bar'),
+                    ]
+                )],
+                0,
+                1
+            )
+        ];
+
+        yield 'nested function with parameters, 2nd active' => [
+            <<<'EOT'
+<?php
+function hello(string $foo, int $bar) {};
+function goodbye(string $good, int $by) {};
+hello(goodbye(
+    "hello",
+    <>
+));
+EOT,
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'goodbye(string $good, int $by)',
+                    [
+                        new ParameterInformation('good', 'string $good'),
+                        new ParameterInformation('by', 'int $by'),
+                    ]
+                )],
+                0,
+                1
+            )
+        ];
+
+        yield 'nested function on the second function, 2nd arg of 1st call active' => [
+            <<<'EOT'
+<?php
+function hello(string $foo, int $bar) {};
+function goodbye(string $good, int $by) {};
+hello(
+    "hello",
+    goo<>dbye("good", "by")
+);
+EOT,
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'hello(string $foo, int $bar)',
+                    [
+                        new ParameterInformation('foo', 'string $foo'),
+                        new ParameterInformation('bar', 'int $bar'),
+                    ]
+                )],
+                0,
+                1
+            )
+        ];
+
+        yield 'function with parameters, 1st contains comma and 2nd active' => [
+            '<?php function hello(string $foo, int $bar, bool $foobar) {}; hello("hello, ",<>',
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'hello(string $foo, int $bar, bool $foobar)',
+                    [
+                        new ParameterInformation('foo', 'string $foo'),
+                        new ParameterInformation('bar', 'int $bar'),
+                        new ParameterInformation('foobar', 'bool $foobar'),
+                    ]
+                )],
+                0,
+                1
+            )
+        ];
+
         yield 'static method call' => [
             '<?php class Foo { static function hello(string $foo, int $bar) {} }; Foo::hello(<>',
             new SignatureHelp(
