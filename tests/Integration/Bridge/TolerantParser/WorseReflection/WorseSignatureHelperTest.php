@@ -257,5 +257,15 @@ EOT
             1
         )
         ];
+
+        yield 'non-existing static member' => [
+            <<<'EOT'
+<?php 
+class Foo {}
+
+Foo::bar(<>);
+EOT
+        , null
+        ];
     }
 }

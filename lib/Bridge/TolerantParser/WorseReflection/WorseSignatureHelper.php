@@ -52,86 +52,87 @@ class WorseSignatureHelper implements SignatureHelper
         TextDocument $textDocument,
         ByteOffset $offset
     ): SignatureHelp {
+        try {
+            return $this->doSignatureHelp($textDocument, $offset);
+        } catch (NotFound $notFound) {
+            throw new CouldNotHelpWithSignature($notFound->getMessage(), 0, $notFound);
+        }
+    }
+
+    private function doSignatureHelp(TextDocument $textDocument, ByteOffset $offset): SignatureHelp
+    {
         $rootNode = $this->parser->parseSourceFile($textDocument->__toString());
         $nodeAtPosition = $node = $rootNode->getDescendantNodeAtPosition($offset->toInt());
-
+        
         if (!$nodeAtPosition instanceof CallExpression && !$nodeAtPosition instanceof ObjectCreationExpression) {
             $node = $node->parent;
         }
-
+        
         if (!$node instanceof CallExpression && !$node instanceof ObjectCreationExpression) {
             throw new CouldNotHelpWithSignature(sprintf('Could not provide signature for AST node of type "%s"', get_class($nodeAtPosition)));
         }
-
+        
         $position = 0;
         if ($nodeAtPosition instanceof ArgumentExpressionList) {
             $position = substr_count($nodeAtPosition->getText(), ',');
         }
-
+        
         if ($node instanceof ObjectCreationExpression) {
             return $this->signatureHelperForObjectCreation($node, $position);
         }
-
+        
         assert($node instanceof CallExpression);
-
+        
         $callable = $node->callableExpression;
-
+        
         if ($callable instanceof QualifiedName) {
             return $this->signatureHelpForFunction($callable, $position);
         }
-
+        
         if ($callable instanceof ScopedPropertyAccessExpression) {
             return $this->signatureHelpForScopedPropertyAccess($callable, $node, $position);
         }
-
+        
         if ($callable instanceof MemberAccessExpression) {
             $reflectionOffset = $this->reflector->reflectOffset($textDocument, $callable->getEndPosition());
             $symbolContext = $reflectionOffset->symbolContext();
-
+        
             if ($symbolContext->symbol()->symbolType() !== Symbol::METHOD) {
                 throw new CouldNotHelpWithSignature(sprintf(
                     'Could not provide signature member type "%s"',
                     $symbolContext->symbol()->symbolType()
                 ));
             }
-
+        
             $containerType = $symbolContext->containerType();
-
+        
             if (null === $containerType) {
                 throw new CouldNotHelpWithSignature(sprintf(
                     'Could not determine container type for: "%s"',
                     $symbolContext->symbol()->name()
                 ));
             }
-
+        
             if (!$containerType->isClass()) {
                 throw new CouldNotHelpWithSignature(sprintf(
                     'Container type is not a class: "%s"',
                     $symbolContext->symbol()->name()
                 ));
             }
-
-            try {
-                $reflectionClass = $this->reflector->reflectClassLike($containerType->className());
-                $reflectionMethod = $reflectionClass->methods()->get($symbolContext->symbol()->name());
-            } catch (NotFound $notFound) {
-                throw new CouldNotHelpWithSignature($notFound->getMessage(), 0, $notFound);
-            }
-
+        
+            $reflectionClass = $this->reflector->reflectClassLike($containerType->className());
+            $reflectionMethod = $reflectionClass->methods()->get($symbolContext->symbol()->name());
+        
             return $this->createSignatureHelp($reflectionMethod, $position);
         }
-
+        
         throw new CouldNotHelpWithSignature(sprintf('Could not provide signature for AST node of type "%s"', get_class($callable)));
     }
 
     private function signatureHelpForFunction(QualifiedName $callable, int $position): SignatureHelp
     {
         $name = $callable->__toString();
-        try {
-            $functionReflection = $this->reflector->reflectFunction($name);
-        } catch (NotFound $notFound) {
-            throw new CouldNotHelpWithSignature($notFound->getMessage());
-        }
+        $functionReflection = $this->reflector->reflectFunction($name);
 
         return $this->createSignatureHelp($functionReflection, $position);
     }
@@ -148,17 +149,8 @@ class WorseSignatureHelper implements SignatureHelper
 
         $offset = $this->reflector->reflectOffset($node->getFileContents(), $name->getStart());
 
-        try {
-            $reflectionClass = $this->reflector->reflectClass($offset->symbolContext()->type()->__toString());
-        } catch (NotFound $notFound) {
-            throw new CouldNotHelpWithSignature($notFound->getMessage());
-        }
-
-        try {
-            $constructor = $reflectionClass->methods()->get('__construct');
-        } catch (NotFound $notFound) {
-            throw new CouldNotHelpWithSignature($notFound->getMessage());
-        }
+        $reflectionClass = $this->reflector->reflectClass($offset->symbolContext()->type()->__toString());
+        $constructor = $reflectionClass->methods()->get('__construct');
 
         return $this->createSignatureHelp($constructor, $position);
     }
@@ -189,12 +181,7 @@ class WorseSignatureHelper implements SignatureHelper
         }
 
         $class = $scopeResolutionQualifier->getResolvedName();
-
-        try {
-            $reflectionClass = $this->reflector->reflectClass((string) $class);
-        } catch (NotFound $notFound) {
-            throw new CouldNotHelpWithSignature($notFound->getMessage());
-        }
+        $reflectionClass = $this->reflector->reflectClass((string) $class);
 
         $memberName = $callable->memberName;
 
