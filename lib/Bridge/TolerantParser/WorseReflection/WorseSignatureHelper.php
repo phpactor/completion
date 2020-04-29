@@ -2,6 +2,7 @@
 
 namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
+use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Node\DelimitedList\ArgumentExpressionList;
 use Microsoft\PhpParser\Node\Expression\CallExpression;
 use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
@@ -62,35 +63,55 @@ class WorseSignatureHelper implements SignatureHelper
     private function doSignatureHelp(TextDocument $textDocument, ByteOffset $offset): SignatureHelp
     {
         $rootNode = $this->parser->parseSourceFile($textDocument->__toString());
-        $nodeAtPosition = $node = $rootNode->getDescendantNodeAtPosition($offset->toInt());
-        
-        if (!$nodeAtPosition instanceof CallExpression && !$nodeAtPosition instanceof ObjectCreationExpression) {
-            $node = $node->parent;
+        $nodeAtPosition = $callNode = $rootNode->getDescendantNodeAtPosition($offset->toInt());
+
+        if ($nodeAtPosition instanceof ArgumentExpressionList) {
+            $argsNode = $nodeAtPosition;
+        } elseif (!$argsNode = $nodeAtPosition->getFirstChildNode(ArgumentExpressionList::class)) {
+            $argsNode = $nodeAtPosition->getFirstAncestor(ArgumentExpressionList::class);
         }
-        
-        if (!$node instanceof CallExpression && !$node instanceof ObjectCreationExpression) {
-            throw new CouldNotHelpWithSignature(sprintf('Could not provide signature for AST node of type "%s"', get_class($nodeAtPosition)));
+
+        $callNode = $argsNode->parent ?? null;
+
+        // current position not inside a call expression
+        if (!$callNode && static::isACallExpression($nodeAtPosition)) {
+            $callNode = $nodeAtPosition;
+            $argsNode = null;
+        }
+
+        if (!$callNode) {
+            throw new CouldNotHelpWithSignature(sprintf(
+                'Could not provide signature for AST node of type "%s"',
+                get_class($nodeAtPosition)
+            ));
         }
         
         $position = 0;
-        if ($nodeAtPosition instanceof ArgumentExpressionList) {
-            $position = substr_count($nodeAtPosition->getText(), ',');
+        if ($argsNode) {
+            /** @var Node $argNode */
+            foreach ($argsNode->getChildNodes() as $argNode) {
+                if ($argNode->getEndPosition() >= $offset->toInt()) {
+                    break;
+                }
+
+                ++$position;
+            }
         }
-        
-        if ($node instanceof ObjectCreationExpression) {
-            return $this->signatureHelperForObjectCreation($node, $position);
+
+        if ($callNode instanceof ObjectCreationExpression) {
+            return $this->signatureHelperForObjectCreation($callNode, $position);
         }
-        
-        assert($node instanceof CallExpression);
-        
-        $callable = $node->callableExpression;
-        
+
+        assert($callNode instanceof CallExpression);
+
+        $callable = $callNode->callableExpression;
+
         if ($callable instanceof QualifiedName) {
             return $this->signatureHelpForFunction($callable, $position);
         }
         
         if ($callable instanceof ScopedPropertyAccessExpression) {
-            return $this->signatureHelpForScopedPropertyAccess($callable, $node, $position);
+            return $this->signatureHelpForScopedPropertyAccess($callable, $callNode, $position);
         }
         
         if ($callable instanceof MemberAccessExpression) {
@@ -193,5 +214,10 @@ class WorseSignatureHelper implements SignatureHelper
         $reflectionMethod = $reflectionClass->methods()->get((string) $memberName);
 
         return $this->createSignatureHelp($reflectionMethod, $position);
+    }
+
+    private static function isACallExpression(Node $node): bool
+    {
+        return $node instanceof CallExpression || $node instanceof ObjectCreationExpression;
     }
 }
