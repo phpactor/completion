@@ -7,6 +7,7 @@ use Microsoft\PhpParser\Node\Expression\AssignmentExpression;
 use Microsoft\PhpParser\Node\Expression\Variable as ParserVariable;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
+use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Inference\Frame;
 use Phpactor\WorseReflection\Core\Inference\Variable;
 use Phpactor\WorseReflection\Reflector;
@@ -34,7 +35,13 @@ class VariableCompletionHelper
         }
 
         $offset = $this->offsetToReflect($node, $offset->toInt());
-        $reflectionOffset = $this->reflector->reflectOffset($source, $offset);
+
+        try {
+            $reflectionOffset = $this->reflector->reflectOffset($source, $offset);
+        } catch (NotFound $notFound) {
+            return [];
+        }
+
         $frame = $reflectionOffset->frame();
 
         // Get all declared variables up until the start of the current
