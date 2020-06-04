@@ -20,17 +20,18 @@ class SuggestionTest extends TestCase
     public function testCanBeCreatedWithOptionsAndProvidesAccessors()
     {
         $suggestion = Suggestion::createWithOptions('hello', [
-            'type' => 'c',
+            'type' => 'class',
             'short_description' => 'Foobar',
             'class_import' => 'Namespace\\Foobar',
             'label' => 'hallo',
         ]);
 
-        $this->assertEquals('c', $suggestion->type());
+        $this->assertEquals('class', $suggestion->type());
         $this->assertEquals('hello', $suggestion->name());
         $this->assertEquals('hallo', $suggestion->label());
         $this->assertEquals('Foobar', $suggestion->shortDescription());
         $this->assertEquals('Namespace\\Foobar', $suggestion->classImport());
+        $this->assertEquals('Namespace\\Foobar', $suggestion->nameImport());
     }
 
     public function testDefaults()
@@ -43,7 +44,7 @@ class SuggestionTest extends TestCase
     public function testCastsToArray()
     {
         $suggestion = Suggestion::createWithOptions('hello', [
-            'type' => 'c',
+            'type' => Suggestion::TYPE_CLASS,
             'short_description' => 'Foobar',
             'class_import' => 'Namespace\\Foobar',
             'documentation' => 'foo',
@@ -53,7 +54,7 @@ class SuggestionTest extends TestCase
         ]);
 
         $this->assertEquals([
-            'type' => 'c',
+            'type' => 'class',
             'short_description' => 'Foobar',
             'documentation' => 'foo',
             'class_import' => 'Namespace\\Foobar',
@@ -62,6 +63,7 @@ class SuggestionTest extends TestCase
             'range' => [1, 2],
             'info' => 'Foobar',
             'snippet' => null,
+            'name_import' => 'Namespace\\Foobar',
         ], $suggestion->toArray());
     }
 }

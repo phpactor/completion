@@ -35,6 +35,7 @@ class NameSearcherCompletor implements TolerantCompletor
                 'short_description' => $result->name()->__toString(),
                 'type' => $this->suggestionType($result),
                 'class_import' => $this->classImport($result),
+                'name_import' => $result->name()->__toString(),
             ]);
         }
 

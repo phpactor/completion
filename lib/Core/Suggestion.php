@@ -70,11 +70,16 @@ class Suggestion
      */
     private $snippet;
 
+    /**
+     * @var string|null
+     */
+    private $nameImport;
+
     private function __construct(
         string $name,
         ?string $type = null,
         ?string $shortDescription = null,
-        ?string $classImport = null,
+        ?string $nameImport = null,
         ?string $label = null,
         ?string $documentation = null,
         ?Range $range = null,
@@ -83,11 +88,11 @@ class Suggestion
         $this->type = $type;
         $this->name = $name;
         $this->shortDescription = $shortDescription;
-        $this->classImport = $classImport;
         $this->label = $label ?: $name;
         $this->range = $range;
         $this->documentation = $documentation;
         $this->snippet = $snippet;
+        $this->nameImport = $nameImport;
     }
 
     public static function create(string $name): self
@@ -102,6 +107,7 @@ class Suggestion
             'documentation' => '',
             'type' => null,
             'class_import' => null,
+            'name_import' => null,
             'label' => null,
             'range' => null,
             'snippet' => null
@@ -121,7 +127,7 @@ class Suggestion
             $name,
             $options['type'],
             $options['short_description'],
-            $options['class_import'],
+            $options['name_import'] ? $options['name_import'] : $options['class_import'],
             $options['label'],
             $options['documentation'],
             $options['range'],
@@ -138,7 +144,8 @@ class Suggestion
             'label' => $this->label(),
             'short_description' => $this->shortDescription(),
             'documentation' => $this->documentation(),
-            'class_import' => $this->classImport(),
+            'class_import' => $this->type() === self::TYPE_CLASS && $this->nameImport ? $this->nameImport : null,
+            'name_import' => $this->nameImport,
             'range' => $this->range ? $this->range->toArray() : null,
 
             // deprecated: in favour of short_description, to be removed
@@ -170,10 +177,19 @@ class Suggestion
         return $this->shortDescription;
     }
 
+    /**
+     * @deprecated Use nameImport instead
+     */
     public function classImport(): ?string
     {
-        return $this->classImport;
+        return $this->type() === self::TYPE_CLASS ? $this->nameImport : null;
     }
+
+    public function nameImport(): ?string
+    {
+        return $this->nameImport;
+    }
+
 
     public function label(): string
     {
