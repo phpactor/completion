@@ -18,11 +18,15 @@ class MethodFormatter implements Formatter
     {
         assert($method instanceof ReflectionMethod);
 
-        $info = [
-            substr((string) $method->visibility(), 0, 3),
-            ' ',
-            $method->name()
-        ];
+        $info = [];
+
+        if ($method->deprecation()->isDefined()) {
+             $info [] = '⚠ ';
+        }
+
+        $info[] = substr((string) $method->visibility(), 0, 3);
+        $info[] = ' ';
+        $info[] = $method->name();
 
         if ($method->isAbstract()) {
             array_unshift($info, 'abstract ');

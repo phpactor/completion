@@ -6,6 +6,7 @@ use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
 use Phpactor\TextDocument\TextDocument;
+use Phpactor\WorseReflection\Bridge\Phpactor\MemberProvider\DocblockMemberProvider;
 use Phpactor\WorseReflection\ReflectorBuilder;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseClassMemberCompletor;
 use Generator;
@@ -14,7 +15,9 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
 {
     protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
     {
-        $reflector = ReflectorBuilder::create()->addSource($source)->build();
+        $reflector = ReflectorBuilder::create()
+            ->addMemberProvider(new DocblockMemberProvider())
+            ->addSource($source)->build();
 
         return new WorseClassMemberCompletor(
             $reflector,
@@ -201,6 +204,32 @@ EOT
                 'short_description' => 'pub foo(): Foobar|Barbar',
                 'documentation' => "Returns a foobar\n",
                 'snippet' => 'foo()',
+            ]
+        ]
+        ];
+
+        yield 'Virtual method' => [
+            <<<'EOT'
+<?php
+
+/**
+ * @method \Foobar foo()
+ */
+interface Barfoo {}
+
+class Foobar implements Barfoo
+{
+}
+
+$foobar = new Foobar();
+$foobar-><>
+
+EOT
+        , [
+            [
+                'type' => Suggestion::TYPE_METHOD,
+                'name' => 'foo',
+                'short_description' => 'pub foo(): Foobar',
             ]
         ]
     ];
