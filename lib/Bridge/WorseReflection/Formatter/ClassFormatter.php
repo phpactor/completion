@@ -17,9 +17,13 @@ class ClassFormatter implements Formatter
     {
         assert($class instanceof ReflectionClass);
 
-        $info = [
-            $class->name()
-        ];
+        $info = [];
+
+        if ($class->deprecation()->isDefined()) {
+             $info [] = '⚠ ';
+        }
+
+        $info[] = $class->name();
 
         if ($class->methods()->has('__construct')) {
             $info[] = '(';
