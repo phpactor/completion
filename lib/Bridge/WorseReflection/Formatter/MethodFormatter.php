@@ -21,7 +21,7 @@ class MethodFormatter implements Formatter
         $info = [];
 
         if ($method->deprecation()->isDefined()) {
-             $info [] = '⚠ ';
+            $info [] = '⚠ ';
         }
 
         $info[] = substr((string) $method->visibility(), 0, 3);

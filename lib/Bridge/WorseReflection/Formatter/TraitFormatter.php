@@ -19,7 +19,7 @@ class TraitFormatter implements Formatter
         $info = [];
 
         if ($object->deprecation()->isDefined()) {
-             $info [] = '⚠ ';
+            $info [] = '⚠ ';
         }
 
         $info[] = sprintf('%s (trait)', $object->name()->full());

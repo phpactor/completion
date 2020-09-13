@@ -20,7 +20,7 @@ class InterfaceFormatter implements Formatter
         $info = [];
 
         if ($object->deprecation()->isDefined()) {
-             $info [] = '⚠ ';
+            $info [] = '⚠ ';
         }
         assert($object instanceof ReflectionInterface);
         $info[] = sprintf('%s (interface)', $object->name()->full());

@@ -20,7 +20,7 @@ class ClassFormatter implements Formatter
         $info = [];
 
         if ($class->deprecation()->isDefined()) {
-             $info [] = '⚠ ';
+            $info [] = '⚠ ';
         }
 
         $info[] = $class->name();
