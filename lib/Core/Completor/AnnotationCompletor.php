@@ -1,18 +1,17 @@
 <?php
 
-namespace Phpactor\Completion\Bridge\TolerantParser\ReferenceFinder;
+namespace Phpactor\Completion\Core\Completor;
 
 use Generator;
-use Microsoft\PhpParser\Node;
-use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
-use Phpactor\Completion\Core\Completor\NameSearcherCompletor as CoreNameSearcherCompletor;
+use Phpactor\Completion\Core\Completor;
 use Phpactor\ReferenceFinder\NameSearcher;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
+use Phpactor\TextDocument\Util\WordAtOffset;
 
-class NameSearcherCompletor implements TolerantCompletor
+class AnnotationCompletor implements Completor
 {
-    use CoreNameSearcherCompletor;
+    use NameSearcherCompletor;
 
     /**
      * @var NameSearcher
@@ -27,9 +26,15 @@ class NameSearcherCompletor implements TolerantCompletor
     /**
      * {@inheritDoc}
      */
-    public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
+    public function complete(TextDocument $source, ByteOffset $byteOffset): Generator
     {
-        $suggestions = $this->completeName($node->getText());
+        $annotation = WordAtOffset::annotation($source, $byteOffset->toInt());
+
+        if (0 !== strpos($annotation, '@')) {
+            return true;
+        }
+
+        $suggestions = $this->completeName(ltrim($annotation, '@'));
 
         yield from $suggestions;
 
