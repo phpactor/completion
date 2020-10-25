@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpactor\Completion\Bridge\TolerantParser;
+namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
 use Generator;
 use Microsoft\PhpParser\Node;
@@ -8,11 +8,13 @@ use Microsoft\PhpParser\Node\SourceFileNode;
 use Microsoft\PhpParser\Parser;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Completor\NameSearcherCompletor;
+use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Util\OffsetHelper;
 use Phpactor\ReferenceFinder\NameSearcher;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
 use Phpactor\TextDocument\Util\WordAtOffset;
+use Phpactor\WorseReflection\Reflector;
 
 class AnnotationCompletor implements Completor
 {
@@ -24,13 +26,22 @@ class AnnotationCompletor implements Completor
     private $nameSearcher;
 
     /**
+     * @var Reflector
+     */
+    private $reflector;
+
+    /**
      * @var Parser
      */
     private $parser;
 
-    public function __construct(NameSearcher $nameSearcher, Parser $parser = null)
-    {
+    public function __construct(
+        NameSearcher $nameSearcher,
+        Reflector $reflector,
+        Parser $parser = null
+    ) {
         $this->nameSearcher = $nameSearcher;
+        $this->reflector = $reflector;
         $this->parser = $parser ?: new Parser();
     }
 
@@ -45,26 +56,29 @@ class AnnotationCompletor implements Completor
             strlen($truncatedSource)
         );
 
-        $isComplete = true;
-
         if (!$node) {
             // Ignore this case is the cursor is not in a phpdoc block
-            return $isComplete;
+            return true;
         }
 
         $annotation = WordAtOffset::annotation($source, $byteOffset->toInt());
 
         if (0 !== strpos($annotation, '@')) {
             // Ignore if not an annotation
-            return $isComplete;
+            return true;
         }
 
         $suggestions = $this->completeName(ltrim($annotation, '@'));
 
-        // TODO: filter suggestions for class having @Annotation only
-        yield from $suggestions;
+        foreach ($suggestions as $suggestion) {
+            if (!$this->isAnAnnotation($suggestion)) {
+                continue;
+            }
 
-        return $isComplete && $suggestions->getReturn();
+            yield $suggestion;
+        }
+
+        return $suggestions->getReturn();
     }
 
     private function truncateSource(string $source, int $byteOffset): string
@@ -103,5 +117,17 @@ class AnnotationCompletor implements Completor
         }
 
         return null;
+    }
+
+    private function isAnAnnotation(Suggestion $suggestion): bool
+    {
+        try {
+            $reflectionClass = $this->reflector->reflectClass($suggestion->classImport());
+            $docblock = $reflectionClass->docblock();
+
+            return false !== strpos($docblock->raw(), '@Annotation');
+        } catch (\Throwable $error) {
+            return false;
+        }
     }
 }

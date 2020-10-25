@@ -3,13 +3,15 @@
 namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser;
 
 use Generator;
-use Phpactor\Completion\Bridge\TolerantParser\AnnotationCompletor;
+use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\AnnotationCompletor;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\CompletorTestCase;
 use Phpactor\ReferenceFinder\NameSearcher;
 use Phpactor\ReferenceFinder\Search\NameSearchResult;
 use Phpactor\TextDocument\TextDocumentBuilder;
+use Phpactor\WorseReflection\Bridge\Phpactor\MemberProvider\DocblockMemberProvider;
+use Phpactor\WorseReflection\ReflectorBuilder;
 use Prophecy\Argument;
 
 class AnnotationCompletorTest extends CompletorTestCase
@@ -23,8 +25,21 @@ class AnnotationCompletorTest extends CompletorTestCase
         $searcher->search('Ann')->willYield([
             NameSearchResult::create('class', 'Annotation')
         ]);
+        $searcher->search('Ent')->willYield([
+            NameSearchResult::create('class', 'App\Annotation\Entity')
+        ]);
+        $searcher->search('NotAnn')->willYield([
+            NameSearchResult::create('class', 'NotAnnotation')
+        ]);
 
-        return new AnnotationCompletor($searcher->reveal());
+        $reflector = ReflectorBuilder::create()
+            ->addMemberProvider(new DocblockMemberProvider())
+            ->addSource($source)->build();
+
+        return new AnnotationCompletor(
+            $searcher->reveal(),
+            $reflector,
+        );
     }
 
     /**
@@ -40,6 +55,11 @@ class AnnotationCompletorTest extends CompletorTestCase
         yield 'not a docblock' => [
             <<<'EOT'
 <?php
+
+/**
+ * @Annotation
+ */
+class Annotation {}
 
 /*
  * @Ann<>
@@ -61,9 +81,40 @@ EOT
             , []
         ];
 
-        yield 'annotation on node in the middle of the AST' => [
+        yield 'in a namespace' => [
             <<<'EOT'
 <?php
+
+namespace App\Annotation;
+
+/**
+ * @Annotation
+ */
+class Entity {}
+
+namespace App;
+
+/**
+ * @Ent<>
+ */
+class Foo {}
+EOT
+        , [
+            [
+                'type' => Suggestion::TYPE_CLASS,
+                'name' => 'Entity',
+                'short_description' => 'App\Annotation\Entity',
+            ]
+        ]];
+
+        yield 'annotation on a node in the middle of the AST' => [
+            <<<'EOT'
+<?php
+
+/**
+ * @Annotation
+ */
+class Annotation {}
 
 class Foo
 {
@@ -87,11 +138,37 @@ class Foo
 }
 EOT
         , [
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Annotation',
-                    'short_description' => 'Annotation',
-                ]
+            [
+                'type' => Suggestion::TYPE_CLASS,
+                'name' => 'Annotation',
+                'short_description' => 'Annotation',
+            ]
         ]];
+
+        yield 'not an annotation class' => [
+            <<<'EOT'
+<?php
+
+class NotAnnotation {}
+
+/**
+ * @NotAnn<>
+ */
+class Foo {}
+EOT
+            , []
+        ];
+
+        yield 'handle errors if class not found' => [
+            <<<'EOT'
+<?php
+
+/**
+ * @NotAnn<>
+ */
+class Foo {}
+EOT
+            , []
+        ];
     }
 }
