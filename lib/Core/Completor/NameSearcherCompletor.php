@@ -17,15 +17,28 @@ trait NameSearcherCompletor
     protected function completeName(string $name): Generator
     {
         foreach ($this->getSearcher()->search($name) as $result) {
-            yield Suggestion::createWithOptions($result->name()->head(), [
-                'short_description' => $result->name()->__toString(),
-                'type' => $this->suggestionType($result),
-                'class_import' => $this->classImport($result),
-                'name_import' => $result->name()->__toString(),
-            ]);
+            yield $this->createSuggestion(
+                $result,
+                $this->createSuggestionOptions($result),
+            );
         }
 
         return true;
+    }
+
+    protected function createSuggestion(NameSearchResult $result, array $options): Suggestion
+    {
+        return Suggestion::createWithOptions($result->name()->head(), $options);
+    }
+
+    protected function createSuggestionOptions(NameSearchResult $result): array
+    {
+        return [
+            'short_description' => $result->name()->__toString(),
+            'type' => $this->suggestionType($result),
+            'class_import' => $this->classImport($result),
+            'name_import' => $result->name()->__toString(),
+        ];
     }
 
     protected function suggestionType(NameSearchResult $result): ?string

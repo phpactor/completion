@@ -104,6 +104,7 @@ EOT
                 'type' => Suggestion::TYPE_CLASS,
                 'name' => 'Entity',
                 'short_description' => 'App\Annotation\Entity',
+                'snippet' => 'Entity($1)$0'
             ]
         ]];
 
@@ -142,6 +143,7 @@ EOT
                 'type' => Suggestion::TYPE_CLASS,
                 'name' => 'Annotation',
                 'short_description' => 'Annotation',
+                'snippet' => 'Annotation($1)$0'
             ]
         ]];
 

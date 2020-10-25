@@ -11,6 +11,7 @@ use Phpactor\Completion\Core\Completor\NameSearcherCompletor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Util\OffsetHelper;
 use Phpactor\ReferenceFinder\NameSearcher;
+use Phpactor\ReferenceFinder\Search\NameSearchResult;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
 use Phpactor\TextDocument\Util\WordAtOffset;
@@ -18,7 +19,9 @@ use Phpactor\WorseReflection\Reflector;
 
 class AnnotationCompletor implements Completor
 {
-    use NameSearcherCompletor;
+    use NameSearcherCompletor {
+        createSuggestionOptions as parentCreateSuggestionOptions;
+    }
 
     /**
      * @var NameSearcher
@@ -129,5 +132,14 @@ class AnnotationCompletor implements Completor
         } catch (\Throwable $error) {
             return false;
         }
+    }
+
+    protected function createSuggestionOptions(NameSearchResult $result): array
+    {
+        $defaultOptions = $this->parentCreateSuggestionOptions($result);
+
+        return array_merge($defaultOptions, [
+            'snippet' => (string) $result->name()->head() .'($1)$0',
+        ]);
     }
 }
