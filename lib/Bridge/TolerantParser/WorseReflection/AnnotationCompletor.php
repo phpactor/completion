@@ -14,7 +14,6 @@ use Phpactor\ReferenceFinder\NameSearcher;
 use Phpactor\ReferenceFinder\Search\NameSearchResult;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
-use Phpactor\TextDocument\Util\WordAtOffset;
 use Phpactor\WorseReflection\Reflector;
 
 class AnnotationCompletor implements Completor
@@ -64,14 +63,12 @@ class AnnotationCompletor implements Completor
             return true;
         }
 
-        $annotation = WordAtOffset::annotation($source, $byteOffset->toInt());
-
-        if (0 !== strpos($annotation, '@')) {
+        if (!$annotation = $this->extractAnnotation($truncatedSource)) {
             // Ignore if not an annotation
             return true;
         }
 
-        $suggestions = $this->completeName(ltrim($annotation, '@'));
+        $suggestions = $this->completeName($annotation);
 
         foreach ($suggestions as $suggestion) {
             if (!$this->isAnAnnotation($suggestion)) {
@@ -141,5 +138,17 @@ class AnnotationCompletor implements Completor
         return array_merge($defaultOptions, [
             'snippet' => (string) $result->name()->head() .'($1)$0',
         ]);
+    }
+
+    private function extractAnnotation(string $truncatedSource): ?string
+    {
+        $count = 0;
+        $annotation = preg_replace('/.*@([^@\s\t*]+)$/s', '$1', $truncatedSource, 1, $count);
+
+        if (0 === $count) {
+            return null;
+        }
+
+        return $annotation;
     }
 }
