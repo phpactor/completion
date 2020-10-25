@@ -46,11 +46,6 @@ class Suggestion
     private $shortDescription;
 
     /**
-     * @var string|null
-     */
-    private $classImport;
-
-    /**
      * @var string
      */
     private $label;
