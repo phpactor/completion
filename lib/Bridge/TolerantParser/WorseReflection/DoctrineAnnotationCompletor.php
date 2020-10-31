@@ -16,17 +16,8 @@ use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
 use Phpactor\WorseReflection\Reflector;
 
-class DoctrineAnnotationCompletor implements Completor
+class DoctrineAnnotationCompletor extends NameSearcherCompletor implements Completor
 {
-    use NameSearcherCompletor {
-        createSuggestionOptions as parentCreateSuggestionOptions;
-    }
-
-    /**
-     * @var NameSearcher
-     */
-    private $nameSearcher;
-
     /**
      * @var Reflector
      */
@@ -42,7 +33,8 @@ class DoctrineAnnotationCompletor implements Completor
         Reflector $reflector,
         Parser $parser = null
     ) {
-        $this->nameSearcher = $nameSearcher;
+        parent::__construct($nameSearcher);
+
         $this->reflector = $reflector;
         $this->parser = $parser ?: new Parser();
     }
@@ -81,6 +73,13 @@ class DoctrineAnnotationCompletor implements Completor
         return $suggestions->getReturn();
     }
 
+    protected function createSuggestionOptions(NameSearchResult $result): array
+    {
+        return array_merge(parent::createSuggestionOptions($result), [
+            'snippet' => (string) $result->name()->head() .'($1)$0',
+        ]);
+    }
+
     private function truncateSource(string $source, int $byteOffset): string
     {
         // truncate source at byte offset - we don't want the rest of the source
@@ -96,11 +95,6 @@ class DoctrineAnnotationCompletor implements Completor
         $truncatedSource = mb_substr($source, 0, $characterOffset);
 
         return $truncatedSource;
-    }
-
-    protected function getSearcher(): NameSearcher
-    {
-        return $this->nameSearcher;
     }
 
     private function findNodeForPhpdocAtPosition(SourceFileNode $sourceNodeFile, int $position): ?Node
@@ -129,15 +123,6 @@ class DoctrineAnnotationCompletor implements Completor
         } catch (\Throwable $error) {
             return false;
         }
-    }
-
-    protected function createSuggestionOptions(NameSearchResult $result): array
-    {
-        $defaultOptions = $this->parentCreateSuggestionOptions($result);
-
-        return array_merge($defaultOptions, [
-            'snippet' => (string) $result->name()->head() .'($1)$0',
-        ]);
     }
 
     private function extractAnnotation(string $truncatedSource): ?string

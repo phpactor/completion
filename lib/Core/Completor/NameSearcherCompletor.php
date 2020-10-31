@@ -7,16 +7,24 @@ use Phpactor\Completion\Core\Suggestion;
 use Phpactor\ReferenceFinder\NameSearcher;
 use Phpactor\ReferenceFinder\Search\NameSearchResult;
 
-trait NameSearcherCompletor
+abstract class NameSearcherCompletor
 {
-    abstract protected function getSearcher(): NameSearcher;
+    /**
+     * @var NameSearcher
+     */
+    protected $nameSearcher;
+
+    public function __construct(NameSearcher $nameSearcher)
+    {
+        $this->nameSearcher = $nameSearcher;
+    }
 
     /**
      * @return Generator<Suggestion>
      */
     protected function completeName(string $name): Generator
     {
-        foreach ($this->getSearcher()->search($name) as $result) {
+        foreach ($this->nameSearcher->search($name) as $result) {
             yield $this->createSuggestion(
                 $result,
                 $this->createSuggestionOptions($result),
@@ -26,8 +34,10 @@ trait NameSearcherCompletor
         return true;
     }
 
-    protected function createSuggestion(NameSearchResult $result, array $options): Suggestion
+    protected function createSuggestion(NameSearchResult $result, array $options = []): Suggestion
     {
+        $options = array_merge($this->createSuggestionOptions($result), $options);
+
         return Suggestion::createWithOptions($result->name()->head(), $options);
     }
 

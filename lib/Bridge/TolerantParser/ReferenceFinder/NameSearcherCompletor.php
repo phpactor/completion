@@ -10,18 +10,11 @@ use Phpactor\ReferenceFinder\NameSearcher;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
 
-class NameSearcherCompletor implements TolerantCompletor
+class NameSearcherCompletor extends CoreNameSearcherCompletor implements TolerantCompletor
 {
-    use CoreNameSearcherCompletor;
-
-    /**
-     * @var NameSearcher
-     */
-    private $nameSearcher;
-
     public function __construct(NameSearcher $nameSearcher)
     {
-        $this->nameSearcher = $nameSearcher;
+        parent::__construct($nameSearcher);
     }
 
     /**
@@ -34,10 +27,5 @@ class NameSearcherCompletor implements TolerantCompletor
         yield from $suggestions;
 
         return $suggestions->getReturn();
-    }
-
-    protected function getSearcher(): NameSearcher
-    {
-        return $this->nameSearcher;
     }
 }
