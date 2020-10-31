@@ -14,6 +14,7 @@ use Phpactor\ReferenceFinder\NameSearcher;
 use Phpactor\ReferenceFinder\Search\NameSearchResult;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
+use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Reflector;
 
 class DoctrineAnnotationCompletor extends NameSearcherCompletor implements Completor
@@ -120,7 +121,7 @@ class DoctrineAnnotationCompletor extends NameSearcherCompletor implements Compl
             $docblock = $reflectionClass->docblock();
 
             return false !== strpos($docblock->raw(), '@Annotation');
-        } catch (\Throwable $error) {
+        } catch (NotFound $error) {
             return false;
         }
     }
