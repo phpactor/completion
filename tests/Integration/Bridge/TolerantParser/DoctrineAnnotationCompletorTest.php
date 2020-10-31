@@ -3,7 +3,7 @@
 namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser;
 
 use Generator;
-use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\AnnotationCompletor;
+use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\DoctrineAnnotationCompletor;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\CompletorTestCase;
@@ -14,7 +14,7 @@ use Phpactor\WorseReflection\Bridge\Phpactor\MemberProvider\DocblockMemberProvid
 use Phpactor\WorseReflection\ReflectorBuilder;
 use Prophecy\Argument;
 
-class AnnotationCompletorTest extends CompletorTestCase
+class DoctrineAnnotationCompletorTest extends CompletorTestCase
 {
     protected function createCompletor(string $source): Completor
     {
@@ -36,7 +36,7 @@ class AnnotationCompletorTest extends CompletorTestCase
             ->addMemberProvider(new DocblockMemberProvider())
             ->addSource($source)->build();
 
-        return new AnnotationCompletor(
+        return new DoctrineAnnotationCompletor(
             $searcher->reveal(),
             $reflector,
         );

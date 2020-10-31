@@ -16,7 +16,7 @@ use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
 use Phpactor\WorseReflection\Reflector;
 
-class AnnotationCompletor implements Completor
+class DoctrineAnnotationCompletor implements Completor
 {
     use NameSearcherCompletor {
         createSuggestionOptions as parentCreateSuggestionOptions;
