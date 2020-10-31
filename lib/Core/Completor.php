@@ -9,7 +9,7 @@ use Phpactor\TextDocument\TextDocument;
 interface Completor
 {
     /**
-     * @return Generator<Suggestion>
+     * @return Generator<int, Suggestion, null, bool>
      */
     public function complete(TextDocument $source, ByteOffset $byteOffset): Generator;
 }
