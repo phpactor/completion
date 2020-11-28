@@ -161,12 +161,14 @@ EOT
 
     /**
      * @dataProvider provideSuggestionsToResolve
+     *
+     * @param Suggestion[] $expectedSuggestions
      */
     public function testResolveImportName(
         TextDocument $textDocument,
         ByteOffset $byteOffset,
         Suggestion $completorSuggestion,
-        Suggestion $expectedSuggestion
+        array $expectedSuggestions
     ): void {
         $completor = $this->create([$this->completor1->reveal()]);
 
@@ -181,9 +183,9 @@ EOT
         $generator = $completor->complete($textDocument, $byteOffset);
         $suggestions = iterator_to_array($generator);
 
-        $this->assertCount(1, $suggestions);
+        $this->assertCount(count($expectedSuggestions), $suggestions);
         $this->assertFalse($generator->getReturn());
-        $this->assertEquals($expectedSuggestion, $suggestions[0]);
+        $this->assertEqualsCanonicalizing($expectedSuggestions, $suggestions);
     }
 
     public function provideSuggestionsToResolve(): iterable
@@ -230,21 +232,24 @@ EOT
             $textDocument = $textDocumentFactory(),
             $computeByteOffset($textDocument),
             $suggestion,
-            $suggestion,
+            [$suggestion],
         ];
 
         yield 'Imported without an alias' => [
             $textDocument = $textDocumentFactory(['App\Foo\Bar']),
             $computeByteOffset($textDocument),
             $suggestion,
-            $suggestion->withoutNameImport(),
+            [$suggestion->withoutNameImport()],
         ];
 
         yield 'Imported with an alias' => [
             $textDocument = $textDocumentFactory(['Foobar' => 'App\Foo\Bar']),
             $computeByteOffset($textDocument),
             $suggestion,
-            $suggestion->withoutNameImport()->withName('Foobar'),
+            [
+                $suggestion,
+                $suggestion->withoutNameImport()->withName('Foobar'),
+            ],
         ];
 
         yield 'Imported with and without an alias' => [
@@ -254,7 +259,10 @@ EOT
             ]),
             $computeByteOffset($textDocument),
             $suggestion,
-            $suggestion->withoutNameImport(),
+            [
+                $suggestion->withoutNameImport(),
+                $suggestion->withoutNameImport()->withName('Foobar'),
+            ],
         ];
 
         yield 'Imported with an aliased namespace' => [
@@ -264,7 +272,11 @@ EOT
             ]),
             $computeByteOffset($textDocument),
             $suggestion,
-            $suggestion->withoutNameImport()->withName('FOO\Bar'),
+            [
+                $suggestion,
+                $suggestion->withoutNameImport()->withName('FOO\Bar'),
+                $suggestion->withoutNameImport()->withName('APP\Foo\Bar'),
+            ],
         ];
 
         yield 'Imported with and without an aliased namespace' => [
@@ -274,7 +286,10 @@ EOT
             ]),
             $computeByteOffset($textDocument),
             $suggestion,
-            $suggestion->withoutNameImport(),
+            [
+                $suggestion->withoutNameImport(),
+                $suggestion->withoutNameImport()->withName('FOO\Bar'),
+            ],
         ];
     }
 

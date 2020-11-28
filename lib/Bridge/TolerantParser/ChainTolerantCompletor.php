@@ -57,7 +57,11 @@ class ChainTolerantCompletor implements Completor
 
             $suggestions = $tolerantCompletor->complete($completionNode, $source, $byteOffset);
             foreach ($suggestions as $suggestion) {
-                yield $this->resolveClassSuggestion($completionNode, $suggestion);
+                // Trick to avoid any BC break when converting to an array
+                // https://www.php.net/manual/fr/language.generators.syntax.php#control-structures.yield.from
+                foreach ($this->resolveAliasSuggestions($completionNode, $suggestion) as $resolvedSuggestion) {
+                    yield $resolvedSuggestion;
+                }
             }
 
             $isComplete = $isComplete && $suggestions->getReturn();
@@ -94,48 +98,38 @@ class ChainTolerantCompletor implements Completor
         });
     }
 
-    private function resolveClassSuggestion(Node $completionNode, Suggestion $suggestion): Suggestion
+    /**
+     * Add suggestions when a class is already imported with an alias or when a relative name is abailable.
+     *
+     * Will update the suggestion to remove the import_name option if already imported.
+     * Will add a suggestion if the class is imported under an alias.
+     * Will add a suggestion if part of the namespace is imported (i.e. ORM\Column is a relative name).
+     *
+     * @return Suggestion[]
+     */
+    private function resolveAliasSuggestions(Node $completionNode, Suggestion $suggestion): array
     {
         if (Suggestion::TYPE_CLASS !== $suggestion->type()) {
-            return $suggestion;
+            return [$suggestion];
         }
 
         /** @var ResolvedName[] $importTable */
         [$importTable] = $completionNode->getImportTablesForCurrentScope();
 
-        // Prioritize import without alias
-        if (isset($importTable[$suggestion->name()])) {
-            return $suggestion->withoutNameImport();
-        }
-
         $suggestionFqcn = $suggestion->classImport();
-        $possibleMatches = [];
+        $suggestions = [$suggestion->name() => $suggestion];
         foreach ($importTable as $alias => $resolvedName) {
             $importFqcn = $resolvedName->getFullyQualifiedNameText();
 
-            if ($suggestionFqcn === $importFqcn) {
-                return $suggestion->withoutNameImport()->withName($alias);
+            if (0 !== strpos($suggestionFqcn, $importFqcn)) {
+                continue;
             }
 
-            if (0 === strpos($suggestionFqcn, $importFqcn)) {
-                $possibleMatches[$alias] = $importFqcn;
-            }
+            $name = $alias.substr($suggestionFqcn, strlen($importFqcn));
+
+            $suggestions[$alias] = $suggestion->withoutNameImport()->withName($name);
         }
 
-        if (!$possibleMatches) {
-            return $suggestion;
-        }
-
-        // Sort the possible by matches by FQCN length
-        uasort($possibleMatches, function (string $firstFqcn, $secondFqcn) {
-            return strlen($firstFqcn) <=> strlen($secondFqcn);
-        });
-
-        // Keep the match with the longest FQCN (more accurate one)
-        $importFqcn = end($possibleMatches);
-        $alias = array_key_last($possibleMatches);
-        $name = $alias.substr($suggestionFqcn, strlen($importFqcn));
-
-        return $suggestion->withoutNameImport()->withName($name);
+        return array_values($suggestions);
     }
 }
