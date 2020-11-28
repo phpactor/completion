@@ -12,6 +12,7 @@ use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\TestCase;
 use Phpactor\TestUtils\ExtractOffset;
 use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocument;
 use Phpactor\TextDocument\TextDocumentBuilder;
 use Prophecy\Argument;
 
@@ -156,6 +157,125 @@ EOT
         );
         $this->assertCount(1, $suggestions);
         $this->assertTrue($suggestions->getReturn());
+    }
+
+    /**
+     * @dataProvider provideSuggestionsToResolve
+     */
+    public function testResolveImportName(
+        TextDocument $textDocument,
+        ByteOffset $byteOffset,
+        Suggestion $completorSuggestion,
+        Suggestion $expectedSuggestion
+    ): void {
+        $completor = $this->create([$this->completor1->reveal()]);
+
+        $this->completor1->complete(Argument::type(Node::class), $textDocument, $byteOffset)
+            ->will(function () use ($completorSuggestion) {
+                yield $completorSuggestion;
+
+                return false;
+            })
+        ;
+
+        $generator = $completor->complete($textDocument, $byteOffset);
+        $suggestions = iterator_to_array($generator);
+
+        $this->assertCount(1, $suggestions);
+        $this->assertFalse($generator->getReturn());
+        $this->assertEquals($expectedSuggestion, $suggestions[0]);
+    }
+
+    public function provideSuggestionsToResolve(): iterable
+    {
+        $textDocumentFactory = function (array $data = []): TextDocument {
+            $useStatements = [];
+            foreach ($data as $alias => $fqcn) {
+                $alias = is_int($alias) ? null : $alias;
+                $useStatements[] = "use $fqcn".($alias ? " as $alias" : '');
+            }
+
+            $useStatements = implode(PHP_EOL, $useStatements);
+
+            return TextDocumentBuilder::create(
+                <<<EOT
+<?php
+
+namespace Test;
+
+$useStatements
+
+class BarTest
+{
+    public function methodName(Bar \$bar)
+    {
+    }
+}
+EOT
+            )->build();
+        };
+        $computeByteOffset = function (TextDocument $textDocument): ByteOffset {
+            $matches = [];
+            preg_match('/Bar \$bar/u', (string) $textDocument, $matches, PREG_OFFSET_CAPTURE);
+
+            return ByteOffset::fromInt($matches[0][1] + 2);
+        };
+        $suggestion = Suggestion::createWithOptions('Bar', [
+            'short_description' => 'App\Foo\Bar',
+            'type' => Suggestion::TYPE_CLASS,
+            'name_import' => 'App\Foo\Bar',
+        ]);
+
+        yield 'Not imported yet' => [
+            $textDocument = $textDocumentFactory(),
+            $computeByteOffset($textDocument),
+            $suggestion,
+            $suggestion,
+        ];
+
+        yield 'Imported without an alias' => [
+            $textDocument = $textDocumentFactory(['App\Foo\Bar']),
+            $computeByteOffset($textDocument),
+            $suggestion,
+            $suggestion->withoutNameImport(),
+        ];
+
+        yield 'Imported with an alias' => [
+            $textDocument = $textDocumentFactory(['Foobar' => 'App\Foo\Bar']),
+            $computeByteOffset($textDocument),
+            $suggestion,
+            $suggestion->withoutNameImport()->withName('Foobar'),
+        ];
+
+        yield 'Imported with and without an alias' => [
+            $textDocument = $textDocumentFactory([
+                'Foobar' => 'App\Foo\Bar',
+                'App\Foo\Bar',
+            ]),
+            $computeByteOffset($textDocument),
+            $suggestion,
+            $suggestion->withoutNameImport(),
+        ];
+
+        yield 'Imported with an aliased namespace' => [
+            $textDocument = $textDocumentFactory([
+                'FOO' => 'App\Foo',
+                'APP' => 'App',
+            ]),
+            $computeByteOffset($textDocument),
+            $suggestion,
+            $suggestion->withoutNameImport()->withName('FOO\Bar'),
+        ];
+
+        yield 'Imported with and without an aliased namespace' => [
+            $textDocument = $textDocumentFactory([
+                'App\Foo\Bar',
+                'FOO' => 'App\Foo',
+            ]),
+            $computeByteOffset($textDocument),
+            $suggestion,
+            $suggestion->withoutNameImport(),
+        ];
     }
 
     private function create(array $completors): ChainTolerantCompletor

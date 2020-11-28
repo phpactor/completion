@@ -46,7 +46,7 @@ class Suggestion
     private $shortDescription;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $label;
 
@@ -83,7 +83,7 @@ class Suggestion
         $this->type = $type;
         $this->name = $name;
         $this->shortDescription = $shortDescription;
-        $this->label = $label ?: $name;
+        $this->label = $label;
         $this->range = $range;
         $this->documentation = $documentation;
         $this->snippet = $snippet;
@@ -128,6 +128,22 @@ class Suggestion
             $options['range'],
             $options['snippet']
         );
+    }
+
+    public function withName(string $name): self
+    {
+        $suggestion = clone $this;
+        $suggestion->name = $name;
+
+        return $suggestion;
+    }
+
+    public function withoutNameImport(): self
+    {
+        $suggestion = clone $this;
+        $suggestion->nameImport = null;
+
+        return $suggestion;
     }
 
     public function toArray(): array
@@ -185,10 +201,9 @@ class Suggestion
         return $this->nameImport;
     }
 
-
     public function label(): string
     {
-        return $this->label;
+        return $this->label ?: $this->name;
     }
 
     public function range(): ?Range
