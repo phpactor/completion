@@ -89,4 +89,13 @@ class SuggestionTest extends TestCase
         )->withoutNameImport();
         $this->assertNull($suggestion->nameImport());
     }
+
+    public function testWithSnippet()
+    {
+        $suggestion = Suggestion::createWithOptions(
+            'name',
+            ['snippet' => 'snippet'],
+        )->withSnippet('test');
+        $this->assertEquals('test', $suggestion->snippet());
+    }
 }

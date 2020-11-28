@@ -146,6 +146,14 @@ class Suggestion
         return $suggestion;
     }
 
+    public function withSnippet(string $snippet): self
+    {
+        $suggestion = clone $this;
+        $suggestion->snippet = $snippet;
+
+        return $suggestion;
+    }
+
     public function toArray(): array
     {
         return [

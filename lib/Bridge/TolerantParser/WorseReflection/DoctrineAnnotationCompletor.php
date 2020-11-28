@@ -6,12 +6,12 @@ use Generator;
 use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Node\SourceFileNode;
 use Microsoft\PhpParser\Parser;
+use Phpactor\Completion\Bridge\TolerantParser\ResolveAliasSuggestionsTrait;
 use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Completor\NameSearcherCompletor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Util\OffsetHelper;
 use Phpactor\ReferenceFinder\NameSearcher;
-use Phpactor\ReferenceFinder\Search\NameSearchResult;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
@@ -19,6 +19,8 @@ use Phpactor\WorseReflection\Reflector;
 
 class DoctrineAnnotationCompletor extends NameSearcherCompletor implements Completor
 {
+    use ResolveAliasSuggestionsTrait;
+
     /**
      * @var Reflector
      */
@@ -61,6 +63,7 @@ class DoctrineAnnotationCompletor extends NameSearcherCompletor implements Compl
             return true;
         }
 
+        $importTable = $this->getClassImportTablesForNode($node);
         $suggestions = $this->completeName($annotation);
 
         foreach ($suggestions as $suggestion) {
@@ -68,17 +71,13 @@ class DoctrineAnnotationCompletor extends NameSearcherCompletor implements Compl
                 continue;
             }
 
-            yield $suggestion;
+            $resolvedSuggestions = $this->resolveAliasSuggestions($importTable, $suggestion);
+            foreach ($resolvedSuggestions as $resolvedSuggestion) {
+                yield $resolvedSuggestion->withSnippet($resolvedSuggestion->name().'($1)$0');
+            }
         }
 
         return $suggestions->getReturn();
-    }
-
-    protected function createSuggestionOptions(NameSearchResult $result): array
-    {
-        return array_merge(parent::createSuggestionOptions($result), [
-            'snippet' => (string) $result->name()->head() .'($1)$0',
-        ]);
     }
 
     private function truncateSource(string $source, int $byteOffset): string
