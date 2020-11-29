@@ -7,16 +7,19 @@ use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Node\SourceFileNode;
 use Microsoft\PhpParser\Parser;
 use Microsoft\PhpParser\ResolvedName;
-use Phpactor\Completion\Core\Completor;
+use Phpactor\Completion\Core\Completor\NameSearcherCompletor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Util\OffsetHelper;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
 
-final class ResolveAliasSuggestionCompletor implements Completor
+/**
+ * Replace the suggestions from the decorated decorator by new ones based on the impor table.
+ */
+final class ImportedNameSearcherCompletor implements NameSearcherCompletor
 {
     /**
-     * @var Completor
+     * @var NameSearcherCompletor
      */
     private $decorated;
 
@@ -25,7 +28,7 @@ final class ResolveAliasSuggestionCompletor implements Completor
      */
     private $parser;
 
-    public function __construct(Completor $decorated, Parser $parser = null)
+    public function __construct(NameSearcherCompletor $decorated, Parser $parser = null)
     {
         $this->decorated = $decorated;
         $this->parser = $parser ?: new Parser();
@@ -34,10 +37,10 @@ final class ResolveAliasSuggestionCompletor implements Completor
     /**
      * {@inheritDoc}
      */
-    public function complete(TextDocument $source, ByteOffset $byteOffset): Generator
+    public function complete(TextDocument $source, ByteOffset $byteOffset, string $name = null): Generator
     {
         $importTable = $this->getClassImportTableAtPosition($source, $byteOffset);
-        $suggestions = $this->decorated->complete($source, $byteOffset);
+        $suggestions = $this->decorated->complete($source, $byteOffset, $name);
 
         foreach ($suggestions as $suggestion) {
             $resolvedSuggestions = $this->resolveAliasSuggestions($importTable, $suggestion);
@@ -89,12 +92,18 @@ final class ResolveAliasSuggestionCompletor implements Completor
         $suggestionFqcn = $suggestion->nameImport();
         $originalName = $suggestion->name();
         $originalSnippet = $suggestion->snippet();
-        $suggestions = [$suggestion->name() => $suggestion];
+        $suggestions = [];
 
         foreach ($importTable as $alias => $resolvedName) {
             $importFqcn = $resolvedName->getFullyQualifiedNameText();
 
+            if ($suggestionFqcn === $importFqcn && $originalName === $alias) {
+                // Ignore the original suggestion, another completor already retruns it
+                continue;
+            }
+
             if (0 !== strpos($suggestionFqcn, $importFqcn)) {
+                // Ignore imported name that are not part of the one from suggestion
                 continue;
             }
 

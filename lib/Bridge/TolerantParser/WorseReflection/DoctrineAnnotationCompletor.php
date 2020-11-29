@@ -10,15 +10,18 @@ use Phpactor\Completion\Core\Completor;
 use Phpactor\Completion\Core\Completor\NameSearcherCompletor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Util\OffsetHelper;
-use Phpactor\ReferenceFinder\NameSearcher;
-use Phpactor\ReferenceFinder\Search\NameSearchResult;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Reflector;
 
-class DoctrineAnnotationCompletor extends NameSearcherCompletor implements Completor
+final class DoctrineAnnotationCompletor implements Completor
 {
+    /**
+     * @var NameSearcherCompletor
+     */
+    private $nameCompletor;
+
     /**
      * @var Reflector
      */
@@ -30,12 +33,11 @@ class DoctrineAnnotationCompletor extends NameSearcherCompletor implements Compl
     private $parser;
 
     public function __construct(
-        NameSearcher $nameSearcher,
+        NameSearcherCompletor $nameCompletor,
         Reflector $reflector,
         Parser $parser = null
     ) {
-        parent::__construct($nameSearcher);
-
+        $this->nameCompletor = $nameCompletor;
         $this->reflector = $reflector;
         $this->parser = $parser ?: new Parser();
     }
@@ -48,7 +50,7 @@ class DoctrineAnnotationCompletor extends NameSearcherCompletor implements Compl
         $node = $this->findNodeForPhpdocAtPosition(
             $sourceNodeFile,
             // the parser requires the byte offset, not the char offset
-            strlen($truncatedSource)
+            strlen($truncatedSource),
         );
 
         if (!$node) {
@@ -61,24 +63,17 @@ class DoctrineAnnotationCompletor extends NameSearcherCompletor implements Compl
             return true;
         }
 
-        $suggestions = $this->completeName($annotation);
+        $suggestions = $this->nameCompletor->complete($source, $byteOffset, $annotation);
 
         foreach ($suggestions as $suggestion) {
             if (!$this->isAnAnnotation($suggestion)) {
                 continue;
             }
 
-            yield $suggestion;
+            yield $suggestion->withSnippet($suggestion->name().'($1)$0');
         }
 
         return $suggestions->getReturn();
-    }
-
-    protected function createSuggestionOptions(NameSearchResult $result): array
-    {
-        return array_merge(parent::createSuggestionOptions($result), [
-            'snippet' => (string) $result->name()->head() .'($1)$0',
-        ]);
     }
 
     private function truncateSource(string $source, int $byteOffset): string
@@ -117,7 +112,7 @@ class DoctrineAnnotationCompletor extends NameSearcherCompletor implements Compl
     private function isAnAnnotation(Suggestion $suggestion): bool
     {
         try {
-            $reflectionClass = $this->reflector->reflectClass($suggestion->classImport());
+            $reflectionClass = $this->reflector->reflectClass($suggestion->shortDescription());
             $docblock = $reflectionClass->docblock();
 
             return false !== strpos($docblock->raw(), '@Annotation');

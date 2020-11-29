@@ -9,14 +9,24 @@ use Phpactor\Completion\Core\Completor\NameSearcherCompletor as CoreNameSearcher
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
 
-class NameSearcherCompletor extends CoreNameSearcherCompletor implements TolerantCompletor
+final class NameSearcherCompletor implements TolerantCompletor
 {
+    /**
+     * @var CoreNameSearcherCompletor
+     */
+    private $nameCompletor;
+
+    public function __construct(CoreNameSearcherCompletor $nameCompletor)
+    {
+        $this->nameCompletor = $nameCompletor;
+    }
+
     /**
      * {@inheritDoc}
      */
     public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
-        $suggestions = $this->completeName($node->getText());
+        $suggestions = $this->nameCompletor->complete($source, $offset, $node->getText());
 
         yield from $suggestions;
 

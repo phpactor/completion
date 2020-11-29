@@ -2,15 +2,15 @@
 
 namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser;
 
-use Phpactor\Completion\Bridge\TolerantParser\ResolveAliasSuggestionCompletor;
-use Phpactor\Completion\Core\Completor;
+use Phpactor\Completion\Bridge\TolerantParser\ImportedNameSearcherCompletor;
+use Phpactor\Completion\Core\Completor\NameSearcherCompletor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\TestCase;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
 use Phpactor\TextDocument\TextDocumentBuilder;
 
-class ResolveAliasSuggestionCompletorTest extends TestCase
+class ImportedNameSearcherCompletorTest extends TestCase
 {
     /**
      * @dataProvider provideSuggestionsToResolve
@@ -24,10 +24,12 @@ class ResolveAliasSuggestionCompletorTest extends TestCase
         Suggestion $completorSuggestion,
         array $expectedSuggestions
     ): void {
-        $decoratedCompletor = $this->prophesize(Completor::class);
-        $completor = new ResolveAliasSuggestionCompletor($decoratedCompletor->reveal());
+        $nameSearcherCompletor = $this->prophesize(NameSearcherCompletor::class);
+        $completor = new ImportedNameSearcherCompletor(
+            $nameSearcherCompletor->reveal(),
+        );
 
-        $decoratedCompletor->complete($textDocument, $byteOffset)
+        $nameSearcherCompletor->complete($textDocument, $byteOffset, 'something')
             ->will(function () use ($completorSuggestion) {
                 yield $completorSuggestion;
 
@@ -35,7 +37,7 @@ class ResolveAliasSuggestionCompletorTest extends TestCase
             })
         ;
 
-        $generator = $completor->complete($textDocument, $byteOffset);
+        $generator = $completor->complete($textDocument, $byteOffset, 'something');
         $suggestions = iterator_to_array($generator, false);
 
         $this->assertCount(count($expectedSuggestions), $suggestions);
@@ -87,24 +89,21 @@ EOT
             $textDocument = $textDocumentFactory(),
             $computeByteOffset($textDocument),
             $suggestion,
-            [$suggestion],
+            [],
         ];
 
         yield 'Class imported without an alias' => [
             $textDocument = $textDocumentFactory(['App\Foo\Bar']),
             $computeByteOffset($textDocument),
             $suggestion,
-            [$suggestion->withoutNameImport()],
+            [],
         ];
 
         yield 'Class imported with an alias' => [
             $textDocument = $textDocumentFactory(['Foobar' => 'App\Foo\Bar']),
             $computeByteOffset($textDocument),
             $suggestion,
-            [
-                $suggestion,
-                $suggestion->withoutNameImport()->withName('Foobar'),
-            ],
+            [$suggestion->withoutNameImport()->withName('Foobar')],
         ];
 
         yield 'Class imported with and without an alias' => [
@@ -114,10 +113,7 @@ EOT
             ]),
             $computeByteOffset($textDocument),
             $suggestion,
-            [
-                $suggestion->withoutNameImport(),
-                $suggestion->withoutNameImport()->withName('Foobar'),
-            ],
+            [$suggestion->withoutNameImport()->withName('Foobar')],
         ];
 
         yield 'Class imported with an aliased namespace' => [
@@ -128,7 +124,6 @@ EOT
             $computeByteOffset($textDocument),
             $suggestion,
             [
-                $suggestion,
                 $suggestion->withoutNameImport()->withName('FOO\Bar'),
                 $suggestion->withoutNameImport()->withName('APP\Foo\Bar'),
             ],
@@ -141,10 +136,7 @@ EOT
             ]),
             $computeByteOffset($textDocument),
             $suggestion,
-            [
-                $suggestion->withoutNameImport(),
-                $suggestion->withoutNameImport()->withName('FOO\Bar'),
-            ],
+            [$suggestion->withoutNameImport()->withName('FOO\Bar')],
         ];
     }
 
@@ -194,24 +186,21 @@ EOT
             $textDocument = $textDocumentFactory(),
             $computeByteOffset($textDocument),
             $suggestion,
-            [$suggestion],
+            [],
         ];
 
         yield 'Annotation imported without an alias' => [
             $textDocument = $textDocumentFactory(['App\Foo\Bar']),
             $computeByteOffset($textDocument),
             $suggestion,
-            [$suggestion->withoutNameImport()],
+            [],
         ];
 
         yield 'Annotation imported with an alias' => [
             $textDocument = $textDocumentFactory(['Foobar' => 'App\Foo\Bar']),
             $computeByteOffset($textDocument),
             $suggestion,
-            [
-                $suggestion,
-                $suggestion->withoutNameImport()->withName('Foobar')->withSnippet('Foobar($1)$0'),
-            ],
+            [$suggestion->withoutNameImport()->withName('Foobar')->withSnippet('Foobar($1)$0')],
         ];
 
         yield 'Annotation imported with and without an alias' => [
@@ -221,10 +210,7 @@ EOT
             ]),
             $computeByteOffset($textDocument),
             $suggestion,
-            [
-                $suggestion->withoutNameImport(),
-                $suggestion->withoutNameImport()->withName('Foobar')->withSnippet('Foobar($1)$0'),
-            ],
+            [$suggestion->withoutNameImport()->withName('Foobar')->withSnippet('Foobar($1)$0')],
         ];
 
         yield 'Annotation imported with an aliased namespace' => [
@@ -235,7 +221,6 @@ EOT
             $computeByteOffset($textDocument),
             $suggestion,
             [
-                $suggestion,
                 $suggestion->withoutNameImport()->withName('FOO\Bar')->withSnippet('FOO\Bar($1)$0'),
                 $suggestion->withoutNameImport()->withName('APP\Foo\Bar')->withSnippet('APP\Foo\Bar($1)$0'),
             ],
@@ -248,10 +233,7 @@ EOT
             ]),
             $computeByteOffset($textDocument),
             $suggestion,
-            [
-                $suggestion->withoutNameImport(),
-                $suggestion->withoutNameImport()->withName('FOO\Bar')->withSnippet('FOO\Bar($1)$0'),
-            ],
+            [$suggestion->withoutNameImport()->withName('FOO\Bar')->withSnippet('FOO\Bar($1)$0')],
         ];
     }
 }

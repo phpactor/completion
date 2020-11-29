@@ -5,10 +5,11 @@ namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser;
 use Generator;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\DoctrineAnnotationCompletor;
 use Phpactor\Completion\Core\Completor;
+use Phpactor\Completion\Core\Completor\NameSearcherCompletor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\CompletorTestCase;
-use Phpactor\ReferenceFinder\NameSearcher;
-use Phpactor\ReferenceFinder\Search\NameSearchResult;
+use Phpactor\TextDocument\ByteOffset;
+use Phpactor\TextDocument\TextDocument;
 use Phpactor\TextDocument\TextDocumentBuilder;
 use Phpactor\WorseReflection\Bridge\Phpactor\MemberProvider\DocblockMemberProvider;
 use Phpactor\WorseReflection\ReflectorBuilder;
@@ -20,24 +21,42 @@ class DoctrineAnnotationCompletorTest extends CompletorTestCase
     {
         $source = TextDocumentBuilder::create($source)->uri('file:///tmp/test')->build();
 
-        $searcher = $this->prophesize(NameSearcher::class);
-        $searcher->search(Argument::any())->willYield([]);
-        $searcher->search('Ann')->willYield([
-            NameSearchResult::create('class', 'Annotation')
-        ]);
-        $searcher->search('Ent')->willYield([
-            NameSearchResult::create('class', 'App\Annotation\Entity')
-        ]);
-        $searcher->search('NotAnn')->willYield([
-            NameSearchResult::create('class', 'NotAnnotation')
-        ]);
+        $nameSearcherCompletor = $this->prophesize(NameSearcherCompletor::class);
+        $nameSearcherCompletor->complete(Argument::any())->willYield([]);
+        $nameSearcherCompletor->complete(Argument::type(TextDocument::class), Argument::type(ByteOffset::class), 'Ann')->will(function () {
+            yield Suggestion::createWithOptions('Annotation', [
+                'type' => Suggestion::TYPE_CLASS,
+                'short_description' => 'Annotation',
+                'name_import' => 'Annotation',
+            ]);
+
+            return true;
+        });
+        $nameSearcherCompletor->complete(Argument::type(TextDocument::class), Argument::type(ByteOffset::class), 'Ent')->will(function () {
+            yield Suggestion::createWithOptions('Entity', [
+                'type' => Suggestion::TYPE_CLASS,
+                'short_description' => 'App\Annotation\Entity',
+                'name_import' => 'App\Annotation\Entity',
+            ]);
+
+            return true;
+        });
+        $nameSearcherCompletor->complete(Argument::type(TextDocument::class), Argument::type(ByteOffset::class), 'NotAnn')->will(function () {
+            yield Suggestion::createWithOptions('NotAnnotation', [
+                'type' => Suggestion::TYPE_CLASS,
+                'short_description' => 'NotAnnotation',
+                'name_import' => 'NotAnnotation',
+            ]);
+
+            return true;
+        });
 
         $reflector = ReflectorBuilder::create()
             ->addMemberProvider(new DocblockMemberProvider())
             ->addSource($source)->build();
 
         return new DoctrineAnnotationCompletor(
-            $searcher->reveal(),
+            $nameSearcherCompletor->reveal(),
             $reflector,
         );
     }

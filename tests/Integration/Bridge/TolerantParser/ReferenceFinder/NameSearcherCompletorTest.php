@@ -5,10 +5,9 @@ namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\ReferenceF
 use Generator;
 use Phpactor\Completion\Bridge\TolerantParser\ReferenceFinder\NameSearcherCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
+use Phpactor\Completion\Core\Completor\NameSearcherCompletor as PhpactorNameSearcherCompletor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
-use Phpactor\ReferenceFinder\NameSearcher;
-use Phpactor\ReferenceFinder\Search\NameSearchResult;
 use Phpactor\TextDocument\TextDocument;
 use Prophecy\Argument;
 
@@ -16,11 +15,20 @@ class NameSearcherCompletorTest extends TolerantCompletorTestCase
 {
     protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
     {
-        $searcher = $this->prophesize(NameSearcher::class);
-        $searcher->search(Argument::any())->willYield([
-            NameSearchResult::create('class', 'Foobar')
-        ]);
-        return new NameSearcherCompletor($searcher->reveal());
+        $nameSearcherCompletor = $this->prophesize(PhpactorNameSearcherCompletor::class);
+        $nameSearcherCompletor->complete(Argument::cetera())->will(function () {
+            yield Suggestion::createWithOptions('Foobar', [
+                'type' => Suggestion::TYPE_CLASS,
+                'short_description' => 'Foobar',
+                'name_import' => 'Foobar',
+            ]);
+
+            return true;
+        });
+
+        return new NameSearcherCompletor(
+            $nameSearcherCompletor->reveal(),
+        );
     }
 
     /**
