@@ -12,8 +12,6 @@ use Phpactor\TextDocument\TextDocument;
 
 class ChainTolerantCompletor implements Completor
 {
-    use ResolveAliasSuggestionsTrait;
-
     /**
      * @var Parser
      */
@@ -38,7 +36,8 @@ class ChainTolerantCompletor implements Completor
         $truncatedSource = $this->truncateSource((string) $source, $byteOffset->toInt());
 
         $node = $this->parser->parseSourceFile($truncatedSource)->getDescendantNodeAtPosition(
-            // the parser requires the byte offset, not the char offset
+            // use strlen because the parser requires the byte offset, not the char offset
+            // But we need to recalculate it because we removed trailing spaces when truncating
             strlen($truncatedSource)
         );
 
@@ -55,16 +54,9 @@ class ChainTolerantCompletor implements Completor
                 continue;
             }
 
-            $importTable = $this->getClassImportTablesForNode($completionNode);
             $suggestions = $tolerantCompletor->complete($completionNode, $source, $byteOffset);
 
-            foreach ($suggestions as $suggestion) {
-                // Trick to avoid any BC break when converting to an array
-                // https://www.php.net/manual/fr/language.generators.syntax.php#control-structures.yield.from
-                foreach ($this->resolveAliasSuggestions($importTable, $suggestion) as $resolvedSuggestion) {
-                    yield $resolvedSuggestion;
-                }
-            }
+            yield from $suggestions;
 
             $isComplete = $isComplete && $suggestions->getReturn();
         }

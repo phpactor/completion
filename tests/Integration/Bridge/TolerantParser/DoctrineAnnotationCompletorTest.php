@@ -109,43 +109,6 @@ EOT
             ]
         ]];
 
-
-        yield 'in a namespace with an import' => [
-            <<<'EOT'
-<?php
-
-namespace App\Annotation;
-
-/**
- * @Annotation
- */
-class Entity {}
-
-namespace App;
-
-use App\Annotation as APP;
-
-/**
- * @Ent<>
- */
-class Foo {}
-EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_CLASS,
-                'name' => 'APP\Entity',
-                'short_description' => 'App\Annotation\Entity',
-                'snippet' => 'APP\Entity($1)$0',
-                'name_import' => null,
-            ], [
-                'type' => Suggestion::TYPE_CLASS,
-                'name' => 'Entity',
-                'short_description' => 'App\Annotation\Entity',
-                'snippet' => 'Entity($1)$0',
-                'name_import' => 'App\Annotation\Entity',
-            ]
-        ]];
-
         yield 'annotation on a node in the middle of the AST' => [
             <<<'EOT'
 <?php
