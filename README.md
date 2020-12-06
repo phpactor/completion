@@ -1,7 +1,7 @@
 Phpactor Completion
 ===================
 
-[![Build Status](https://travis-ci.org/phpactor/completion.svg?branch=master)](https://travis-ci.org/phpactor/completion)
+![CI](https://github.com/phpactor/completion/workflows/CI/badge.svg)
 
 PHP Code Completion library for [Phpactor](https://github.com/phpactor/phpactor).
 
