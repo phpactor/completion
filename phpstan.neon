@@ -5,6 +5,4 @@ parameters:
         - '{Instanceof between .*Microsoft.* will always}'
     paths:
         - lib
-
     checkMissingIterableValueType: false
-
