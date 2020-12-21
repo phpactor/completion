@@ -38,7 +38,7 @@ class ChainSignatureHelperTest extends TestCase
      */
     private $help;
 
-    protected function setUp(): void
+    protected function setUp(): void: void
     {
         $this->logger = $this->prophesize(LoggerInterface::class);
         $this->helper1 = $this->prophesize(SignatureHelper::class);

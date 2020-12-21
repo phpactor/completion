@@ -29,7 +29,7 @@ class LimitingCompletorTest extends TestCase
      */
     private $node;
 
-    protected function setUp(): void
+    protected function setUp(): void: void
     {
         $this->innerCompletor = $this->prophesize(TolerantCompletor::class);
         $this->node = $this->prophesize(Node::class);

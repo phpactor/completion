@@ -40,7 +40,7 @@ class ChainTolerantCompletorTest extends TestCase
      */
     private $qualifier2;
 
-    protected function setUp(): void
+    protected function setUp(): void: void
     {
         $this->completor1 = $this->prophesize(TolerantCompletor::class);
         $this->qualifiableCompletor1 = $this->prophesize(TolerantCompletor::class)

@@ -23,7 +23,7 @@
     },
     "require-dev": {
         "phpbench/phpbench": "^1.0",
-        "phpunit/phpunit": "~9.0",
+        "phpunit/phpunit": "^9.0",
         "phpactor/test-utils": "^1.1",
         "phpstan/phpstan": "~0.12.0",
         "friendsofphp/php-cs-fixer": "~2.15.0",

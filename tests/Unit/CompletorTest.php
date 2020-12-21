@@ -21,7 +21,7 @@ class CompletorTest extends TestCase
     const EXAMPLE_SOURCE = 'test source';
     const EXAMPLE_OFFSET = 1234;
 
-    protected function setUp(): void
+    protected function setUp(): void: void
     {
         $this->completor1 = $this->prophesize(Completor::class);
     }
