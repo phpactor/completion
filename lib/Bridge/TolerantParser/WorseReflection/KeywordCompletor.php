@@ -19,8 +19,6 @@ class KeywordCompletor implements TolerantCompletor
     */
     public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
-        
-        // TokenStringMaps::RESERVED_WORDS
         foreach (array_merge(array_keys(TokenStringMaps::RESERVED_WORDS), array_keys(TokenStringMaps::KEYWORDS)) as $keyword) {
             yield Suggestion::createWithOptions(
                 $keyword,
