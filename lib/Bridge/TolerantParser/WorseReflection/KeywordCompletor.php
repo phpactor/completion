@@ -55,14 +55,19 @@ class KeywordCompletor implements TolerantCompletor
         ],
     ];
 
-    private $allKeywords;
+    /**
+     * @var array
+     */
+    private static $allKeywords = null;
 
     public function __construct()
     {
-        $this->allKeywords = array_merge(
-            array_keys(TokenStringMaps::RESERVED_WORDS),
-            array_keys(TokenStringMaps::KEYWORDS)
-        );
+        if(self::$allKeywords === null){
+            self::$allKeywords = array_merge(
+                array_keys(TokenStringMaps::RESERVED_WORDS),
+                array_keys(TokenStringMaps::KEYWORDS)
+            );
+        }
     }
     /**
     * {@inheritDoc}
@@ -71,20 +76,20 @@ class KeywordCompletor implements TolerantCompletor
     {
         $scopeName = $this->getScopeName($node, $offset);
         
-        $parents = [
-            get_class($node)
-        ];
-        $parent = $node;
-        while (($parent = $parent->getParent()) !== null) {
-            $parents[] = get_class($parent);
-        }
-
-        dump(implode("\n    ->", $parents));
+        // PARENT TREE VISUALISATION
+        // $parents = [
+        //     get_class($node)
+        // ];
+        // $parent = $node;
+        // while (($parent = $parent->getParent()) !== null) {
+        //     $parents[] = get_class($parent);
+        // }
+        // dump(implode("\n    ->", $parents));
 
         $keywords =
             (isset(self::SPECIAL_SCOPES[$scopeName])) ?
                 self::SPECIAL_SCOPES[$scopeName] :
-                $this->allKeywords;
+                self::$allKeywords;
 
         foreach ($keywords as $keyword) {
             yield Suggestion::createWithOptions(
