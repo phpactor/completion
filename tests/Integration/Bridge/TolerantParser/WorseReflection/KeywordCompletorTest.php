@@ -15,21 +15,20 @@ class KeywordCompletorTest extends TolerantCompletorTestCase
     {
         return new KeywordCompletor(
         );
-	}
-	
-	public function testComplete(): void
-	{
-		$expected = [];
-		$keywords = array_merge(array_keys(TokenStringMaps::RESERVED_WORDS), array_keys(TokenStringMaps::KEYWORDS));
-		sort($keywords);
-		foreach ($keywords as $keyword) {
-			$expected[] = [
-				'type' => Suggestion::TYPE_KEYWORD,
-				'name' => $keyword,
-			];
-		}
+    }
+    
+    public function testComplete(): void
+    {
+        $expected = [];
+        $keywords = array_merge(array_keys(TokenStringMaps::RESERVED_WORDS), array_keys(TokenStringMaps::KEYWORDS));
+        sort($keywords);
+        foreach ($keywords as $keyword) {
+            $expected[] = [
+                'type' => Suggestion::TYPE_KEYWORD,
+                'name' => $keyword,
+            ];
+        }
 
-		$this->assertComplete("<?php <>", $expected);
-	}
-
+        $this->assertComplete("<?php <>", $expected);
+    }
 }
