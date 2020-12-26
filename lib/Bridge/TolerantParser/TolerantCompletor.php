@@ -11,7 +11,7 @@ use Phpactor\TextDocument\TextDocument;
 interface TolerantCompletor
 {
     /**
-     * @return Generator & iterable<Suggestion>
+     * @return Suggestion[]|Generator<int, Suggestion, null, bool>
      */
     public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator;
 }

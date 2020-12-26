@@ -66,4 +66,36 @@ class SuggestionTest extends TestCase
             'name_import' => 'Namespace\\Foobar',
         ], $suggestion->toArray());
     }
+
+    public function testWithName()
+    {
+        $suggestion = Suggestion::create('name')->withName('test');
+        $this->assertEquals('test', $suggestion->name());
+        $this->assertEquals('test', $suggestion->label());
+
+        $suggestion = Suggestion::createWithOptions(
+            'name',
+            ['label' => 'label'],
+        )->withName('test');
+        $this->assertEquals('test', $suggestion->name());
+        $this->assertEquals('label', $suggestion->label());
+    }
+
+    public function testWithoutNameImport()
+    {
+        $suggestion = Suggestion::createWithOptions(
+            'name',
+            ['name_import' => 'previous'],
+        )->withoutNameImport();
+        $this->assertNull($suggestion->nameImport());
+    }
+
+    public function testWithSnippet()
+    {
+        $suggestion = Suggestion::createWithOptions(
+            'name',
+            ['snippet' => 'snippet'],
+        )->withSnippet('test');
+        $this->assertEquals('test', $suggestion->snippet());
+    }
 }
