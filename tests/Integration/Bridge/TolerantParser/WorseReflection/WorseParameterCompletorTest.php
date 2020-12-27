@@ -322,6 +322,33 @@ EOT
     }
 
     /**
+     * @dataProvider provideObjectCreation
+     */
+    public function testObjectCreation(string $source, array $expected)
+    {
+        $this->assertComplete($source, $expected);
+    }
+
+    public function provideObjectCreation()
+    {
+        yield 'complete object creation' => [
+            <<<'EOT'
+<?php 
+class Foobar { public function __construct(string $foo, Foobar $bar, $mixed) {} }
+
+new Foobar($param, $foobar, $<>);
+EOT
+            ,[
+                [
+                    'type' => Suggestion::TYPE_VARIABLE,
+                    'name' => '$param',
+                    'short_description' => 'string => param #3 $mixed',
+                ],
+            ],
+        ];
+    }
+
+    /**
      * @dataProvider provideCouldNotComplete
      */
     public function testCouldNotComplete(string $source)

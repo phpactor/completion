@@ -13,6 +13,7 @@ use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 use Microsoft\PhpParser\Node\Expression\Variable;
 use Microsoft\PhpParser\Node\QualifiedName;
+use Phpactor\Completion\Bridge\TolerantParser\Helper\NodeQuery;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
@@ -33,11 +34,14 @@ class WorseParameterCompletor extends AbstractParameterCompletor implements Tole
             $node = $node->parent;
         }
 
-        if ($node instanceof ArgumentExpressionList) {
-            $node = $node->parent;
-        }
+        $node = NodeQuery::firstAncestorOrSelfInVia($node, [
+            Variable::class,
+            CallExpression::class,
+        ], [
+            ArgumentExpressionList::class
+        ]);
 
-        if (!$node instanceof Variable && !$node instanceof CallExpression) {
+        if (null === $node) {
             return true;
         }
 
