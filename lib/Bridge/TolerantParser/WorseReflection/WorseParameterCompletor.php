@@ -7,9 +7,11 @@ use LogicException;
 use Microsoft\PhpParser\MissingToken;
 use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Node\DelimitedList\ArgumentExpressionList;
+use Microsoft\PhpParser\Node\Expression;
 use Microsoft\PhpParser\Node\Expression\ArgumentExpression;
 use Microsoft\PhpParser\Node\Expression\CallExpression;
 use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
+use Microsoft\PhpParser\Node\Expression\ObjectCreationExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 use Microsoft\PhpParser\Node\Expression\Variable;
 use Microsoft\PhpParser\Node\QualifiedName;
@@ -22,6 +24,7 @@ use Phpactor\WorseReflection\Core\Inference\Variable as WorseVariable;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionFunctionLike;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionParameter;
 use Phpactor\WorseReflection\Core\Type;
+use RuntimeException;
 
 class WorseParameterCompletor extends AbstractParameterCompletor implements TolerantCompletor
 {
@@ -34,10 +37,11 @@ class WorseParameterCompletor extends AbstractParameterCompletor implements Tole
             $node = $node->parent;
         }
 
-        $node = NodeQuery::firstAncestorOrSelfInVia($node, [
-            Variable::class,
+        $expression = NodeQuery::firstAncestorOrSelfInVia($node, [
             CallExpression::class,
+            ObjectCreationExpression::class,
         ], [
+            ArgumentExpression::class,
             ArgumentExpressionList::class
         ]);
 
@@ -45,14 +49,9 @@ class WorseParameterCompletor extends AbstractParameterCompletor implements Tole
             return true;
         }
 
-        $callExpression = $node instanceof CallExpression ? $node : $node->getFirstAncestor(CallExpression::class);
-
-        if (!$callExpression) {
-            return true;
+        if ($expression instanceof CallExpression) {
+            $expression = $expression->callableExpression;
         }
-
-        assert($callExpression instanceof CallExpression);
-        $callableExpression = $callExpression->callableExpression;
 
         $variables = $this->variableCompletionHelper->variableCompletions($node, $source, $offset);
 
@@ -61,17 +60,13 @@ class WorseParameterCompletor extends AbstractParameterCompletor implements Tole
             return true;
         }
 
-        try {
-            $reflectionFunctionLike = $this->reflectFunctionLike($source, $callableExpression);
-        } catch (NotFound $exception) {
-            return true;
-        }
+        $reflectionFunctionLike = $this->reflectionLikeFromNode($expression, $source);
 
         if (null === $reflectionFunctionLike) {
             return true;
         }
 
-        $suggestions = $this->populateResponse($callableExpression, $reflectionFunctionLike, $variables);
+        $suggestions = $this->populateResponse($expression, $reflectionFunctionLike, $variables);
         yield from $suggestions;
 
         return $suggestions->getReturn();
@@ -192,7 +187,7 @@ class WorseParameterCompletor extends AbstractParameterCompletor implements Tole
             assert($callExpression instanceof CallExpression);
             return $callExpression->argumentExpressionList;
         }
-        
+
         assert($node instanceof MemberAccessExpression || $node instanceof ScopedPropertyAccessExpression);
         assert(null !== $node->parent);
 
@@ -200,5 +195,34 @@ class WorseParameterCompletor extends AbstractParameterCompletor implements Tole
         assert($list instanceof ArgumentExpressionList || is_null($list));
 
         return $list;
+    }
+
+    private function reflectionLikeFromNode(Expression $expression, TextDocument $source): ?ReflectionFunctionLike
+    {
+        if ($expression instanceof CallExpression) {
+            try {
+                return $this->reflectFunctionLike($source, $expression);
+            } catch (NotFound $exception) {
+                return null;
+            }
+        }
+
+        if ($expression instanceof ObjectCreationExpression) {
+            $designator = $expression->classTypeDesignator;
+            if (!$designator instanceof QualifiedName) {
+                return null;
+            }
+
+            try {
+                return $this->reflector->reflectClass((string)$designator->getResolvedName())->methods()->get('__construct');
+            } catch (NotFound $exception) {
+                return null;
+            }
+        }
+
+        throw new RuntimeException(sprintf(
+            'Could not resolve function like from node "%s"',
+            get_class($node)
+        ));
     }
 }

@@ -336,13 +336,14 @@ EOT
 <?php 
 class Foobar { public function __construct(string $foo, Foobar $bar, $mixed) {} }
 
-new Foobar($param, $foobar, $<>);
+$param = 'string';
+new Foobar($<>
 EOT
             ,[
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
                     'name' => '$param',
-                    'short_description' => 'string => param #3 $mixed',
+                    'short_description' => 'string => param #1 string $foo',
                 ],
             ],
         ];
