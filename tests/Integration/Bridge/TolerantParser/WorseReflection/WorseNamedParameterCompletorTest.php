@@ -54,6 +54,17 @@ class WorseNamedParameterCompletorTest extends TolerantCompletorTestCase
                 ]
             ]
         ];
+
+        yield 'Static' => [
+            '<?php class A{static function bee(string $one){}} A::bee(o<>',
+            [
+                [
+                    'type' => Suggestion::TYPE_FIELD,
+                    'name' => 'one: ',
+                    'short_description' => 'string $one',
+                ]
+            ]
+        ];
     }
 
     /**
