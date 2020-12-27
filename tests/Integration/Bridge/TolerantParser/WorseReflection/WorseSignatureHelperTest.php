@@ -119,21 +119,6 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                 0,
                 1
             )
-        ]
-        ;
-        yield 'function with parameters, 2nd active and already filled' => [
-            '<?php function good(string $baz) {} function hello(string $foo) {}; hello("hello", $test<>',
-            new SignatureHelp(
-                [new SignatureInformation(
-                    'hello(string $foo, int $bar)',
-                    [
-                        new ParameterInformation('foo', 'string $foo'),
-                        new ParameterInformation('bar', 'int $bar'),
-                    ]
-                )],
-                0,
-                1
-            )
         ];
 
         yield 'function with parameters, 2nd active within other nodes' => [

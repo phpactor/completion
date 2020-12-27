@@ -38,14 +38,10 @@ class NodeQuery
     {
         $ancestor = $node;
 
-        // do this instead of returning early because PHPStan doesn't
-        // understand.
-        $found = null;
-
         while ($ancestor = $ancestor->parent) {
             if (in_array(get_class($ancestor), $classNames)) {
-                $found = $ancestor;
-                break;
+                /** @phpstan-ignore-next-line */
+                return $ancestor;
             }
 
             if (!in_array(get_class($ancestor), $validDescendants)) {
