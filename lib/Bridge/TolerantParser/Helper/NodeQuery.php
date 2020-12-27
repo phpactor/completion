@@ -37,9 +37,11 @@ class NodeQuery
     public static function firstAncestorInVia(Node $node, array $classNames, array $validDescendants): ?Node
     {
         $ancestor = $node;
+        $found = null;
         while ($ancestor = $ancestor->parent) {
             if (in_array(get_class($ancestor), $classNames)) {
-                return $ancestor;
+                $found = $ancestor;
+                break;
             }
 
             if (!in_array(get_class($ancestor), $validDescendants)) {
@@ -59,6 +61,7 @@ class NodeQuery
     public static function firstAncestorOrSelfInVia(Node $node, array $classNames, array $validDescendants): ?Node
     {
         if (in_array(get_class($node), $classNames)) {
+            /** @phpstan-ignore-next-line */
             return $node;
         }
 

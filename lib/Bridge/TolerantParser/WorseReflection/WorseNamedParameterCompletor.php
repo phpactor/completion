@@ -17,6 +17,7 @@ use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionClass;
+use Phpactor\WorseReflection\Core\Reflection\ReflectionClassLike;
 use Phpactor\WorseReflection\Reflector;
 
 class WorseNamedParameterCompletor implements TolerantCompletor
@@ -63,6 +64,7 @@ class WorseNamedParameterCompletor implements TolerantCompletor
             return yield from $this->fromCallExpression($creation);
         }
 
+        /** @phpstan-ignore-next-line */
         return true;
     }
 
@@ -85,7 +87,7 @@ class WorseNamedParameterCompletor implements TolerantCompletor
         return true;
     }
 
-    private function fromMethod(ReflectionClass $class, string $method): Generator
+    private function fromMethod(ReflectionClassLike $class, string $method): Generator
     {
         if (!$class->methods()->has($method)) {
             return true;
