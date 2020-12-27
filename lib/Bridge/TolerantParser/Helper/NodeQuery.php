@@ -37,7 +37,11 @@ class NodeQuery
     public static function firstAncestorInVia(Node $node, array $classNames, array $validDescendants): ?Node
     {
         $ancestor = $node;
+
+        // do this instead of returning early because PHPStan doesn't
+        // understand.
         $found = null;
+
         while ($ancestor = $ancestor->parent) {
             if (in_array(get_class($ancestor), $classNames)) {
                 $found = $ancestor;
