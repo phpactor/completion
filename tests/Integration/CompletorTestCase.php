@@ -31,7 +31,7 @@ abstract class CompletorTestCase extends IntegrationTestCase
         }
 
         $this->assertCount(count($expected), $suggestions);
-        $this->assertEquals($isComplete, $suggestionGenerator->getReturn());
+        $this->assertEquals($isComplete, $suggestionGenerator->getReturn(), '"is complete" was as expected');
     }
 
     public function assertCouldNotComplete(string $source): void
