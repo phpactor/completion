@@ -7,7 +7,9 @@ use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Node\DelimitedList\ArgumentExpressionList;
 use Microsoft\PhpParser\Node\Expression\ArgumentExpression;
 use Microsoft\PhpParser\Node\Expression\CallExpression;
+use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
 use Microsoft\PhpParser\Node\Expression\ObjectCreationExpression;
+use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\Helper\NodeQuery;
@@ -105,10 +107,14 @@ class WorseNamedParameterCompletor implements TolerantCompletor
 
     private function fromCallExpression(CallExpression $creation): Generator
     {
+        $callableExpression = $creation->callableExpression;
+        if (!$callableExpression instanceof MemberAccessExpression && !$callableExpression instanceof ScopedPropertyAccessExpression) {
+            return true;
+        }
         try {
             $classLike = $this->reflector->reflectMethodCall(
                 $creation->getFileContents(),
-                $creation->callableExpression->getEndPosition()
+                $callableExpression->getEndPosition()
             );
             yield from $this->fromMethod($classLike->class(), $classLike->name());
         } catch (NotFound $e) {
