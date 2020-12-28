@@ -54,8 +54,38 @@ class WorseNamedParameterCompletorTest extends TolerantCompletorTestCase
             ]
         ];
 
+        yield 'Method call in partial method call' => [
+            '<?php class B {function boo(): B{}}' . 
+            'class A{function bee(string $one){}} $b=new B();$a=new A(); $a->bee($b->boo()-><>',
+            [
+            ]
+        ];
+
+        yield 'Method call in method call' => [
+            '<?php class B {function boo(string $two): B{}}' . 
+            'class A{function bee(string $one){}} $b=new B();$a=new A(); $a->bee($b->boo(<>',
+            [
+                [
+                    'type' => Suggestion::TYPE_FIELD,
+                    'name' => 'two: ',
+                    'short_description' => 'string $two',
+                ]
+            ]
+        ];
+
         yield 'Static' => [
             '<?php class A{static function bee(string $one){}} A::bee(o<>',
+            [
+                [
+                    'type' => Suggestion::TYPE_FIELD,
+                    'name' => 'one: ',
+                    'short_description' => 'string $one',
+                ]
+            ]
+        ];
+
+        yield 'Static call begin' => [
+            '<?php class A{static function bee(string $one){}} A::bee(<>',
             [
                 [
                     'type' => Suggestion::TYPE_FIELD,

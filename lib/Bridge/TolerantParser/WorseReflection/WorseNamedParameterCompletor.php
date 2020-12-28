@@ -43,9 +43,10 @@ class WorseNamedParameterCompletor implements TolerantCompletor
      */
     public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
-        if (null === $creation = NodeQuery::firstAncestorInVia(
+        if (null === $creation = NodeQuery::firstAncestorOrSelfInVia(
             $node,
             [
+                MemberAccessExpression::class,
                 ObjectCreationExpression::class,
                 CallExpression::class,
             ],
