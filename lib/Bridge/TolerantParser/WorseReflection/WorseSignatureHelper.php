@@ -106,6 +106,7 @@ class WorseSignatureHelper implements SignatureHelper
 
         $callable = $callNode->callableExpression;
 
+        /** @phpstan-ignore-next-line */
         if ($callable instanceof QualifiedName) {
             return $this->signatureHelpForFunction($callable, $position);
         }

@@ -1,7 +1,0 @@
-parameters:
-	ignoreErrors:
-		-
-			message: "#^Instanceof between Microsoft\\\\PhpParser\\\\Node\\\\Expression and Microsoft\\\\PhpParser\\\\Node\\\\QualifiedName will always evaluate to false\\.$#"
-			count: 1
-			path: lib/Bridge/TolerantParser/WorseReflection/WorseSignatureHelper.php
-

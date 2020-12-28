@@ -66,7 +66,6 @@ class WorseNamedParameterCompletor implements TolerantCompletor
             return yield from $this->fromCallExpression($creation);
         }
 
-        /** @phpstan-ignore-next-line */
         return true;
     }
 
