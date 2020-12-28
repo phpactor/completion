@@ -13,6 +13,6 @@ class ClassMemberCompletorBench extends TolerantCompletorBenchCase
     protected function createTolerant(string $source): TolerantCompletor
     {
         $reflector = ReflectorBuilder::create()->addSource($source)->build();
-        return new WorseClassMemberCompletor($reflector, new ObjectFormatter());
+        return new WorseClassMemberCompletor($reflector, new ObjectFormatter(), new ObjectFormatter());
     }
 }
