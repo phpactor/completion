@@ -3,9 +3,12 @@
 namespace Phpactor\Completion\Core\Completor;
 
 use Generator;
+use Phpactor\Completion\Core\DocumentPrioritizer\DefaultResultPrioritizer;
+use Phpactor\Completion\Core\DocumentPrioritizer\DocumentPrioritizer;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\ReferenceFinder\NameSearcher;
 use Phpactor\ReferenceFinder\Search\NameSearchResult;
+use Phpactor\TextDocument\TextDocumentUri;
 
 abstract class NameSearcherCompletor
 {
@@ -14,20 +17,26 @@ abstract class NameSearcherCompletor
      */
     protected $nameSearcher;
 
-    public function __construct(NameSearcher $nameSearcher)
+    /**
+     * @var DocumentPrioritizer
+     */
+    private $prioritizer;
+
+    public function __construct(NameSearcher $nameSearcher, DocumentPrioritizer $prioritizer = null)
     {
         $this->nameSearcher = $nameSearcher;
+        $this->prioritizer = $prioritizer ?: new DefaultResultPrioritizer();
     }
 
     /**
      * @return Generator<Suggestion>
      */
-    protected function completeName(string $name): Generator
+    protected function completeName(string $name, ?TextDocumentUri $sourceUri = null): Generator
     {
         foreach ($this->nameSearcher->search($name) as $result) {
             yield $this->createSuggestion(
                 $result,
-                $this->createSuggestionOptions($result),
+                $this->createSuggestionOptions($result, $sourceUri),
             );
         }
 
@@ -41,13 +50,14 @@ abstract class NameSearcherCompletor
         return Suggestion::createWithOptions($result->name()->head(), $options);
     }
 
-    protected function createSuggestionOptions(NameSearchResult $result): array
+    protected function createSuggestionOptions(NameSearchResult $result, ?TextDocumentUri $sourceUri = null): array
     {
         return [
             'short_description' => $result->name()->__toString(),
             'type' => $this->suggestionType($result),
             'class_import' => $this->classImport($result),
             'name_import' => $result->name()->__toString(),
+            'priority' => $this->prioritizer->priority($result->uri(), $sourceUri)
         ];
     }
 

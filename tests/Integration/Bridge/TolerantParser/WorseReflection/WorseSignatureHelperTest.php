@@ -57,8 +57,7 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                     'hello()',
                     []
                 )],
-                0,
-                null
+                0
             )
         ];
 

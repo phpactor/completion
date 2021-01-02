@@ -16,7 +16,7 @@ class NameSearcherCompletor extends CoreNameSearcherCompletor implements Toleran
      */
     public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
-        $suggestions = $this->completeName($node->getText());
+        $suggestions = $this->completeName($node->getText(), $source->uri());
 
         yield from $suggestions;
 

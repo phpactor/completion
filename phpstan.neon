@@ -4,5 +4,3 @@ parameters:
     paths:
         - lib
     checkMissingIterableValueType: false
-includes:
-    - phpstan-baseline.neon
