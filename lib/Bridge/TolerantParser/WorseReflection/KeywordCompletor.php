@@ -33,7 +33,7 @@ class KeywordCompletor implements TolerantCompletor
         self::STRING_LITERAL => [ ],
         self::VARIABLE => [ ],
         // https://github.com/php/php-langspec/blob/master/spec/10-expressions.md#anonymous-function-creation
-        self::AFTER_ANONYMOUS_FUNC_PARAMS => [ 
+        self::AFTER_ANONYMOUS_FUNC_PARAMS => [
             'use'
         ],
         // https://github.com/php/php-langspec/blob/master/spec/14-classes.md#grammar-class-member-declaration
@@ -62,7 +62,7 @@ class KeywordCompletor implements TolerantCompletor
 
     public function __construct()
     {
-        if(self::$allKeywords === null){
+        if (self::$allKeywords === null) {
             self::$allKeywords = array_merge(
                 array_keys(TokenStringMaps::RESERVED_WORDS),
                 array_keys(TokenStringMaps::KEYWORDS)
@@ -127,7 +127,7 @@ class KeywordCompletor implements TolerantCompletor
                 $node->getParent()->colonToken == null
                 || $node->getParent()->colonToken->getStartPosition() > $offset->toInt()
             )
-        ){
+        ) {
             $scopeName = self::AFTER_ANONYMOUS_FUNC_PARAMS;
         }
 

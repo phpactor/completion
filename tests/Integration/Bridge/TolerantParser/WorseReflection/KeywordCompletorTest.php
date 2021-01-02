@@ -89,7 +89,6 @@ class KeywordCompletorTest extends TolerantCompletorTestCase
             '<?php $func = function() <> :string ',
             $this->createExpectedKeywords(KeywordCompletor::SPECIAL_SCOPES[KeywordCompletor::AFTER_ANONYMOUS_FUNC_PARAMS])
         ];
-        
     }
 
     private function createExpectedKeywords(array $list): array
