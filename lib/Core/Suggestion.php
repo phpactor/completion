@@ -30,6 +30,10 @@ class Suggestion
     const TYPE_REFERENCE = 'reference';
     const TYPE_CONSTANT = 'constant';
 
+    const PRIORITY_HIGH = 64;
+    const PRIORITY_MEDIUM = 127;
+    const PRIORITY_LOW = 255;
+
     /**
      * @var string|null
      */
@@ -70,6 +74,11 @@ class Suggestion
      */
     private $nameImport;
 
+    /**
+     * @var int|null
+     */
+    private $priority;
+
     private function __construct(
         string $name,
         ?string $type = null,
@@ -78,7 +87,8 @@ class Suggestion
         ?string $label = null,
         ?string $documentation = null,
         ?Range $range = null,
-        ?string $snippet = null
+        ?string $snippet = null,
+        ?int $priority = null
     ) {
         $this->type = $type;
         $this->name = $name;
@@ -88,6 +98,7 @@ class Suggestion
         $this->documentation = $documentation;
         $this->snippet = $snippet;
         $this->nameImport = $nameImport;
+        $this->priority = $priority;
     }
 
     public static function create(string $name): self
@@ -105,7 +116,8 @@ class Suggestion
             'name_import' => null,
             'label' => null,
             'range' => null,
-            'snippet' => null
+            'snippet' => null,
+            'priority' => null,
         ];
 
         if ($diff = array_diff(array_keys($options), array_keys($defaults))) {
@@ -126,7 +138,8 @@ class Suggestion
             $options['label'],
             $options['documentation'],
             $options['range'],
-            $options['snippet']
+            $options['snippet'],
+            $options['priority'],
         );
     }
 
@@ -199,5 +212,10 @@ class Suggestion
     public function documentation(): ?string
     {
         return $this->documentation;
+    }
+
+    public function priority(): ?int
+    {
+        return $this->priority;
     }
 }

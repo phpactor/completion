@@ -99,6 +99,7 @@ class WorseNamedParameterCompletor implements TolerantCompletor
                 sprintf('%s: ', $parameter->name()),
                 [
                     'type' => Suggestion::TYPE_FIELD,
+                    'priority' => Suggestion::PRIORITY_HIGH,
                     'short_description' => $this->formatter->format($parameter),
                 ]
             );

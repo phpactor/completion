@@ -76,6 +76,7 @@ abstract class AbstractParameterCompletor
                 '$' . $variable->name(),
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
+                    'priority' => Suggestion::PRIORITY_HIGH,
                     'short_description' => sprintf(
                         '%s => param #%d %s',
                         $this->formatter->format($variable->symbolContext()->types()),

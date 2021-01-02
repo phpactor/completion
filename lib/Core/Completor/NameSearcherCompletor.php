@@ -48,6 +48,7 @@ abstract class NameSearcherCompletor
             'type' => $this->suggestionType($result),
             'class_import' => $this->classImport($result),
             'name_import' => $result->name()->__toString(),
+            'priority' => Suggestion::PRIORITY_LOW,
         ];
     }
 
