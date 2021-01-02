@@ -14,6 +14,7 @@ use Phpactor\ReferenceFinder\NameSearcher;
 use Phpactor\ReferenceFinder\Search\NameSearchResult;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
+use Phpactor\TextDocument\TextDocumentUri;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Reflector;
 
@@ -61,7 +62,7 @@ class DoctrineAnnotationCompletor extends NameSearcherCompletor implements Compl
             return true;
         }
 
-        $suggestions = $this->completeName($annotation);
+        $suggestions = $this->completeName($annotation, $source->uri());
 
         foreach ($suggestions as $suggestion) {
             if (!$this->isAnAnnotation($suggestion)) {
@@ -74,7 +75,7 @@ class DoctrineAnnotationCompletor extends NameSearcherCompletor implements Compl
         return $suggestions->getReturn();
     }
 
-    protected function createSuggestionOptions(NameSearchResult $result): array
+    protected function createSuggestionOptions(NameSearchResult $result, ?TextDocumentUri $sourceUri = null): array
     {
         return array_merge(parent::createSuggestionOptions($result), [
             'snippet' => (string) $result->name()->head() .'($1)$0',
