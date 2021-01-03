@@ -17,7 +17,7 @@
         "phpactor/rpc-extension": "~0.1",
         "phpactor/source-code-filesystem": "~0.1",
         "phpactor/text-document": "^1.0",
-        "phpactor/worse-reflection": "~0.4.4"
+        "phpactor/worse-reflection": "^0.4.4"
     },
     "require-dev": {
         "dms/phpunit-arraysubset-asserts": "dev-master",
