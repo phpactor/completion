@@ -35,31 +35,43 @@ class ProximityPrioritizerTest extends TestCase
         yield [
             '/home/daniel/phpactor/vendor/symfony/foobar/lib/ClassOne.php',
             '/home/daniel/phpactor/lib/ClassOne.php',
-            163
+            218
         ];
 
         yield 'further 1' => [
             '/home/daniel/phpactor/vendor/symfony/foobar/lib/ClassOne.php',
             '/home/daniel/phpactor/lib/Further/Away/ClassOne.php',
-            183
+            198
         ];
 
         yield 'closer 1' => [
             '/home/daniel/phpactor/lib/ClassTwo.php',
             '/home/daniel/phpactor/lib/Further/Away/ClassOne.php',
-            159
+            223
         ];
 
         yield 'closer 2' => [
             '/home/daniel/phpactor/lib/ClassTwo.php',
-            '/home/daniel/phpactor/lib/Further/Away/ClassTwo.php',
-            159
+            '/home/daniel/phpactor/lib/Away/ClassTwo.php',
+            212
         ];
 
         yield [
             '/home/daniel/phpactor/vendor/symfony/foobar/lib/ClassOne.php',
             '/home/daniel/phpactor/vendor/symfony/foobar/lib/ClassOne.php',
             Suggestion::PRIORITY_MEDIUM // exact match gives baseline of medium priority (127)
+        ];
+
+        yield 'closer 3' => [
+            '/project/pipeline/Survey/GitSurvey.php',
+            '/project/pipeline/Task/ComposerBumpVersionIfPresentTask.php',
+            191
+        ];
+
+        yield 'further 3' => [
+            '/project/vendor/dantleech/maestro/src/Composer/Extension/ComposerExtension.php',
+            '/project/pipeline/Survey/GitSurvey.php',
+            216
         ];
     }
 }

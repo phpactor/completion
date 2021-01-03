@@ -52,6 +52,6 @@ class ProximityPrioritizer implements DocumentPrioritizer
         
         $max = max($count1, $count2);
         $weight = $max / $distance;
-        return $weight;
+        return 1 - $weight;
     }
 }
