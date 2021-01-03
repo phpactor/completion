@@ -11,8 +11,6 @@ use Phpactor\TextDocument\TextDocumentUri;
  *
  * This is used to compare the text document being edited and the suggestion.
  * Classes that are closer in the source tree will be suggested first.
- *
- * The result is weighted from MEDIUM to HIGH
  */
 class SimilarityResultPrioritizer implements DocumentPrioritizer
 {

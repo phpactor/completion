@@ -13,8 +13,11 @@ class SimilarityResultPrioritizerTest extends TestCase
     /**
      * @dataProvider providePriority
      */
-    public function testPriority(?TextDocumentUri $one, ?TextDocumentUri $two, int $priority): void
+    public function testPriority(?string $one, ?string $two, int $priority): void
     {
+        $one = $one ? TextDocumentUri::fromString($one) : null;
+        $two = $two ? TextDocumentUri::fromString($two) : null;
+
         self::assertEquals($priority, (new SimilarityResultPrioritizer())->priority($one, $two));
     }
         
@@ -24,18 +27,32 @@ class SimilarityResultPrioritizerTest extends TestCase
     public function providePriority(): Generator
     {
         yield [
-                null,
-                null,
-                Suggestion::PRIORITY_LOW
+                '/home/daniel/phpactor/vendor/symfony/foobar/lib/ClassOne.php',
+                '/home/daniel/phpactor/lib/ClassOne.php',
+                169
             ];
-        yield [
-                TextDocumentUri::fromString('/home/daniel/phpactor/vendor/symfony/foobar/lib/ClassOne.php'),
-                TextDocumentUri::fromString('/home/daniel/phpactor/lib/ClassOne.php'),
-                169 // higher priority for non matching
+
+        yield 'further 1' => [
+                '/home/daniel/phpactor/vendor/symfony/foobar/lib/ClassOne.php',
+                '/home/daniel/phpactor/lib/Further/Away/ClassOne.php',
+                169
             ];
+
+        yield 'closer 1' => [
+                '/home/daniel/phpactor/lib/ClassTwo.php',
+                '/home/daniel/phpactor/lib/Further/Away/ClassOne.php',
+                175
+            ];
+
+        yield 'closer 2' => [
+                '/home/daniel/phpactor/lib/ClassTwo.php',
+                '/home/daniel/phpactor/lib/Further/Away/ClassTwo.php',
+                159
+            ];
+
         yield [
-                TextDocumentUri::fromString('/home/daniel/phpactor/vendor/symfony/foobar/lib/ClassOne.php'),
-                TextDocumentUri::fromString('/home/daniel/phpactor/vendor/symfony/foobar/lib/ClassOne.php'),
+                '/home/daniel/phpactor/vendor/symfony/foobar/lib/ClassOne.php',
+                '/home/daniel/phpactor/vendor/symfony/foobar/lib/ClassOne.php',
                 Suggestion::PRIORITY_MEDIUM // exact match gives baseline of medium priority (127)
             ];
     }
