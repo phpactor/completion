@@ -18,7 +18,6 @@ use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
-use function get_class;
 
 class KeywordCompletor implements TolerantCompletor
 {
@@ -56,14 +55,14 @@ class KeywordCompletor implements TolerantCompletor
     ];
 
     /**
-     * @var array
+     * @var string[]
      */
-    private static $allKeywords = null;
-
-    public function __construct()
+    private $allKeywords = null;
+    
+    public function initKeywords(): void
     {
-        if (self::$allKeywords === null) {
-            self::$allKeywords = array_merge(
+        if ($this->allKeywords === null) {
+            $this->allKeywords = array_merge(
                 array_keys(TokenStringMaps::RESERVED_WORDS),
                 array_keys(TokenStringMaps::KEYWORDS)
             );
@@ -74,22 +73,14 @@ class KeywordCompletor implements TolerantCompletor
     */
     public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
+        $this->initKeywords();
+
         $scopeName = $this->getScopeName($node, $offset);
-        
-        // PARENT TREE VISUALISATION
-        // $parents = [
-        //     get_class($node)
-        // ];
-        // $parent = $node;
-        // while (($parent = $parent->getParent()) !== null) {
-        //     $parents[] = get_class($parent);
-        // }
-        // dump(implode("\n    ->", $parents));
 
         $keywords =
             (isset(self::SPECIAL_SCOPES[$scopeName])) ?
                 self::SPECIAL_SCOPES[$scopeName] :
-                self::$allKeywords;
+                $this->allKeywords;
 
         foreach ($keywords as $keyword) {
             yield Suggestion::createWithOptions(
@@ -104,22 +95,29 @@ class KeywordCompletor implements TolerantCompletor
 
     private function getScopeName(Node $node, ByteOffset $offset): ?string
     {
-        $scopeName = null;
         if (
             ($node instanceof MemberAccessExpression || $node instanceof ScopedPropertyAccessExpression)
             && ($node->memberName->getEndPosition() == $offset->toInt())
         ) {
-            $scopeName = self::MEMBER_ACCESS;
-        } elseif ($node instanceof ClassMembersNode) {
-            $scopeName = self::CLASS_MEMBERS;
-        } elseif ($node instanceof StringLiteral) {
-            $scopeName = self::STRING_LITERAL;
-        } elseif (
+            return self::MEMBER_ACCESS;
+        }
+        
+        if ($node instanceof ClassMembersNode) {
+            return self::CLASS_MEMBERS;
+        }
+        
+        if ($node instanceof StringLiteral) {
+            return self::STRING_LITERAL;
+        }
+        
+        if (
             $node instanceof Variable
             && ($node->name->getEndPosition() == $offset->toInt())
         ) {
-            $scopeName = self::VARIABLE;
-        } elseif (
+            return self::VARIABLE;
+        }
+        
+        if (
             $node instanceof CompoundStatementNode
             && $node->getParent() instanceof AnonymousFunctionCreationExpression
             && $node->getParent()->closeParen->getEndPosition() == ($offset->toInt() - 1)
@@ -128,9 +126,9 @@ class KeywordCompletor implements TolerantCompletor
                 || $node->getParent()->colonToken->getStartPosition() > $offset->toInt()
             )
         ) {
-            $scopeName = self::AFTER_ANONYMOUS_FUNC_PARAMS;
+            return self::AFTER_ANONYMOUS_FUNC_PARAMS;
         }
 
-        return $scopeName;
+        return null;
     }
 }
