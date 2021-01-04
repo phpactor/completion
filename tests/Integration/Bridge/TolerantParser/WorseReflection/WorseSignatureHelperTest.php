@@ -61,6 +61,28 @@ class WorseSignatureHelperTest extends IntegrationTestCase
             )
         ];
 
+        yield 'function signature with no parameters inside another function' => [
+            '<?php function hello() {}; function hi() {}; hello(hi(<>',
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'hi()',
+                    []
+                )],
+                0
+            )
+        ];
+
+        yield 'function signature with no parameters inside another function 2' => [
+            '<?php function hello() {}; function hi() {}; hello(hi(<>)',
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'hi()',
+                    []
+                )],
+                0
+            )
+        ];
+
         yield 'function with parameter' => [
             '<?php function hello(string $foo) {}; hello(<>',
             new SignatureHelp(
