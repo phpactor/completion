@@ -60,13 +60,13 @@ class WorseSignatureHelper implements SignatureHelper
         }
     }
 
-    private function doSignatureHelp(TextDocument $textDocument, ByteOffset $offset): SignatureHelp
+    private function doSignatureHelp(TextDocument $textDocument, ByteOffset $offset): SignatureHelp // NOSONAR
     {
         $rootNode = $this->parser->parseSourceFile($textDocument->__toString());
         $nodeAtPosition = $callNode = $rootNode->getDescendantNodeAtPosition($offset->toInt());
 
         if (
-            $nodeAtPosition instanceof CallExpression
+            ($nodeAtPosition instanceof CallExpression || $nodeAtPosition instanceof ObjectCreationExpression)
             && null === $nodeAtPosition->argumentExpressionList
             && null !== $nodeAtPosition->openParen
             && $nodeAtPosition->openParen->getEndPosition() == $offset->toInt()
