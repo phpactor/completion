@@ -2,6 +2,7 @@
 
 namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseReflection;
 
+use Generator;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseSignatureHelper;
 use Phpactor\Completion\Core\Exception\CouldNotHelpWithSignature;
 use Phpactor\Completion\Core\ParameterInformation;
@@ -18,7 +19,7 @@ class WorseSignatureHelperTest extends IntegrationTestCase
     /**
      * @dataProvider provideSignatureHelper
      */
-    public function testSignatureHelper(string $source, ?SignatureHelp $expected)
+    public function testSignatureHelper(string $source, ?SignatureHelp $expected): void
     {
         if ($expected === null) {
             $this->expectException(CouldNotHelpWithSignature::class);
@@ -32,13 +33,13 @@ class WorseSignatureHelperTest extends IntegrationTestCase
 
         $help = $helper->signatureHelp(
             $source,
-            ByteOffset::fromInt($offset)
+            ByteOffset::fromInt((int)$offset)
         );
 
         $this->assertEquals($expected, $help);
     }
 
-    public function provideSignatureHelper()
+    public function provideSignatureHelper(): Generator
     {
         yield 'not a signature' => [
             '<?php echo "h<>ello";',
@@ -55,6 +56,61 @@ class WorseSignatureHelperTest extends IntegrationTestCase
             new SignatureHelp(
                 [new SignatureInformation(
                     'hello()',
+                    []
+                )],
+                0
+            )
+        ];
+
+        yield 'function signature with no parameters inside another function' => [
+            '<?php function hello() {}; function hi() {}; hello(hi(<>',
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'hi()',
+                    []
+                )],
+                0
+            )
+        ];
+
+        yield 'function signature with no parameters inside another function 2' => [
+            '<?php function hello() {}; function hi() {}; hello(hi(<>)',
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'hi()',
+                    []
+                )],
+                0
+            )
+        ];
+
+        yield 'constructor signature with no parameters inside another function' => [
+            '<?php function hello() {}; class Hi { function __construct() {} }; hello(new Hi(<>',
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'pub __construct()',
+                    []
+                )],
+                0
+            )
+        ];
+
+        yield 'constructor signature with no parameters inside another function 2' => [
+            '<?php function hello() {}; class Hi { function __construct() {} }; hello(new Hi(<>)',
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'pub __construct()',
+                    []
+                )],
+                0
+            )
+        ];
+
+        yield 'static method signature with no parameters inside another function' => [
+            '<?php function hello() {}; class Hi { public static function hi() }; hello(Hi::hi(<>',
+            new SignatureHelp(
+                [new SignatureInformation(
+                    'pub hi()',
                     []
                 )],
                 0

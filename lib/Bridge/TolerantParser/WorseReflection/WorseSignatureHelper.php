@@ -60,19 +60,27 @@ class WorseSignatureHelper implements SignatureHelper
         }
     }
 
-    private function doSignatureHelp(TextDocument $textDocument, ByteOffset $offset): SignatureHelp
+    private function doSignatureHelp(TextDocument $textDocument, ByteOffset $offset): SignatureHelp // NOSONAR
     {
         $rootNode = $this->parser->parseSourceFile($textDocument->__toString());
         $nodeAtPosition = $callNode = $rootNode->getDescendantNodeAtPosition($offset->toInt());
 
-        if ($nodeAtPosition instanceof ArgumentExpressionList) {
+        if (
+            ($nodeAtPosition instanceof CallExpression || $nodeAtPosition instanceof ObjectCreationExpression)
+            && null === $nodeAtPosition->argumentExpressionList
+            && null !== $nodeAtPosition->openParen
+            && $nodeAtPosition->openParen->getEndPosition() == $offset->toInt()
+        ) {
+            $argsNode = null;
+            $callNode = $nodeAtPosition;
+        } elseif ($nodeAtPosition instanceof ArgumentExpressionList) {
             $argsNode = $nodeAtPosition;
+            $callNode = $argsNode->parent ?? null;
         } elseif (!$argsNode = $nodeAtPosition->getFirstChildNode(ArgumentExpressionList::class)) {
             $argsNode = $nodeAtPosition->getFirstAncestor(ArgumentExpressionList::class);
+            $callNode = $argsNode->parent ?? null;
         }
-
-        $callNode = $argsNode->parent ?? null;
-
+        
         // current position not inside a call expression
         if (!$callNode && static::isACallExpression($nodeAtPosition)) {
             $callNode = $nodeAtPosition;
@@ -85,7 +93,7 @@ class WorseSignatureHelper implements SignatureHelper
                 get_class($nodeAtPosition)
             ));
         }
-        
+
         $position = 0;
         if ($argsNode) {
             /** @var Node $argNode */
