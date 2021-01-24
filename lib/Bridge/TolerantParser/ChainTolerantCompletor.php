@@ -87,7 +87,7 @@ class ChainTolerantCompletor implements Completor
                 return true;
             }
 
-            return $completor->qualifier()->couldComplete($node);
+            return null !== $completor->qualifier()->couldComplete($node);
         });
     }
 }
