@@ -17,8 +17,6 @@ abstract class CompletorBenchCase
      */
     private $completor;
 
-    abstract protected function create(string $source): Completor;
-
     public function setUp($params): void
     {
         $source = file_get_contents(__DIR__ . '/' . $params['source']);
@@ -35,7 +33,7 @@ abstract class CompletorBenchCase
      * @Iterations(10)
      * @OutputTimeUnit("milliseconds")
      */
-    public function benchComplete($params)
+    public function benchComplete($params): void
     {
         iterator_to_array($this->completor->complete(
             TextDocumentBuilder::create($this->source)->build(),
@@ -54,4 +52,6 @@ abstract class CompletorBenchCase
             ],
         ];
     }
+
+    abstract protected function create(string $source): Completor;
 }

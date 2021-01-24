@@ -14,7 +14,7 @@ class WorseTypeFormatterTest extends TestCase
     /**
      * @dataProvider provideFormat
      */
-    public function testFormat(Types $types, string $expected)
+    public function testFormat(Types $types, string $expected): void
     {
         $formatter = new ObjectFormatter([
             new TypeFormatter(),

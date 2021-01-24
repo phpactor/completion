@@ -12,11 +12,6 @@ use Phpactor\WorseReflection\ReflectorBuilder;
 
 class WorseNamedParameterCompletorTest extends TolerantCompletorTestCase
 {
-    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
-    {
-        $reflector = ReflectorBuilder::create()->addSource($source)->build();
-        return new WorseNamedParameterCompletor($reflector, $this->formatter());
-    }
 
     /**
      * @dataProvider provideComplete
@@ -99,7 +94,7 @@ class WorseNamedParameterCompletorTest extends TolerantCompletorTestCase
     /**
      * @dataProvider provideCouldNotComplete
      */
-    public function testCouldNotComplete(string $source)
+    public function testCouldNotComplete(string $source): void
     {
         $this->assertCouldNotComplete($source);
     }
@@ -110,5 +105,10 @@ class WorseNamedParameterCompletorTest extends TolerantCompletorTestCase
         yield 'function call' => [ '<?php echo<>' ];
         yield 'variable with space' => [ '<?php $foo <>' ];
         yield 'static variable' => ['<?php Foobar::$<>'];
+    }
+    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
+    {
+        $reflector = ReflectorBuilder::create()->addSource($source)->build();
+        return new WorseNamedParameterCompletor($reflector, $this->formatter());
     }
 }

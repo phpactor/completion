@@ -13,7 +13,7 @@ abstract class TolerantQualifierTestCase extends TestCase
     /**
      * @dataProvider provideCouldComplete
      */
-    public function testCouldComplete(string $source, Closure $assertion)
+    public function testCouldComplete(string $source, Closure $assertion): void
     {
         list($source, $offset) = ExtractOffset::fromSource($source);
 

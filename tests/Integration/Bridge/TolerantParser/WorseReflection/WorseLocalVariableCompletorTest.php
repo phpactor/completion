@@ -12,16 +12,11 @@ use Phpactor\WorseReflection\ReflectorBuilder;
 
 class WorseLocalVariableCompletorTest extends TolerantCompletorTestCase
 {
-    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
-    {
-        $reflector = ReflectorBuilder::create()->addSource($source)->build();
-        return new WorseLocalVariableCompletor($reflector, $this->formatter());
-    }
 
     /**
      * @dataProvider provideComplete
      */
-    public function testComplete(string $source, array $expected)
+    public function testComplete(string $source, array $expected): void
     {
         $this->assertComplete($source, $expected);
     }
@@ -29,7 +24,7 @@ class WorseLocalVariableCompletorTest extends TolerantCompletorTestCase
     /**
      * @dataProvider provideCouldNotComplete
      */
-    public function testCouldNotComplete(string $source)
+    public function testCouldNotComplete(string $source): void
     {
         $this->assertCouldNotComplete($source);
     }
@@ -88,16 +83,16 @@ class WorseLocalVariableCompletorTest extends TolerantCompletorTestCase
 
         yield 'Complete previously declared variable which had no type' => [
             <<<'EOT'
-<?php
+                <?php
 
-$callMe = foobar();
+                $callMe = foobar();
 
-/** @var Barfoo $callMe */
-$callMe = foobar();
+                /** @var Barfoo $callMe */
+                $callMe = foobar();
 
-$call<>
+                $call<>
 
-EOT
+                EOT
             , [
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
@@ -109,12 +104,12 @@ EOT
 
         yield 'Does not assign offer suggestion for incomplete assignment' => [
             <<<'EOT'
-<?php
+                <?php
 
-$std = new \stdClass();
-$std = $st<>
+                $std = new \stdClass();
+                $std = $st<>
 
-EOT
+                EOT
             , [
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
@@ -123,5 +118,10 @@ EOT
                 ],
             ],
         ];
+    }
+    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
+    {
+        $reflector = ReflectorBuilder::create()->addSource($source)->build();
+        return new WorseLocalVariableCompletor($reflector, $this->formatter());
     }
 }

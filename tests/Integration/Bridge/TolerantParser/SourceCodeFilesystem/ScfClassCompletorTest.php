@@ -15,18 +15,11 @@ use Phpactor\TextDocument\TextDocument;
 
 class ScfClassCompletorTest extends TolerantCompletorTestCase
 {
-    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
-    {
-        $filesystem = new SimpleFilesystem(FilePath::fromString(__DIR__ . '/files'));
-        $fileToClass = new SimpleFileToClass();
-
-        return new ScfClassCompletor($filesystem, $fileToClass, new ClassQualifier(0));
-    }
 
     /**
      * @dataProvider provideComplete
      */
-    public function testComplete(string $source, array $expected)
+    public function testComplete(string $source, array $expected): void
     {
         $this->assertComplete($source, $expected);
     }
@@ -162,7 +155,7 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
     /**
      * @dataProvider provideImportClass
      */
-    public function testImportClass($source, $expected)
+    public function testImportClass($source, $expected): void
     {
         $this->assertComplete($source, $expected);
     }
@@ -218,5 +211,12 @@ class ScfClassCompletorTest extends TolerantCompletorTestCase
                 ],
             ],
         ];
+    }
+    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
+    {
+        $filesystem = new SimpleFilesystem(FilePath::fromString(__DIR__ . '/files'));
+        $fileToClass = new SimpleFileToClass();
+
+        return new ScfClassCompletor($filesystem, $fileToClass, new ClassQualifier(0));
     }
 }

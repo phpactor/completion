@@ -11,7 +11,7 @@ use Phpactor\TextDocument\TextDocumentBuilder;
 
 class LimitingCompletorTest extends TestCase
 {
-    public function testLimitsResults()
+    public function testLimitsResults(): void
     {
         $source = TextDocumentBuilder::create('foobar')->build();
         $offset = ByteOffset::fromInt(10);
@@ -32,7 +32,7 @@ class LimitingCompletorTest extends TestCase
         $this->assertFalse($suggestions->getReturn());
     }
 
-    public function testDoesNotLimitsResults()
+    public function testDoesNotLimitsResults(): void
     {
         $source = TextDocumentBuilder::create('foobar')->build();
         $offset = ByteOffset::fromInt(10);

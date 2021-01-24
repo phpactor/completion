@@ -11,7 +11,7 @@ use Phpactor\TextDocument\TextDocumentBuilder;
 
 class TypedCompletorRegistryTest extends TestCase
 {
-    public function testReturnsCompletorsForAType()
+    public function testReturnsCompletorsForAType(): void
     {
         $completor = $this->prophesize(Completor::class);
         $registry = new TypedCompletorRegistry([
@@ -32,7 +32,7 @@ class TypedCompletorRegistryTest extends TestCase
         ));
     }
 
-    public function testEmptyChainCompletorWhenTypeNotConfigured()
+    public function testEmptyChainCompletorWhenTypeNotConfigured(): void
     {
         $registry = new TypedCompletorRegistry([
         ]);

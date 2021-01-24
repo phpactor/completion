@@ -11,7 +11,7 @@ class OffsetHelperTest extends TestCase
     /**
      * @dataProvider provideReturnsLastNonWhitespaceOffset
      */
-    public function testReturnsLastNonWhitespaceOffset(string $example)
+    public function testReturnsLastNonWhitespaceOffset(string $example): void
     {
         list($source, $expectedOffset) = ExtractOffset::fromSource($example);
         $characterOffset = OffsetHelper::lastNonWhitespaceCharacterOffset($source);
@@ -54,7 +54,7 @@ class OffsetHelperTest extends TestCase
         ];
 
         yield 'long string (about 6MB)' => [
-            str_repeat("foobar", 2**20) . "<>\t",
+            str_repeat('foobar', 2**20) . "<>\t",
             'this is actually unused'
         ];
     }

@@ -52,7 +52,7 @@ class ChainTolerantCompletorTest extends TestCase
         $this->qualifier2 = $this->prophesize(TolerantQualifier::class);
     }
 
-    public function testEmptyResponseWithNoCompletors()
+    public function testEmptyResponseWithNoCompletors(): void
     {
         $completor = $this->create([]);
         $suggestions = $completor->complete(
@@ -63,7 +63,7 @@ class ChainTolerantCompletorTest extends TestCase
         $this->assertTrue($suggestions->getReturn());
     }
 
-    public function testCallsCompletors()
+    public function testCallsCompletors(): void
     {
         $completor = $this->create([
             $this->completor1->reveal(),
@@ -86,25 +86,25 @@ class ChainTolerantCompletorTest extends TestCase
         $this->assertFalse($suggestions->getReturn());
     }
 
-    public function testPassesCorrectByteOffsetToParser()
+    public function testPassesCorrectByteOffsetToParser(): void
     {
         $completor = $this->create([ $this->completor1->reveal() ]);
         list($source, $offset) = ExtractOffset::fromSource(
             <<<'EOT'
-<?php
+                <?php
 
-// 姓名
+                // 姓名
 
-class A
-{
-  public function foo()
-  {
-  }
-}
+                class A
+                {
+                  public function foo()
+                  {
+                  }
+                }
 
-$a = new A;
-$<>
-EOT
+                $a = new A;
+                $<>
+                EOT
         );
 
         // the parser node passed to the tolerant completor should be the one
@@ -115,7 +115,7 @@ EOT
             }),
             $source,
             $offset
-        )->will(function ($args) {
+        )->will(function ($args): void {
             return;
         });
 
@@ -126,7 +126,7 @@ EOT
         $this->addToAssertionCount(1);
     }
 
-    public function testExcludesNonQualifingClasses()
+    public function testExcludesNonQualifingClasses(): void
     {
         $completor = $this->create([
             $this->qualifiableCompletor1->reveal(),
