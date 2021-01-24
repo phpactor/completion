@@ -13,16 +13,11 @@ use Phpactor\WorseReflection\ReflectorBuilder;
 
 class WorseClassAliasCompletorTest extends TolerantCompletorTestCase
 {
-    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
-    {
-        $reflector = ReflectorBuilder::create()->addSource($source)->build();
-        return new WorseClassAliasCompletor($reflector, new ClassQualifier(0));
-    }
 
     /**
      * @dataProvider provideComplete
      */
-    public function testComplete(string $source, array $expected)
+    public function testComplete(string $source, array $expected): void
     {
         $this->assertComplete($source, $expected);
     }
@@ -31,34 +26,34 @@ class WorseClassAliasCompletorTest extends TolerantCompletorTestCase
     {
         yield 'no imports' => [
             <<<'EOT'
-<?php
+                <?php
 
-$class = new B<>
-EOT
+                $class = new B<>
+                EOT
         ,
             []
         ];
 
         yield 'import with no aliases' => [
             <<<'EOT'
-<?php
+                <?php
 
-use Barfoo;
+                use Barfoo;
 
-$class = new B<>
-EOT
+                $class = new B<>
+                EOT
         ,
             []
         ];
 
         yield 'import with aliased class' => [
             <<<'EOT'
-<?php namespace {
-    use Barfoo as BarfooThis;
+                <?php namespace {
+                    use Barfoo as BarfooThis;
 
-    $class = new B<>
-}
-EOT
+                    $class = new B<>
+                }
+                EOT
         ,
             [
                 [
@@ -71,13 +66,13 @@ EOT
 
         yield 'import with aliased class and concrete class' => [
             <<<'EOT'
-<?php namespace {
-    use Barfoo as BarfooThis;
-    use Barbar;
+                <?php namespace {
+                    use Barfoo as BarfooThis;
+                    use Barbar;
 
-    $class = new B<>
-}
-EOT
+                    $class = new B<>
+                }
+                EOT
         ,
             [
                 [
@@ -90,17 +85,22 @@ EOT
 
         yield 'import multi-part non-aliased class' => [
             <<<'EOT'
-<?php 
+                <?php 
 
-    use Foo\Bar\Barfoo;
-    use Foo\Bar\Barbar;
+                    use Foo\Bar\Barfoo;
+                    use Foo\Bar\Barbar;
 
-    $class = new B<>
-}
-EOT
+                    $class = new B<>
+                }
+                EOT
         ,
             [
             ]
         ];
+    }
+    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
+    {
+        $reflector = ReflectorBuilder::create()->addSource($source)->build();
+        return new WorseClassAliasCompletor($reflector, new ClassQualifier(0));
     }
 }

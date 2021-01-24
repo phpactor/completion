@@ -14,19 +14,11 @@ use Prophecy\Argument;
 
 class NameSearcherCompletorTest extends TolerantCompletorTestCase
 {
-    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
-    {
-        $searcher = $this->prophesize(NameSearcher::class);
-        $searcher->search(Argument::any())->willYield([
-            NameSearchResult::create('class', 'Foobar')
-        ]);
-        return new NameSearcherCompletor($searcher->reveal());
-    }
 
     /**
      * @dataProvider provideComplete
      */
-    public function testComplete(string $source, array $expected)
+    public function testComplete(string $source, array $expected): void
     {
         $this->assertComplete($source, $expected);
     }
@@ -42,5 +34,13 @@ class NameSearcherCompletorTest extends TolerantCompletorTestCase
                 ]
             ]
         ];
+    }
+    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
+    {
+        $searcher = $this->prophesize(NameSearcher::class);
+        $searcher->search(Argument::any())->willYield([
+            NameSearchResult::create('class', 'Foobar')
+        ]);
+        return new NameSearcherCompletor($searcher->reveal());
     }
 }

@@ -32,14 +32,14 @@ abstract class AbstractParameterCompletor
     protected $reflector;
 
     /**
-     * @var ObjectFormatter
-     */
-    private $formatter;
-
-    /**
      * @var VariableCompletionHelper
      */
     protected $variableCompletionHelper;
+
+    /**
+     * @var ObjectFormatter
+     */
+    private $formatter;
 
     public function __construct(Reflector $reflector, ObjectFormatter $formatter, VariableCompletionHelper $variableCompletionHelper = null)
     {

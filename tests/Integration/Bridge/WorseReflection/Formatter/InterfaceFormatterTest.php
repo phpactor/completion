@@ -7,7 +7,7 @@ use Phpactor\WorseReflection\ReflectorBuilder;
 
 class InterfaceFormatterTest extends IntegrationTestCase
 {
-    public function testFormatsInterface()
+    public function testFormatsInterface(): void
     {
         $interface = ReflectorBuilder::create()->build()->reflectClassesIn('<?php namespace Bar {interface Foobar {}}')->first();
         self::assertTrue($this->formatter()->canFormat($interface));

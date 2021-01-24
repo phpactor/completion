@@ -10,6 +10,18 @@ use Phpactor\TextDocument\TextDocumentBuilder;
 
 abstract class CompletorTestCase extends IntegrationTestCase
 {
+    public function assertCouldNotComplete(string $source): void
+    {
+        list($source, $offset) = ExtractOffset::fromSource($source);
+        $completor = $this->createCompletor($source);
+        $suggestions = $completor->complete(
+            TextDocumentBuilder::create($source)->language('php')->uri('file:///tmp/test')->build(),
+            ByteOffset::fromInt($offset)
+        );
+
+        $this->assertEmpty(iterator_to_array($suggestions));
+        $this->assertTrue($suggestions->getReturn());
+    }
     abstract protected function createCompletor(string $source): Completor;
 
     protected function assertComplete(string $source, array $expected, bool $isComplete = true): void
@@ -32,18 +44,5 @@ abstract class CompletorTestCase extends IntegrationTestCase
 
         $this->assertCount(count($expected), $suggestions);
         $this->assertEquals($isComplete, $suggestionGenerator->getReturn(), '"is complete" was as expected');
-    }
-
-    public function assertCouldNotComplete(string $source): void
-    {
-        list($source, $offset) = ExtractOffset::fromSource($source);
-        $completor = $this->createCompletor($source);
-        $suggestions = $completor->complete(
-            TextDocumentBuilder::create($source)->language('php')->uri('file:///tmp/test')->build(),
-            ByteOffset::fromInt($offset)
-        );
-
-        $this->assertEmpty(iterator_to_array($suggestions));
-        $this->assertTrue($suggestions->getReturn());
     }
 }

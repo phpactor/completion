@@ -11,7 +11,7 @@ use Phpactor\TextDocument\TextDocumentBuilder;
 
 class DedupeCompletorTest extends TestCase
 {
-    public function testDeduplicates()
+    public function testDeduplicates(): void
     {
         $source = TextDocumentBuilder::create('foobar')->build();
         $offset = ByteOffset::fromInt(10);
@@ -30,7 +30,7 @@ class DedupeCompletorTest extends TestCase
         $this->assertTrue($suggestions->getReturn());
     }
 
-    public function testDeduplicatesWithShortDescription()
+    public function testDeduplicatesWithShortDescription(): void
     {
         $source = TextDocumentBuilder::create('foobar')->build();
         $offset = ByteOffset::fromInt(10);

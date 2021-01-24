@@ -13,6 +13,33 @@ use Phpactor\WorseReflection\ReflectorBuilder;
 
 class WorseDeclaredClassCompletorTest extends TolerantCompletorTestCase
 {
+
+    /**
+     * @dataProvider provideComplete
+     */
+    public function testComplete(string $source, array $expected): void
+    {
+        $this->assertComplete($source, $expected);
+    }
+
+    public function provideComplete(): Generator
+    {
+        yield 'array object' => [
+            <<<'EOT'
+                <?php
+
+                $class = new RangeException<>
+                EOT
+        ,
+            [
+                [
+                    'type' => Suggestion::TYPE_CLASS,
+                    'name' => 'RangeException',
+                    'short_description' => 'RangeException(string $message = \'\', int $code = 0, Throwable $previous = NULL)',
+                ]
+            ]
+        ];
+    }
     protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
     {
         $reflector = ReflectorBuilder::create()
@@ -25,32 +52,5 @@ class WorseDeclaredClassCompletorTest extends TolerantCompletorTestCase
             ->build();
 
         return new WorseDeclaredClassCompletor($reflector, $this->formatter());
-    }
-
-    /**
-     * @dataProvider provideComplete
-     */
-    public function testComplete(string $source, array $expected)
-    {
-        $this->assertComplete($source, $expected);
-    }
-
-    public function provideComplete(): Generator
-    {
-        yield 'array object' => [
-            <<<'EOT'
-<?php
-
-$class = new RangeException<>
-EOT
-        ,
-            [
-                [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'RangeException',
-                    'short_description' => 'RangeException(string $message = \'\', int $code = 0, Throwable $previous = NULL)',
-                ]
-            ]
-        ];
     }
 }

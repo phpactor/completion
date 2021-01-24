@@ -16,6 +16,138 @@ use Prophecy\Argument;
 
 class DoctrineAnnotationCompletorTest extends CompletorTestCase
 {
+
+    /**
+     * @dataProvider provideComplete
+     */
+    public function testComplete(string $source, array $expected): void
+    {
+        $this->assertComplete($source, $expected);
+    }
+
+    public function provideComplete(): Generator
+    {
+        yield 'not a docblock' => [
+            <<<'EOT'
+                <?php
+
+                /**
+                 * @Annotation
+                 */
+                class Annotation {}
+
+                /*
+                 * @Ann<>
+                 */
+                class Foo {}
+                EOT
+            , []
+        ];
+
+        yield 'not a text annotation' => [
+            <<<'EOT'
+                <?php
+
+                /**
+                 * Ann<>
+                 */
+                class Foo {}
+                EOT
+            , []
+        ];
+
+        yield 'in a namespace' => [
+            <<<'EOT'
+                <?php
+
+                namespace App\Annotation;
+
+                /**
+                 * @Annotation
+                 */
+                class Entity {}
+
+                namespace App;
+
+                /**
+                 * @Ent<>
+                 */
+                class Foo {}
+                EOT
+        , [
+            [
+                'type' => Suggestion::TYPE_CLASS,
+                'name' => 'Entity',
+                'short_description' => 'App\Annotation\Entity',
+                'snippet' => 'Entity($1)$0'
+            ]
+        ]];
+
+        yield 'annotation on a node in the middle of the AST' => [
+            <<<'EOT'
+                <?php
+
+                /**
+                 * @Annotation
+                 */
+                class Annotation {}
+
+                class Foo
+                {
+                    /**
+                     * @var string
+                     */
+                    private $foo;
+
+                    /**
+                     * @Ann<>
+                     */
+                    public function foo(): string
+                    {
+                        return 'foo';
+                    }
+
+                    public function bar(): string
+                    {
+                        return 'bar';
+                    }
+                }
+                EOT
+        , [
+            [
+                'type' => Suggestion::TYPE_CLASS,
+                'name' => 'Annotation',
+                'short_description' => 'Annotation',
+                'snippet' => 'Annotation($1)$0'
+            ]
+        ]];
+
+        yield 'not an annotation class' => [
+            <<<'EOT'
+                <?php
+
+                class NotAnnotation {}
+
+                /**
+                 * @NotAnn<>
+                 */
+                class Foo {}
+                EOT
+            , []
+        ];
+
+        yield 'handle errors if class not found' => [
+            <<<'EOT'
+                <?php
+
+                /**
+                 * @NotAnn<>
+                 */
+                class Foo {}
+                EOT
+            , []
+        ];
+    }
     protected function createCompletor(string $source): Completor
     {
         $source = TextDocumentBuilder::create($source)->uri('file:///tmp/test')->build();
@@ -40,137 +172,5 @@ class DoctrineAnnotationCompletorTest extends CompletorTestCase
             $searcher->reveal(),
             $reflector,
         );
-    }
-
-    /**
-     * @dataProvider provideComplete
-     */
-    public function testComplete(string $source, array $expected)
-    {
-        $this->assertComplete($source, $expected);
-    }
-
-    public function provideComplete(): Generator
-    {
-        yield 'not a docblock' => [
-            <<<'EOT'
-<?php
-
-/**
- * @Annotation
- */
-class Annotation {}
-
-/*
- * @Ann<>
- */
-class Foo {}
-EOT
-            , []
-        ];
-
-        yield 'not a text annotation' => [
-            <<<'EOT'
-<?php
-
-/**
- * Ann<>
- */
-class Foo {}
-EOT
-            , []
-        ];
-
-        yield 'in a namespace' => [
-            <<<'EOT'
-<?php
-
-namespace App\Annotation;
-
-/**
- * @Annotation
- */
-class Entity {}
-
-namespace App;
-
-/**
- * @Ent<>
- */
-class Foo {}
-EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_CLASS,
-                'name' => 'Entity',
-                'short_description' => 'App\Annotation\Entity',
-                'snippet' => 'Entity($1)$0'
-            ]
-        ]];
-
-        yield 'annotation on a node in the middle of the AST' => [
-            <<<'EOT'
-<?php
-
-/**
- * @Annotation
- */
-class Annotation {}
-
-class Foo
-{
-    /**
-     * @var string
-     */
-    private $foo;
-
-    /**
-     * @Ann<>
-     */
-    public function foo(): string
-    {
-        return 'foo';
-    }
-
-    public function bar(): string
-    {
-        return 'bar';
-    }
-}
-EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_CLASS,
-                'name' => 'Annotation',
-                'short_description' => 'Annotation',
-                'snippet' => 'Annotation($1)$0'
-            ]
-        ]];
-
-        yield 'not an annotation class' => [
-            <<<'EOT'
-<?php
-
-class NotAnnotation {}
-
-/**
- * @NotAnn<>
- */
-class Foo {}
-EOT
-            , []
-        ];
-
-        yield 'handle errors if class not found' => [
-            <<<'EOT'
-<?php
-
-/**
- * @NotAnn<>
- */
-class Foo {}
-EOT
-            , []
-        ];
     }
 }

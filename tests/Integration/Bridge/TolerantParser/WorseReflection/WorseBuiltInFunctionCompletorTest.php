@@ -12,21 +12,11 @@ use Generator;
 
 class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
 {
-    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
-    {
-        $reflector = ReflectorBuilder::create()->addSource($source)->build();
-
-        return new WorseFunctionCompletor(
-            $reflector,
-            $this->formatter(),
-            $this->snippetFormatter()
-        );
-    }
 
     /**
      * @dataProvider provideComplete
      */
-    public function testComplete(string $source, array $expected)
+    public function testComplete(string $source, array $expected): void
     {
         $this->assertComplete($source, $expected);
     }
@@ -34,7 +24,7 @@ class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
     /**
      * @dataProvider provideCouldNotComplete
      */
-    public function testCouldNotComplete(string $source)
+    public function testCouldNotComplete(string $source): void
     {
         $this->assertCouldNotComplete($source);
     }
@@ -69,5 +59,15 @@ class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
         yield 'non member access' => [ '<?php $hello<>' ];
         yield 'return value' => [ '<?php function barfoo() {}; class Hello { function barbar(): bar<>' ];
         yield 'parameter type' => [ '<?php function barfoo() {}; class Hello { function barbar(bar<>)' ];
+    }
+    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
+    {
+        $reflector = ReflectorBuilder::create()->addSource($source)->build();
+
+        return new WorseFunctionCompletor(
+            $reflector,
+            $this->formatter(),
+            $this->snippetFormatter()
+        );
     }
 }

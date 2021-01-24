@@ -13,20 +13,19 @@ use Phpactor\Completion\Core\Suggestion;
 
 class CompletorTest extends TestCase
 {
+    const EXAMPLE_SOURCE = 'test source';
+    const EXAMPLE_OFFSET = 1234;
     /**
      * @var ObjectProphecy|CouldComplete
      */
     private $completor1;
-
-    const EXAMPLE_SOURCE = 'test source';
-    const EXAMPLE_OFFSET = 1234;
 
     protected function setUp(): void
     {
         $this->completor1 = $this->prophesize(Completor::class);
     }
 
-    public function testEmptyGeneratorWithNoCompletors()
+    public function testEmptyGeneratorWithNoCompletors(): void
     {
         $completor = $this->create([]);
         $suggestions = $completor->complete($this->textDocument(self::EXAMPLE_SOURCE), ByteOffset::fromInt(self::EXAMPLE_OFFSET));
@@ -35,7 +34,7 @@ class CompletorTest extends TestCase
         $this->assertTrue($suggestions->getReturn());
     }
 
-    public function testReturnsEmptyGeneratorWhenCompletorCouldNotComplete()
+    public function testReturnsEmptyGeneratorWhenCompletorCouldNotComplete(): void
     {
         $completor = $this->create([
             $this->completor1->reveal()
@@ -54,7 +53,7 @@ class CompletorTest extends TestCase
         $this->assertTrue($suggestions->getReturn());
     }
 
-    public function testReturnsSuggestionsFromCompletor()
+    public function testReturnsSuggestionsFromCompletor(): void
     {
         $expected = [
             Suggestion::create('foobar')
@@ -77,7 +76,7 @@ class CompletorTest extends TestCase
         $this->assertTrue($suggestions->getReturn());
     }
 
-    public function testIsCompleteIfAllCompeltorsReturnedEverything()
+    public function testIsCompleteIfAllCompeltorsReturnedEverything(): void
     {
         $otherCompleter = $this->prophesize(Completor::class);
         $completor = $this->create([
@@ -104,7 +103,7 @@ class CompletorTest extends TestCase
         $this->assertTrue($suggestions->getReturn());
     }
 
-    public function testIsNotCompleteIfAllCompeltorsDoesNotReturnEverything()
+    public function testIsNotCompleteIfAllCompeltorsDoesNotReturnEverything(): void
     {
         $otherCompleter = $this->prophesize(Completor::class);
         $completor = $this->create([

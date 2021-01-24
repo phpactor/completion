@@ -12,16 +12,11 @@ use Phpactor\WorseReflection\ReflectorBuilder;
 
 class WorseConstructorCompletorTest extends TolerantCompletorTestCase
 {
-    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
-    {
-        $reflector = ReflectorBuilder::create()->addSource($source)->build();
-        return new WorseConstructorCompletor($reflector, $this->formatter());
-    }
 
     /**
      * @dataProvider provideCompleteMethodParameter
      */
-    public function testCompleteMethodParameter(string $source, array $expected)
+    public function testCompleteMethodParameter(string $source, array $expected): void
     {
         $this->assertComplete($source, $expected);
     }
@@ -30,22 +25,22 @@ class WorseConstructorCompletorTest extends TolerantCompletorTestCase
     {
         yield 'no parameters' => [
             <<<'EOT'
-<?php 
-class Foobar { function __construct() {} }
+                <?php 
+                class Foobar { function __construct() {} }
 
-$foobar = new Foobar($<>);
-EOT
+                $foobar = new Foobar($<>);
+                EOT
             , [],
         ];
 
         yield 'parameter' => [
             <<<'EOT'
-<?php 
-class Foobar { public function __construct(string $foo) {} }
+                <?php 
+                class Foobar { public function __construct(string $foo) {} }
 
-$param = 'string';
-$foobar = new Foobar($<>);
-EOT
+                $param = 'string';
+                $foobar = new Foobar($<>);
+                EOT
             , [
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
@@ -57,13 +52,13 @@ EOT
 
         yield 'parameter, 2nd pos' => [
             <<<'EOT'
-<?php 
-class Foobar { public function __construct(string $foo, Foobar $bar) {} }
+                <?php 
+                class Foobar { public function __construct(string $foo, Foobar $bar) {} }
 
-$param = 'string';
-$hello = new Foobar();
-$foobar = new Foobar($foo, $<>);
-EOT
+                $param = 'string';
+                $hello = new Foobar();
+                $foobar = new Foobar($foo, $<>);
+                EOT
             , [
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
@@ -75,12 +70,12 @@ EOT
 
         yield 'parameter, 3rd pos' => [
             <<<'EOT'
-<?php 
-class Foobar { public function __construct(string $foo, Foobar $bar, $mixed) {} }
+                <?php 
+                class Foobar { public function __construct(string $foo, Foobar $bar, $mixed) {} }
 
-$param = 'string';
-$foobar = new Foobar($param, $foobar, $<>);
-EOT
+                $param = 'string';
+                $foobar = new Foobar($param, $foobar, $<>);
+                EOT
             , [
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
@@ -92,26 +87,26 @@ EOT
 
         yield 'no suggestions when exceeding parameter arity' => [
             <<<'EOT'
-<?php 
-class Foobar { public function __construct(string $foo) {} }
+                <?php 
+                class Foobar { public function __construct(string $foo) {} }
 
-$param = 'string';
-$foobar = new Foobar($param, $<>);
-EOT
+                $param = 'string';
+                $foobar = new Foobar($param, $<>);
+                EOT
             , []
         ];
 
         yield 'namespaced class' => [
             <<<'EOT'
-<?php 
+                <?php 
 
-namespace Hello;
+                namespace Hello;
 
-class Foobar { public function __construct(string $foo) {} }
+                class Foobar { public function __construct(string $foo) {} }
 
-$param = 'string';
-$foobar = new Foobar($<>);
-EOT
+                $param = 'string';
+                $foobar = new Foobar($<>);
+                EOT
             , [
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
@@ -123,17 +118,17 @@ EOT
 
         yield 'complete on open braclet' => [
             <<<'EOT'
-<?php 
-class Hello
-{
-    public function __construct(string $foobar) 
-    {
-    }
-}
+                <?php 
+                class Hello
+                {
+                    public function __construct(string $foobar) 
+                    {
+                    }
+                }
 
-$mar = '';
-new Hello(<>
-EOT
+                $mar = '';
+                new Hello(<>
+                EOT
             ,[
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
@@ -148,12 +143,12 @@ EOT
     {
         yield 'complete static method parameter' => [
             <<<'EOT'
-<?php 
-class Foobar { public static function barbar(string $foo, Foobar $bar, $mixed) {} }
+                <?php 
+                class Foobar { public static function barbar(string $foo, Foobar $bar, $mixed) {} }
 
-$param = 'string';
-Foobar::barbar($param, $foobar, $<>);
-EOT
+                $param = 'string';
+                Foobar::barbar($param, $foobar, $<>);
+                EOT
             ,[
                 [
                     'type' => Suggestion::TYPE_VARIABLE,
@@ -167,7 +162,7 @@ EOT
     /**
      * @dataProvider provideCouldNotComplete
      */
-    public function testCouldNotComplete(string $source)
+    public function testCouldNotComplete(string $source): void
     {
         $this->assertCouldNotComplete($source);
     }
@@ -179,5 +174,10 @@ EOT
         yield 'variable with previous accessor' => [ '<?php $foobar->hello; $hello<>' ];
         yield 'statement with previous member access' => [ '<?php if ($foobar && $this->foobar) { echo<>' ];
         yield 'variable with previous static member access' => [ '<?php Hello::hello(); $foo<>' ];
+    }
+    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
+    {
+        $reflector = ReflectorBuilder::create()->addSource($source)->build();
+        return new WorseConstructorCompletor($reflector, $this->formatter());
     }
 }

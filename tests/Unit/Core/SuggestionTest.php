@@ -9,7 +9,7 @@ use RuntimeException;
 
 class SuggestionTest extends TestCase
 {
-    public function testThrowsExceptionWithInvalidOptions()
+    public function testThrowsExceptionWithInvalidOptions(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Invalid options for suggestion: "foobar" valid options: "short_description", "documentation", "type"');
@@ -17,7 +17,7 @@ class SuggestionTest extends TestCase
         Suggestion::createWithOptions('foobar', ['foobar' => 'barfoo']);
     }
 
-    public function testCanBeCreatedWithOptionsAndProvidesAccessors()
+    public function testCanBeCreatedWithOptionsAndProvidesAccessors(): void
     {
         $suggestion = Suggestion::createWithOptions('hello', [
             'type' => 'class',
@@ -34,14 +34,14 @@ class SuggestionTest extends TestCase
         $this->assertEquals('Namespace\\Foobar', $suggestion->nameImport());
     }
 
-    public function testDefaults()
+    public function testDefaults(): void
     {
         $suggestion = Suggestion::create('hello');
         $this->assertEquals('hello', $suggestion->name());
         $this->assertEquals('hello', $suggestion->label());
     }
 
-    public function testCastsToArray()
+    public function testCastsToArray(): void
     {
         $suggestion = Suggestion::createWithOptions('hello', [
             'type' => Suggestion::TYPE_CLASS,

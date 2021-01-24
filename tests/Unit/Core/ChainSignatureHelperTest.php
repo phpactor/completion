@@ -48,13 +48,13 @@ class ChainSignatureHelperTest extends TestCase
         $this->help = $this->prophesize(SignatureHelp::class);
     }
 
-    public function testNoHelpersThrowsException()
+    public function testNoHelpersThrowsException(): void
     {
         $this->expectException(CouldNotHelpWithSignature::class);
         $this->create([])->signatureHelp($this->document, $this->offset);
     }
 
-    public function testHelperCouldNotHelp()
+    public function testHelperCouldNotHelp(): void
     {
         $this->expectException(CouldNotHelpWithSignature::class);
         $this->helper1->signatureHelp($this->document, $this->offset)->willThrow(new CouldNotHelpWithSignature('Foobar'));
@@ -65,7 +65,7 @@ class ChainSignatureHelperTest extends TestCase
         ])->signatureHelp($this->document, $this->offset);
     }
 
-    public function testHelpersSignature()
+    public function testHelpersSignature(): void
     {
         $this->helper1->signatureHelp($this->document, $this->offset)->willReturn($this->help->reveal());
 

@@ -13,23 +13,11 @@ use Generator;
 
 class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
 {
-    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
-    {
-        $reflector = ReflectorBuilder::create()
-            ->addMemberProvider(new DocblockMemberProvider())
-            ->addSource($source)->build();
-
-        return new WorseClassMemberCompletor(
-            $reflector,
-            $this->formatter(),
-            $this->snippetFormatter()
-        );
-    }
 
     /**
      * @dataProvider provideComplete
      */
-    public function testComplete(string $source, array $expected)
+    public function testComplete(string $source, array $expected): void
     {
         $this->assertComplete($source, $expected);
     }
@@ -38,17 +26,17 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
     {
         yield 'Public property' => [
             <<<'EOT'
-<?php
+                <?php
 
-class Foobar
-{
-    public $foo;
-}
+                class Foobar
+                {
+                    public $foo;
+                }
 
-$foobar = new Foobar();
-$foobar-><>
+                $foobar = new Foobar();
+                $foobar-><>
 
-EOT
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_PROPERTY,
@@ -60,42 +48,42 @@ EOT
 
         yield 'Private property' => [
             <<<'EOT'
-<?php
+                <?php
 
-class Foobar
-{
-    private $foo;
-}
+                class Foobar
+                {
+                    private $foo;
+                }
 
-$foobar = new Foobar();
-$foobar-><>
+                $foobar = new Foobar();
+                $foobar-><>
 
-EOT
+                EOT
         ,
             [ ]
         ];
 
         yield 'Public property access' => [
             <<<'EOT'
-<?php
+                <?php
 
-class Barar
-{
-    public $bar;
-}
+                class Barar
+                {
+                    public $bar;
+                }
 
-class Foobar
-{
-    /**
-     * @var Barar
-     */
-    public $foo;
-}
+                class Foobar
+                {
+                    /**
+                     * @var Barar
+                     */
+                    public $foo;
+                }
 
-$foobar = new Foobar();
-$foobar->foo-><>
+                $foobar = new Foobar();
+                $foobar->foo-><>
 
-EOT
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_PROPERTY,
@@ -107,19 +95,19 @@ EOT
 
         yield 'Public method with parameters' => [
             <<<'EOT'
-<?php
+                <?php
 
-class Foobar
-{
-    public function foo(string $zzzbar = 'bar', $def): Barbar
-    {
-    }
-}
+                class Foobar
+                {
+                    public function foo(string $zzzbar = 'bar', $def): Barbar
+                    {
+                    }
+                }
 
-$foobar = new Foobar();
-$foobar-><>
+                $foobar = new Foobar();
+                $foobar-><>
 
-EOT
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_METHOD,
@@ -132,22 +120,22 @@ EOT
 
         yield 'Public method multiple return types' => [
             <<<'EOT'
-<?php
+                <?php
 
-class Foobar
-{
-    /**
-     * @return Foobar|Barbar
-     */
-    public function foo()
-    {
-    }
-}
+                class Foobar
+                {
+                    /**
+                     * @return Foobar|Barbar
+                     */
+                    public function foo()
+                    {
+                    }
+                }
 
-$foobar = new Foobar();
-$foobar-><>
+                $foobar = new Foobar();
+                $foobar-><>
 
-EOT
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_METHOD,
@@ -160,43 +148,43 @@ EOT
 
         yield 'Private method' => [
             <<<'EOT'
-<?php
+                <?php
 
-class Foobar
-{
-    private function foo(): Barbar
-    {
-    }
-}
+                class Foobar
+                {
+                    private function foo(): Barbar
+                    {
+                    }
+                }
 
-$foobar = new Foobar();
-$foobar-><>
+                $foobar = new Foobar();
+                $foobar-><>
 
-EOT
+                EOT
         , [
         ]
         ];
 
         yield 'Public method with documentation' => [
             <<<'EOT'
-<?php
+                <?php
 
-class Foobar
-{
-    /**
-     * Returns a foobar
-     *
-     * @return Foobar|Barbar
-     */
-    public function foo()
-    {
-    }
-}
+                class Foobar
+                {
+                    /**
+                     * Returns a foobar
+                     *
+                     * @return Foobar|Barbar
+                     */
+                    public function foo()
+                    {
+                    }
+                }
 
-$foobar = new Foobar();
-$foobar-><>
+                $foobar = new Foobar();
+                $foobar-><>
 
-EOT
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_METHOD,
@@ -210,21 +198,21 @@ EOT
 
         yield 'Virtual method' => [
             <<<'EOT'
-<?php
+                <?php
 
-/**
- * @method \Foobar foo()
- */
-interface Barfoo {}
+                /**
+                 * @method \Foobar foo()
+                 */
+                interface Barfoo {}
 
-class Foobar implements Barfoo
-{
-}
+                class Foobar implements Barfoo
+                {
+                }
 
-$foobar = new Foobar();
-$foobar-><>
+                $foobar = new Foobar();
+                $foobar-><>
 
-EOT
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_METHOD,
@@ -236,17 +224,17 @@ EOT
 
         yield 'Static property' => [
             <<<'EOT'
-<?php
+                <?php
 
-class Foobar
-{
-    public static $foo;
-}
+                class Foobar
+                {
+                    public static $foo;
+                }
 
-$foobar = new Foobar();
-$foobar::<>
+                $foobar = new Foobar();
+                $foobar::<>
 
-EOT
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_PROPERTY,
@@ -263,22 +251,22 @@ EOT
 
         yield 'Static property with previous arrow accessor' => [
             <<<'EOT'
-<?php
+                <?php
 
-class Foobar
-{
-    public static $foo;
+                class Foobar
+                {
+                    public static $foo;
 
-    /**
-     * @var Foobar
-     */
-    public $me;
-}
+                    /**
+                     * @var Foobar
+                     */
+                    public $me;
+                }
 
-$foobar = new Foobar();
-$foobar->me::<>
+                $foobar = new Foobar();
+                $foobar->me::<>
 
-EOT
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_PROPERTY,
@@ -295,18 +283,18 @@ EOT
 
         yield 'Partially completed 3' => [
             <<<'EOT'
-<?php
+                <?php
 
-class Foobar
-{
-    public static $foobar;
-    public static $barfoo;
-}
+                class Foobar
+                {
+                    public static $foobar;
+                    public static $barfoo;
+                }
 
-$foobar = new Foobar();
-$foobar::$f<>
+                $foobar = new Foobar();
+                $foobar::$f<>
 
-EOT
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_PROPERTY,
@@ -318,20 +306,20 @@ EOT
 
         yield 'Partially completed 2' => [
             <<<'EOT'
-<?php
+                <?php
 
-class Foobar
-{
-    public function aaa()
-    {
-        $this->bb<>
-    }
+                class Foobar
+                {
+                    public function aaa()
+                    {
+                        $this->bb<>
+                    }
 
-    public function bbb() {}
-    public function ccc() {}
-}
+                    public function bbb() {}
+                    public function ccc() {}
+                }
 
-EOT
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_METHOD,
@@ -343,18 +331,18 @@ EOT
     ];
         yield 'Partially completed' => [
             <<<'EOT'
-<?php
+                <?php
 
-class Foobar
-{
-    const FOOBAR = 'foobar';
-    const BARFOO = 'barfoo';
-}
+                class Foobar
+                {
+                    const FOOBAR = 'foobar';
+                    const BARFOO = 'barfoo';
+                }
 
-$foobar = new Foobar();
-$foobar::<>
+                $foobar = new Foobar();
+                $foobar::<>
 
-EOT
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_CONSTANT,
@@ -376,18 +364,18 @@ EOT
 
         yield 'Accessor on new line' => [
             <<<'EOT'
-<?php
+                <?php
 
-class Foobar
-{
-    public $foobar;
-}
+                class Foobar
+                {
+                    public $foobar;
+                }
 
-$foobar = new Foobar();
-$foobar
-    ->    <>
+                $foobar = new Foobar();
+                $foobar
+                    ->    <>
 
-EOT
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_PROPERTY,
@@ -399,26 +387,26 @@ EOT
 
         yield 'Completion on collection' => [
             <<<'EOT'
-<?php
+                <?php
 
-class Collection
-{
-    public function heyho() {}
-}
+                class Collection
+                {
+                    public function heyho() {}
+                }
 
-class Foobar
-{
-    /**
-     * @return Collection<Foobar>
-     */
-    public function collection() {}
-}
+                class Foobar
+                {
+                    /**
+                     * @return Collection<Foobar>
+                     */
+                    public function collection() {}
+                }
 
-$foobar = new Foobar();
-$collection = $foobar->collection();
-$collection-><>
+                $foobar = new Foobar();
+                $collection = $foobar->collection();
+                $collection-><>
 
-EOT
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_METHOD,
@@ -431,17 +419,17 @@ EOT
 
         yield 'Completion on assignment' => [
             <<<'EOT'
-<?php
+                <?php
 
-class Foobar
-{
-    public function method1() {}
-}
+                class Foobar
+                {
+                    public function method1() {}
+                }
 
-$foobar = new Foobar();
-$foobar = $foobar->meth<>
+                $foobar = new Foobar();
+                $foobar = $foobar->meth<>
 
-EOT
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_METHOD,
@@ -454,45 +442,45 @@ EOT
 
         yield 'member is variable name' => [
             <<<'EOT'
-<?php
+                <?php
 
-class BarBar
-{
-    public $barbar;
-}
+                class BarBar
+                {
+                    public $barbar;
+                }
 
-class Foobar
-{
-    /**
-     * @var BarBar
-     */
-    public $foobar;
-}
+                class Foobar
+                {
+                    /**
+                     * @var BarBar
+                     */
+                    public $foobar;
+                }
 
-$barbar = 'foobar';
-$foobar = new Foobar();
-$foobar->$bar<>;
-EOT
+                $barbar = 'foobar';
+                $foobar = new Foobar();
+                $foobar->$bar<>;
+                EOT
         , [
         ]];
 
         yield 'chained method call with arguments' => [
             <<<'EOT'
-<?php
+                <?php
 
-class BarBar {
-    public function hello($one, $two): Foobar {}
-}
+                class BarBar {
+                    public function hello($one, $two): Foobar {}
+                }
 
-class Foobar {
-    public function goodbye(): BarBar {}
-}
+                class Foobar {
+                    public function goodbye(): BarBar {}
+                }
 
-$foobar = (new Foobar())
-    ->goodbye()
-    ->hello('one', 'two')
-    -><>
-EOT
+                $foobar = (new Foobar())
+                    ->goodbye()
+                    ->hello('one', 'two')
+                    -><>
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_METHOD,
@@ -503,20 +491,20 @@ EOT
 
         yield 'chained static method call with arguments' => [
             <<<'EOT'
-<?php
+                <?php
 
-class BarBar {
-    public static function hello($one, $two): Foobar {}
-}
+                class BarBar {
+                    public static function hello($one, $two): Foobar {}
+                }
 
-class Foobar {
-    public function goodbye(): BarBar {}
-}
+                class Foobar {
+                    public function goodbye(): BarBar {}
+                }
 
-$foobar = Foobar::goodbye()
-    ->hello('one', 'two')
-    -><>
-EOT
+                $foobar = Foobar::goodbye()
+                    ->hello('one', 'two')
+                    -><>
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_METHOD,
@@ -527,16 +515,16 @@ EOT
 
         yield 'instance member on static method' => [
             <<<'EOT'
-<?php
+                <?php
 
-class BarBar {
-    public static function hello() {}
-    public function goodbye() {}
-}
+                class BarBar {
+                    public static function hello() {}
+                    public function goodbye() {}
+                }
 
-BarBar::<>
+                BarBar::<>
 
-EOT
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_CONSTANT,
@@ -552,17 +540,17 @@ EOT
 
         yield 'shows static member on instance method' => [
             <<<'EOT'
-<?php
+                <?php
 
-class BarBar {
-    public function hello() {}
-    public static function goodbye() {}
-}
+                class BarBar {
+                    public function hello() {}
+                    public static function goodbye() {}
+                }
 
-$bar = new BarBar();
-$bar-><>
+                $bar = new BarBar();
+                $bar-><>
 
-EOT
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_METHOD,
@@ -578,16 +566,16 @@ EOT
 
         yield 'static property' => [
             <<<'EOT'
-<?php
+                <?php
 
-class BarBar {
-    /** @var Foo */
-    public static $foo;
-}
+                class BarBar {
+                    /** @var Foo */
+                    public static $foo;
+                }
 
-BarBar::$f<>
+                BarBar::$f<>
 
-EOT
+                EOT
         , [
             [
                 'type' => Suggestion::TYPE_PROPERTY,
@@ -600,7 +588,7 @@ EOT
     /**
      * @dataProvider provideCouldNotComplete
      */
-    public function testCouldNotComplete(string $source)
+    public function testCouldNotComplete(string $source): void
     {
         $this->assertCouldNotComplete($source);
     }
@@ -611,5 +599,17 @@ EOT
         yield 'variable with previous accessor' => [ '<?php $foobar->hello; $hello<>' ];
         yield 'statement with previous member access' => [ '<?php if ($foobar && $this->foobar) { echo<>' ];
         yield 'variable with previous static member access' => [ '<?php Hello::hello(); $foo<>' ];
+    }
+    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
+    {
+        $reflector = ReflectorBuilder::create()
+            ->addMemberProvider(new DocblockMemberProvider())
+            ->addSource($source)->build();
+
+        return new WorseClassMemberCompletor(
+            $reflector,
+            $this->formatter(),
+            $this->snippetFormatter()
+        );
     }
 }

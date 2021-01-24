@@ -10,7 +10,7 @@ class ConstantFormatterTest extends IntegrationTestCase
     /**
      * @dataProvider provideFormatConstant
      */
-    public function testFormatsConstant(string $code, string $expected)
+    public function testFormatsConstant(string $code, string $expected): void
     {
         $constant = ReflectorBuilder::create()->build()->reflectClassesIn(
             $code

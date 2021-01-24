@@ -12,10 +12,6 @@ use Phpactor\TextDocument\TextDocument;
 
 class KeywordCompletorTest extends TolerantCompletorTestCase
 {
-    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
-    {
-        return new KeywordCompletor();
-    }
     /**
      * @dataProvider provideComplete
      */
@@ -89,6 +85,10 @@ class KeywordCompletorTest extends TolerantCompletorTestCase
             '<?php $func = function() <> :string ',
             $this->createExpectedKeywords(KeywordCompletor::SPECIAL_SCOPES[KeywordCompletor::AFTER_ANONYMOUS_FUNC_PARAMS])
         ];
+    }
+    protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
+    {
+        return new KeywordCompletor();
     }
 
     private function createExpectedKeywords(array $list): array

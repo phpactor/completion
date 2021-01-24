@@ -41,7 +41,7 @@ class NodeQueryTest extends TestCase
     {
         yield [
             '<?php new Barfoo(new Foobar($foo, $ba<>));',
-            function (Node $node) {
+            function (Node $node): void {
                 $node = NodeQuery::firstAncestorVia($node, ObjectCreationExpression::class, [
                     ArgumentExpression::class,
                     ArgumentExpressionList::class,
@@ -54,7 +54,7 @@ class NodeQueryTest extends TestCase
 
         yield [
             '<?php new Barfoo(new Foobar($foo, array_map($ba<>, [])));',
-            function (Node $node) {
+            function (Node $node): void {
                 $node = NodeQuery::firstAncestorVia($node, ObjectCreationExpression::class, [
                     ArgumentExpression::class,
                     ArgumentExpressionList::class,

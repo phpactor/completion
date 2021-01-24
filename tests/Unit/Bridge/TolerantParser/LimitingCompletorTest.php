@@ -35,7 +35,7 @@ class LimitingCompletorTest extends TestCase
         $this->node = $this->prophesize(Node::class);
     }
 
-    public function testNoSuggestions()
+    public function testNoSuggestions(): void
     {
         $this->innerCompletor->complete(
             $this->node->reveal(),
@@ -56,7 +56,7 @@ class LimitingCompletorTest extends TestCase
         $this->assertTrue($suggestions->getReturn());
     }
 
-    public function testSomeSuggestions()
+    public function testSomeSuggestions(): void
     {
         $suggestions = [
             $this->suggestion('foobar'),
@@ -76,7 +76,7 @@ class LimitingCompletorTest extends TestCase
         $this->assertTrue($suggestions->getReturn());
     }
 
-    public function testAppliesLimit()
+    public function testAppliesLimit(): void
     {
         $suggestions = [
             $this->suggestion('foobar'),
@@ -96,7 +96,7 @@ class LimitingCompletorTest extends TestCase
         $this->assertFalse($suggestions->getReturn());
     }
 
-    public function testIsNotCompleteWhenInnerCompleterIsNotComplete()
+    public function testIsNotCompleteWhenInnerCompleterIsNotComplete(): void
     {
         $suggestions = [
             $this->suggestion('foobar'),
@@ -116,7 +116,7 @@ class LimitingCompletorTest extends TestCase
         $this->assertFalse($suggestions->getReturn());
     }
 
-    public function testQualifiesNonQualifiableCompletors()
+    public function testQualifiesNonQualifiableCompletors(): void
     {
         $completor = $this->create(10);
         $node = $this->prophesize(Node::class);
@@ -125,7 +125,7 @@ class LimitingCompletorTest extends TestCase
         $this->assertSame($node->reveal(), $qualified);
     }
 
-    public function testPassesThroughToInnerQualifier()
+    public function testPassesThroughToInnerQualifier(): void
     {
         $node = $this->prophesize(Node::class);
         $this->innerCompletor->willImplement(TolerantQualifiable::class);
@@ -146,7 +146,7 @@ class LimitingCompletorTest extends TestCase
         return Suggestion::create($name);
     }
 
-    private function primeInnerCompletor(array $suggestions, bool $isComplete = true)
+    private function primeInnerCompletor(array $suggestions, bool $isComplete = true): void
     {
         $this->innerCompletor->complete(
             $this->node->reveal(),

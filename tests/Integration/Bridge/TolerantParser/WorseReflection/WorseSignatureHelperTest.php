@@ -193,13 +193,13 @@ class WorseSignatureHelperTest extends IntegrationTestCase
 
         yield 'function with parameters, 2nd active on multiple lines' => [
             <<<'EOT'
-<?php
-function hello(string $foo, int $bar) {};
-hello(
-    "hello",
-    <>
-);
-EOT,
+                <?php
+                function hello(string $foo, int $bar) {};
+                hello(
+                    "hello",
+                    <>
+                );
+                EOT,
             new SignatureHelp(
                 [new SignatureInformation(
                     'hello(string $foo, int $bar)',
@@ -215,14 +215,14 @@ EOT,
 
         yield 'nested function with parameters, 2nd active' => [
             <<<'EOT'
-<?php
-function hello(string $foo, int $bar) {};
-function goodbye(string $good, int $by) {};
-hello(goodbye(
-    "hello",
-    <>
-));
-EOT,
+                <?php
+                function hello(string $foo, int $bar) {};
+                function goodbye(string $good, int $by) {};
+                hello(goodbye(
+                    "hello",
+                    <>
+                ));
+                EOT,
             new SignatureHelp(
                 [new SignatureInformation(
                     'goodbye(string $good, int $by)',
@@ -238,14 +238,14 @@ EOT,
 
         yield 'nested function on the second function, 2nd arg of 1st call active' => [
             <<<'EOT'
-<?php
-function hello(string $foo, int $bar) {};
-function goodbye(string $good, int $by) {};
-hello(
-    "hello",
-    goo<>dbye("good", "by")
-);
-EOT,
+                <?php
+                function hello(string $foo, int $bar) {};
+                function goodbye(string $good, int $by) {};
+                hello(
+                    "hello",
+                    goo<>dbye("good", "by")
+                );
+                EOT,
             new SignatureHelp(
                 [new SignatureInformation(
                     'hello(string $foo, int $bar)',
@@ -386,18 +386,18 @@ EOT,
 
         yield 'class with namespaced' => [
             <<<'EOT'
-<?php
-namespace Bar {
-    class Foo {
-        public function __construct(string $foo, int $bar)
-        {}
-    }
-};
-namespace Foo {
+                <?php
+                namespace Bar {
+                    class Foo {
+                        public function __construct(string $foo, int $bar)
+                        {}
+                    }
+                };
+                namespace Foo {
 
-    new \Bar\Foo("asd",<>
-}
-EOT
+                    new \Bar\Foo("asd",<>
+                }
+                EOT
         ,
         new SignatureHelp(
             [new SignatureInformation(
@@ -414,11 +414,11 @@ EOT
 
         yield 'non-existing static member' => [
             <<<'EOT'
-<?php 
-class Foo {}
+                <?php 
+                class Foo {}
 
-Foo::bar(<>);
-EOT
+                Foo::bar(<>);
+                EOT
         , null
         ];
     }
