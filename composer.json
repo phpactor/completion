@@ -50,12 +50,12 @@
     "prefer-stable": true,
     "scripts": {
         "integrate": [
-            "vendor/bin/php-cs-fixer fix",
+            "vendor/bin/php-cs-fixer fix --dry-run --allow-risky=yes",
             "vendor/bin/phpstan analyse lib -c phpstan.neon",
             "vendor/bin/phpunit"
         ],
         "integrate-ci": [
-            "vendor/bin/php-cs-fixer fix --dry-run",
+            "vendor/bin/php-cs-fixer fix --dry-run --allow-risky=yes",
             "vendor/bin/phpstan analyse lib -c phpstan.neon",
             "vendor/bin/phpunit"
         ]
