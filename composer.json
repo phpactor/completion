@@ -12,9 +12,7 @@
         "php": "^7.3",
         "phpactor/class-to-file": "~0.3",
         "phpactor/container": "^1.0",
-        "phpactor/logging-extension": "~0.1",
         "phpactor/reference-finder": "^0.1.5",
-        "phpactor/rpc-extension": "~0.1",
         "phpactor/source-code-filesystem": "~0.1",
         "phpactor/text-document": "^1.0",
         "phpactor/worse-reflection": "^0.4.4"
@@ -23,7 +21,6 @@
         "dms/phpunit-arraysubset-asserts": "dev-master",
         "ergebnis/composer-normalize": "^2.0",
         "friendsofphp/php-cs-fixer": "^2.17",
-        "phpactor/completion-worse-extension": "^0.1.2",
         "phpactor/test-utils": "^1.1",
         "phpbench/phpbench": "^1.0.0-alpha5",
         "phpspec/prophecy-phpunit": "dev-master",
