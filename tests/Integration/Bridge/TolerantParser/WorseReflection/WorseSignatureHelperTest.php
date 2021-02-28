@@ -2,6 +2,7 @@
 
 namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseReflection;
 
+use Attribute;
 use Generator;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseSignatureHelper;
 use Phpactor\Completion\Core\Exception\CouldNotHelpWithSignature;
@@ -18,6 +19,7 @@ class WorseSignatureHelperTest extends IntegrationTestCase
 {
     /**
      * @dataProvider provideSignatureHelper
+     * @dataProvider providePhp8
      */
     public function testSignatureHelper(string $source, ?SignatureHelp $expected): void
     {
@@ -421,16 +423,16 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                 EOT
         , null
         ];
+    }
 
-        yield 'incomplete attribute' => [
-            <<<'EOT'
-                <?php
-                #[AttributeFoo(<>
-                class Bar {}
-                EOT
-        , null
-        ];
-
+    /**
+     * @return Generator<mixed>
+     */
+    public function providePhp8(): Generator
+    {
+        if (PHP_VERSION_ID < 80000) {
+            return;
+        }
         yield 'attribute 1' => [
             <<<'EOT'
                 <?php
