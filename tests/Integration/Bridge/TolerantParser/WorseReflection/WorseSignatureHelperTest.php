@@ -421,5 +421,65 @@ class WorseSignatureHelperTest extends IntegrationTestCase
                 EOT
         , null
         ];
+
+        yield 'incomplete attribute' => [
+            <<<'EOT'
+                <?php
+                #[AttributeFoo(<>
+                class Bar {}
+                EOT
+        , null
+        ];
+
+        yield 'attribute 1' => [
+            <<<'EOT'
+                <?php
+
+                #[Attribute]
+                class FooAttr
+                {
+                    public function __construct(string $bar);
+                }
+
+                #[FooAttr(<>
+                class Bar {}
+                EOT
+        , new SignatureHelp(
+            [new SignatureInformation(
+                'pub __construct(string $bar)',
+                [
+                        new ParameterInformation('bar', 'string $bar'),
+                    ]
+            )],
+            0,
+            0
+        )
+        ];
+
+        yield 'attribute 2' => [
+            <<<'EOT'
+                <?php
+
+                #[Attribute]
+                class FooAttr
+                {
+                    public function __construct(string $bar, string $baz);
+                }
+
+                #[FooAttr($bar,<>
+                class Bar {}
+                EOT
+        , new SignatureHelp(
+            [new SignatureInformation(
+                'pub __construct(string $bar, string $baz)',
+                [
+                        new ParameterInformation('bar', 'string $bar'),
+                        new ParameterInformation('baz', 'string $baz'),
+                ]
+            )],
+            0,
+            1
+        )
+        ];
     }
 }

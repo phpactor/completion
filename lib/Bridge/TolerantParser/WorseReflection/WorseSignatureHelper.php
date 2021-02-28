@@ -3,6 +3,7 @@
 namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
 use Microsoft\PhpParser\Node;
+use Microsoft\PhpParser\Node\Attribute;
 use Microsoft\PhpParser\Node\DelimitedList\ArgumentExpressionList;
 use Microsoft\PhpParser\Node\Expression\CallExpression;
 use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
@@ -110,7 +111,16 @@ class WorseSignatureHelper implements SignatureHelper
             return $this->signatureHelperForObjectCreation($callNode, $position);
         }
 
-        assert($callNode instanceof CallExpression);
+        if ($callNode instanceof Attribute) {
+            return $this->signatureHelperForAttribute($callNode, $position);
+        }
+
+        if (!$callNode instanceof CallExpression) {
+            throw new CouldNotHelpWithSignature(sprintf(
+                'Could not resolve signature help for "%s"',
+                get_class($callNode)
+            ));
+        }
 
         $callable = $callNode->callableExpression;
 
@@ -228,5 +238,23 @@ class WorseSignatureHelper implements SignatureHelper
     private static function isACallExpression(Node $node): bool
     {
         return $node instanceof CallExpression || $node instanceof ObjectCreationExpression;
+    }
+
+    private function signatureHelperForAttribute(Attribute $attrNode, int $position): SignatureHelp
+    {
+        $name = $attrNode->name;
+        if (!$name instanceof QualifiedName) {
+            throw new CouldNotHelpWithSignature(sprintf(
+                'Only provide help for qualified names, got "%s"',
+                get_class($name)
+            ));
+        }
+
+        $offset = $this->reflector->reflectOffset($attrNode->getFileContents(), $name->getStart());
+
+        $reflectionClass = $this->reflector->reflectClass($offset->symbolContext()->type()->__toString());
+        $constructor = $reflectionClass->methods()->get('__construct');
+
+        return $this->createSignatureHelp($constructor, $position);
     }
 }
