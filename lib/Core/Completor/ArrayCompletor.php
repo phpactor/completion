@@ -4,6 +4,7 @@ namespace Phpactor\Completion\Core\Completor;
 
 use Generator;
 use Phpactor\Completion\Core\Completor;
+use Phpactor\Completion\Core\Suggestion;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
 
@@ -15,7 +16,7 @@ class ArrayCompletor implements Completor
     private $suggestions;
 
     /**
-     * @var array<Suggestion>
+     * @param Suggestion[] $suggestions
      */
     public function __construct(array $suggestions)
     {
