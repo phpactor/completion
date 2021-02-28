@@ -2,7 +2,6 @@
 
 namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\WorseReflection;
 
-use Attribute;
 use Generator;
 use Phpactor\Completion\Bridge\TolerantParser\WorseReflection\WorseSignatureHelper;
 use Phpactor\Completion\Core\Exception\CouldNotHelpWithSignature;
