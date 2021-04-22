@@ -3,6 +3,7 @@
 namespace Phpactor\Completion\Core\Util;
 
 use RuntimeException;
+use function preg_last_error_msg;
 
 class OffsetHelper
 {
@@ -12,8 +13,9 @@ class OffsetHelper
 
         if (null === $source) {
             throw new RuntimeException(sprintf(
-                'preg_replace could not parse string "%s"',
-                $input
+                'preg_replace could not parse string (size %s): %s',
+                strlen($input),
+                preg_last_error_msg()
             ));
         }
 
