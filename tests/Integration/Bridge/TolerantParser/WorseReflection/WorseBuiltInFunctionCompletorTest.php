@@ -67,7 +67,7 @@ class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
         return new WorseFunctionCompletor(
             $reflector,
             $this->formatter(),
-            $this->snippetFormatter()
+            $this->snippetFormatter($reflector)
         );
     }
 }

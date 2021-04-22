@@ -609,7 +609,7 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
         return new WorseClassMemberCompletor(
             $reflector,
             $this->formatter(),
-            $this->snippetFormatter()
+            $this->snippetFormatter($reflector)
         );
     }
 }

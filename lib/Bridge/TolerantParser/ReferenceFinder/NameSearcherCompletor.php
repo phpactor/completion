@@ -7,7 +7,7 @@ use Microsoft\PhpParser\Node;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Core\Completor\NameSearcherCompletor as CoreNameSearcherCompletor;
 use Phpactor\Completion\Core\DocumentPrioritizer\DocumentPrioritizer;
-use Phpactor\Completion\Core\Formatter\NameSearchResultFunctionSnippetFormatter;
+use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\ReferenceFinder\NameSearcher;
 use Phpactor\ReferenceFinder\Search\NameSearchResult;
 use Phpactor\TextDocument\ByteOffset;
@@ -17,13 +17,13 @@ use Phpactor\TextDocument\TextDocumentUri;
 class NameSearcherCompletor extends CoreNameSearcherCompletor implements TolerantCompletor
 {
     /**
-     * @var NameSearchResultFunctionSnippetFormatter
+     * @var ObjectFormatter
      */
     private $snippetFormatter;
 
     public function __construct(
         NameSearcher $nameSearcher,
-        NameSearchResultFunctionSnippetFormatter $snippetFormatter,
+        ObjectFormatter $snippetFormatter,
         DocumentPrioritizer $prioritizer = null
     ) {
         parent::__construct($nameSearcher, $prioritizer);
