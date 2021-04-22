@@ -2,7 +2,8 @@
 
 namespace Phpactor\Completion\Tests\Unit\Bridge\WorseReflection\Formatter;
 
-use Phpactor\Completion\Bridge\WorseReflection\Formatter\FunctionLikeSnippetFormatter;
+use Phpactor\Completion\Bridge\WorseReflection\SnippetFormatter\FunctionLikeSnippetFormatter;
+use Phpactor\Completion\Bridge\WorseReflection\SnippetFormatter\ParametersSnippetFormatter;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\Completion\Tests\TestCase;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionFunction;
@@ -69,8 +70,9 @@ final class FunctionLikeSnippetFormatterTest extends TestCase
     private function format(ReflectionFunctionLike $reflection): string
     {
         return (new FunctionLikeSnippetFormatter())
-            ->format(new ObjectFormatter([]), $reflection)
-        ;
+            ->format(new ObjectFormatter([
+                new ParametersSnippetFormatter()
+            ]), $reflection);
     }
 
     private function reflectFunction(string $functionAsString): ReflectionFunction

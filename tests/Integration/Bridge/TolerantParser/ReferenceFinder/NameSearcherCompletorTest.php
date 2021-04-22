@@ -5,13 +5,11 @@ namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\ReferenceF
 use Generator;
 use Phpactor\Completion\Bridge\TolerantParser\ReferenceFinder\NameSearcherCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
-use Phpactor\Completion\Bridge\WorseReflection\Formatter\NameSearchResultFunctionSnippetFormatter;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
 use Phpactor\ReferenceFinder\NameSearcher;
 use Phpactor\ReferenceFinder\Search\NameSearchResult;
 use Phpactor\TextDocument\TextDocument;
-use Phpactor\WorseReflection\Reflector;
 use Phpactor\WorseReflection\ReflectorBuilder;
 
 class NameSearcherCompletorTest extends TolerantCompletorTestCase
@@ -27,11 +25,22 @@ class NameSearcherCompletorTest extends TolerantCompletorTestCase
     public function provideComplete(): Generator
     {
         yield 'class' => [
-            '<?php class Foobar {} :int {}; new Foo<>', [
+            '<?php class Foobar { public function __construct(int $cparam) {} } :int {}; new Foo<>', [
                 [
-                    'type' => Suggestion::TYPE_CLASS,
-                    'name' => 'Foobar',
+                    'type'              => Suggestion::TYPE_CLASS,
+                    'name'              => 'Foobar',
                     'short_description' => 'Foobar',
+                    'snippet'           => 'Foobar(${1:\\$cparam})${0}',
+                ]
+            ]
+        ];
+        yield 'class (empty constructor)' => [
+            '<?php class Foobar { public function __construct() {} } :int {}; new Foo<>', [
+                [
+                    'type'              => Suggestion::TYPE_CLASS,
+                    'name'              => 'Foobar',
+                    'short_description' => 'Foobar',
+                    'snippet'           => 'Foobar()',
                 ]
             ]
         ];
@@ -46,32 +55,39 @@ class NameSearcherCompletorTest extends TolerantCompletorTestCase
                 ]
             ]
         ];
-    }
-
-    protected function nameSearchResultFunctionSnippetFormatter(
-        Reflector $reflector
-    ): NameSearchResultFunctionSnippetFormatter {
-        return new NameSearchResultFunctionSnippetFormatter(
-            $this->snippetFormatter(),
-            $reflector
-        );
+        yield 'function (empty params)' => [
+            '<?php function bar() {}; ba<>', [
+                [
+                    'type'              => Suggestion::TYPE_FUNCTION,
+                    'name'              => 'bar',
+                    'short_description' => 'bar',
+                    'snippet'           => 'bar()'
+                ]
+            ]
+        ];
     }
 
     protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
     {
-        $reflector = ReflectorBuilder::create()->addSource($source)->build();
-
         $searcher = $this->prophesize(NameSearcher::class);
         $searcher->search('Foo')->willYield([
             NameSearchResult::create('class', 'Foobar')
         ]);
+        $searcher->search('Foo')->willYield([
+            NameSearchResult::create('class', 'Foobar')
+        ]);
         $searcher->search('ba')->willYield([
-           NameSearchResult::create('function', 'bar'),
-       ]);
+            NameSearchResult::create('function', 'bar'),
+        ]);
+        $searcher->search('ba')->willYield([
+            NameSearchResult::create('function', 'bar'),
+        ]);
+
+        $reflector = ReflectorBuilder::create()->addSource($source)->build();
 
         return new NameSearcherCompletor(
             $searcher->reveal(),
-            $this->nameSearchResultFunctionSnippetFormatter($reflector)
+            $this->snippetFormatter($reflector)
         );
     }
 }
