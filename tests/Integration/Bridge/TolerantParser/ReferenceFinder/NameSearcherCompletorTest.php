@@ -37,12 +37,12 @@ class NameSearcherCompletorTest extends TolerantCompletorTestCase
         ];
 
         yield 'function' => [
-            '<?php function bar($foo) {}; ba<>', [
+            '<?php function bar(int $foo) {}; ba<>', [
                 [
                     'type'              => Suggestion::TYPE_FUNCTION,
                     'name'              => 'bar',
                     'short_description' => 'bar',
-                    'snippet'           => 'bar($foo)'
+                    'snippet'           => 'bar(${1:\\$foo})${0}'
                 ]
             ]
         ];
@@ -52,7 +52,7 @@ class NameSearcherCompletorTest extends TolerantCompletorTestCase
         Reflector $reflector
     ): NameSearchResultFunctionSnippetFormatter {
         return new NameSearchResultFunctionSnippetFormatter(
-            $this->formatter(),
+            $this->snippetFormatter(),
             $reflector
         );
     }
