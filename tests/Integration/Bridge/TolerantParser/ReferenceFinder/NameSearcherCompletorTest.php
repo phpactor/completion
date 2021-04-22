@@ -5,7 +5,7 @@ namespace Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\ReferenceF
 use Generator;
 use Phpactor\Completion\Bridge\TolerantParser\ReferenceFinder\NameSearcherCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
-use Phpactor\Completion\Core\Formatter\NameSearchResultFunctionSnippetFormatter;
+use Phpactor\Completion\Bridge\WorseReflection\Formatter\NameSearchResultFunctionSnippetFormatter;
 use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Tests\Integration\Bridge\TolerantParser\TolerantCompletorTestCase;
 use Phpactor\ReferenceFinder\NameSearcher;

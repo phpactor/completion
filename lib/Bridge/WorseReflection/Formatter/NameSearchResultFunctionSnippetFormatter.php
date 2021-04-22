@@ -1,7 +1,8 @@
 <?php
 
-namespace Phpactor\Completion\Core\Formatter;
+namespace Phpactor\Completion\Bridge\WorseReflection\Formatter;
 
+use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\ReferenceFinder\Search\NameSearchResult;
 use Phpactor\WorseReflection\Reflector;
 
