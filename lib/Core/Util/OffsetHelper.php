@@ -6,12 +6,15 @@ use RuntimeException;
 
 class OffsetHelper
 {
-    public static function lastNonWhitespaceCharacterOffset(string $source): int
+    public static function lastNonWhitespaceCharacterOffset(string $input): int
     {
-        $source = preg_replace('/[ \t\x0d\n\r\f]+$/u', '', $source);
+        $source = preg_replace('/[ \t\x0d\n\r\f]+$/u', '', $input);
 
         if (null === $source) {
-            throw new RuntimeException('preg_replace could not parse string');
+            throw new RuntimeException(sprintf(
+                'preg_replace could not parse string "%s"',
+                $input
+            ));
         }
 
         return mb_strlen($source);
