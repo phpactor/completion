@@ -39,7 +39,6 @@ class WorseClassAliasCompletor implements TolerantCompletor, TolerantQualifiable
 
         /** @var ResolvedName $resolvedName */
         foreach ($namespaceImports as $alias => $resolvedName) {
-            
             $parts = $resolvedName->getNameParts();
             if (empty($parts)) {
                 continue;
