@@ -24,7 +24,7 @@ class NameSearcherCompletorTest extends TolerantCompletorTestCase
 
     public function provideComplete(): Generator
     {
-        yield 'class' => [
+        yield 'new class instance' => [
             '<?php class Foobar { public function __construct(int $cparam) {} } :int {}; new Foo<>', [
                 [
                     'type'              => Suggestion::TYPE_CLASS,
@@ -34,13 +34,22 @@ class NameSearcherCompletorTest extends TolerantCompletorTestCase
                 ]
             ]
         ];
-        yield 'class (empty constructor)' => [
+        yield 'new class instance (empty constructor)' => [
             '<?php class Foobar { public function __construct() {} } :int {}; new Foo<>', [
                 [
                     'type'              => Suggestion::TYPE_CLASS,
                     'name'              => 'Foobar',
                     'short_description' => 'Foobar',
                     'snippet'           => 'Foobar()',
+                ]
+            ]
+        ];
+        yield 'class typehint (no instantiation)' => [
+            '<?php class Foobar { public function __construct() {} } :int {}; Fo<>', [
+                [
+                    'type'              => Suggestion::TYPE_CLASS,
+                    'name'              => 'Foobar',
+                    'short_description' => 'Foobar',
                 ]
             ]
         ];
@@ -74,6 +83,9 @@ class NameSearcherCompletorTest extends TolerantCompletorTestCase
             NameSearchResult::create('class', 'Foobar')
         ]);
         $searcher->search('Foo')->willYield([
+            NameSearchResult::create('class', 'Foobar')
+        ]);
+        $searcher->search('Fo')->willYield([
             NameSearchResult::create('class', 'Foobar')
         ]);
         $searcher->search('ba')->willYield([

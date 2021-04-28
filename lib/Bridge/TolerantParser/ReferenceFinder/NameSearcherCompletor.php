@@ -4,6 +4,7 @@ namespace Phpactor\Completion\Bridge\TolerantParser\ReferenceFinder;
 
 use Generator;
 use Microsoft\PhpParser\Node;
+use Microsoft\PhpParser\Node\Expression\ObjectCreationExpression;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Core\Completor\NameSearcherCompletor as CoreNameSearcherCompletor;
 use Phpactor\Completion\Core\DocumentPrioritizer\DocumentPrioritizer;
@@ -36,26 +37,49 @@ class NameSearcherCompletor extends CoreNameSearcherCompletor implements Toleran
      */
     public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
-        $suggestions = $this->completeName($node->getText(), $source->uri());
+        $suggestions = $this->completeName($node, $source->uri(), $node);
 
         yield from $suggestions;
 
         return $suggestions->getReturn();
     }
 
-    protected function createSuggestionOptions(NameSearchResult $result, ?TextDocumentUri $sourceUri = null): array
-    {
-        $suggestions = parent::createSuggestionOptions($result, $sourceUri);
+    protected function createSuggestionOptions(
+        NameSearchResult $result,
+        ?TextDocumentUri $sourceUri = null,
+        ?Node $node = null
+    ): array {
+        $suggestionOptions = parent::createSuggestionOptions($result, $sourceUri, $node);
 
-        if ($this->snippetFormatter->canFormat($result)) {
-            return array_merge(
-                $suggestions,
-                [
-                    'snippet' => $this->snippetFormatter->format($result)
-                ]
-            );
+        if ($this->isNonObjectCreationClassResult($result, $node) ||
+            !$this->snippetFormatter->canFormat($result)) {
+            return $suggestionOptions;
         }
 
-        return $suggestions;
+        return array_merge(
+            $suggestionOptions,
+            [
+                'snippet' => $this->snippetFormatter->format($result)
+            ]
+        );
+    }
+
+    private function isNonObjectCreationClassResult(NameSearchResult $result, ?Node $node): bool
+    {
+        if (!$result->type()->isClass()) {
+            return false;
+        }
+
+        if ($node === null) {
+            return true;
+        }
+
+        $parent = $node->getParent();
+
+        if ($parent === null) {
+            return true;
+        }
+
+        return !($parent instanceof ObjectCreationExpression);
     }
 }

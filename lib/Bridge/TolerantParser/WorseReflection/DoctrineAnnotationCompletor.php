@@ -75,9 +75,12 @@ class DoctrineAnnotationCompletor extends NameSearcherCompletor implements Compl
         return $suggestions->getReturn();
     }
 
-    protected function createSuggestionOptions(NameSearchResult $result, ?TextDocumentUri $sourceUri = null): array
-    {
-        return array_merge(parent::createSuggestionOptions($result), [
+    protected function createSuggestionOptions(
+        NameSearchResult $result,
+        ?TextDocumentUri $sourceUri = null,
+        ?Node $node = null
+    ): array {
+        return array_merge(parent::createSuggestionOptions($result, null, $node), [
             'snippet' => (string) $result->name()->head() .'($1)$0',
         ]);
     }
