@@ -3,6 +3,7 @@
 namespace Phpactor\Completion\Core\Completor;
 
 use Generator;
+use Microsoft\PhpParser\Node;
 use Phpactor\Completion\Core\DocumentPrioritizer\DefaultResultPrioritizer;
 use Phpactor\Completion\Core\DocumentPrioritizer\DocumentPrioritizer;
 use Phpactor\Completion\Core\Suggestion;
@@ -31,27 +32,31 @@ abstract class NameSearcherCompletor
     /**
      * @return Generator<Suggestion>
      */
-    protected function completeName(string $name, ?TextDocumentUri $sourceUri = null): Generator
+    protected function completeName(string $name, ?TextDocumentUri $sourceUri = null, ?Node $node = null): Generator
     {
         foreach ($this->nameSearcher->search($name) as $result) {
             yield $this->createSuggestion(
                 $result,
-                $this->createSuggestionOptions($result, $sourceUri),
+                $node,
+                $this->createSuggestionOptions($result, $sourceUri, $node),
             );
         }
 
         return true;
     }
 
-    protected function createSuggestion(NameSearchResult $result, array $options = []): Suggestion
+    protected function createSuggestion(NameSearchResult $result, ?Node $node = null, array $options = []): Suggestion
     {
-        $options = array_merge($this->createSuggestionOptions($result), $options);
+        $options = array_merge($this->createSuggestionOptions($result, null, $node), $options);
 
         return Suggestion::createWithOptions($result->name()->head(), $options);
     }
 
-    protected function createSuggestionOptions(NameSearchResult $result, ?TextDocumentUri $sourceUri = null): array
-    {
+    protected function createSuggestionOptions(
+        NameSearchResult $result,
+        ?TextDocumentUri $sourceUri = null,
+        ?Node $node = null
+    ): array {
         return [
             'short_description' => $result->name()->__toString(),
             'type' => $this->suggestionType($result),

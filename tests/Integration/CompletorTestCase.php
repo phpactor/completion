@@ -39,7 +39,11 @@ abstract class CompletorTestCase extends IntegrationTestCase
 
         $this->assertCount(count($expected), $suggestions);
         foreach ($expected as $index => $expectedSuggestion) {
-            $this->assertArraySubset($expectedSuggestion, $suggestions[$index]->toArray());
+            $actual = $suggestions[$index]->toArray();
+            $this->assertArraySubset($expectedSuggestion, $actual);
+            if (array_key_exists('snippet', $expectedSuggestion) === false) {
+                self::assertEmpty($actual['snippet'], 'got unexpected snippet "' . $actual['snippet'] . '"');
+            }
         }
 
         $this->assertCount(count($expected), $suggestions);
