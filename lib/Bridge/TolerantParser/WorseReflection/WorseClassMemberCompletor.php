@@ -82,8 +82,8 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
         }
 
         $callExpression = $node->getParent();
-        if($callExpression instanceof CallExpression) {
-            $shouldCompleteOnlyName = 
+        if ($callExpression instanceof CallExpression) {
+            $shouldCompleteOnlyName =
                 $callExpression->openParen !== null &&
                 $callExpression->callableExpression == $node;
         } else {
