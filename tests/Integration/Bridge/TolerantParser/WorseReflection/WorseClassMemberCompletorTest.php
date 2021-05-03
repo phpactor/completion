@@ -37,14 +37,14 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 $foobar-><>
 
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_PROPERTY,
-                'name' => 'foo',
-                'short_description' => 'pub $foo',
+            , [
+                [
+                    'type' => Suggestion::TYPE_PROPERTY,
+                    'name' => 'foo',
+                    'short_description' => 'pub $foo',
+                ]
             ]
-        ]
-    ];
+        ];
 
         yield 'Private property' => [
             <<<'EOT'
@@ -59,7 +59,7 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 $foobar-><>
 
                 EOT
-        ,
+            ,
             [ ]
         ];
 
@@ -75,8 +75,8 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 class Foobar
                 {
                     /**
-                     * @var Barar
-                     */
+                        * @var Barar
+                        */
                     public $foo;
                 }
 
@@ -84,14 +84,14 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 $foobar->foo-><>
 
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_PROPERTY,
-                'name' => 'bar',
-                'short_description' => 'pub $bar',
+            , [
+                [
+                    'type' => Suggestion::TYPE_PROPERTY,
+                    'name' => 'bar',
+                    'short_description' => 'pub $bar',
+                ]
             ]
-        ]
-    ];
+        ];
 
         yield 'Public method with parameters' => [
             <<<'EOT'
@@ -108,15 +108,15 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 $foobar-><>
 
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_METHOD,
-                'name' => 'foo',
-                'short_description' => 'pub foo(string $zzzbar = \'bar\', $def): Barbar',
-                'snippet' => 'foo(${1:\$def})${0}',
+            , [
+                [
+                    'type' => Suggestion::TYPE_METHOD,
+                    'name' => 'foo',
+                    'short_description' => 'pub foo(string $zzzbar = \'bar\', $def): Barbar',
+                    'snippet' => 'foo(${1:\$def})${0}',
+                ]
             ]
-        ]
-    ];
+        ];
 
         yield 'Public method multiple return types' => [
             <<<'EOT'
@@ -125,8 +125,8 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 class Foobar
                 {
                     /**
-                     * @return Foobar|Barbar
-                     */
+                    * @return Foobar|Barbar
+                    */
                     public function foo()
                     {
                     }
@@ -136,15 +136,15 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 $foobar-><>
 
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_METHOD,
-                'name' => 'foo',
-                'short_description' => 'pub foo(): Foobar|Barbar',
-                'snippet' => 'foo()',
+            , [
+                [
+                    'type' => Suggestion::TYPE_METHOD,
+                    'name' => 'foo',
+                    'short_description' => 'pub foo(): Foobar|Barbar',
+                    'snippet' => 'foo()',
+                ]
             ]
-        ]
-    ];
+        ];
 
         yield 'Private method' => [
             <<<'EOT'
@@ -161,8 +161,8 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 $foobar-><>
 
                 EOT
-        , [
-        ]
+            , [
+            ]
         ];
 
         yield 'Public method with documentation' => [
@@ -185,15 +185,15 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 $foobar-><>
 
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_METHOD,
-                'name' => 'foo',
-                'short_description' => 'pub foo(): Foobar|Barbar',
-                'documentation' => "Returns a foobar\n",
-                'snippet' => 'foo()',
+            , [
+                [
+                    'type' => Suggestion::TYPE_METHOD,
+                    'name' => 'foo',
+                    'short_description' => 'pub foo(): Foobar|Barbar',
+                    'documentation' => "Returns a foobar\n",
+                    'snippet' => 'foo()',
+                ]
             ]
-        ]
         ];
 
         yield 'Virtual method' => [
@@ -213,14 +213,14 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 $foobar-><>
 
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_METHOD,
-                'name' => 'foo',
-                'short_description' => 'pub foo(): Foobar',
+            , [
+                [
+                    'type' => Suggestion::TYPE_METHOD,
+                    'name' => 'foo',
+                    'short_description' => 'pub foo(): Foobar',
+                ]
             ]
-        ]
-    ];
+        ];
 
         yield 'Static property' => [
             <<<'EOT'
@@ -235,19 +235,19 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 $foobar::<>
 
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_PROPERTY,
-                'name' => '$foo',
-                'short_description' => 'pub static $foo',
-            ],
-            [
-                'type' => Suggestion::TYPE_CONSTANT,
-                'name' => 'class',
-                'short_description' => 'Foobar',
-            ],
-        ]
-    ];
+            , [
+                [
+                    'type' => Suggestion::TYPE_PROPERTY,
+                    'name' => '$foo',
+                    'short_description' => 'pub static $foo',
+                ],
+                [
+                    'type' => Suggestion::TYPE_CONSTANT,
+                    'name' => 'class',
+                    'short_description' => 'Foobar',
+                ],
+            ]
+        ];
 
         yield 'Static property with previous arrow accessor' => [
             <<<'EOT'
@@ -267,19 +267,71 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 $foobar->me::<>
 
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_PROPERTY,
-                'name' => '$foo',
-                'short_description' => 'pub static $foo',
-            ],
-            [
-                'type' => Suggestion::TYPE_CONSTANT,
-                'name' => 'class',
-                'short_description' => 'Foobar',
-            ],
-        ]
-    ];
+            , [
+                [
+                    'type' => Suggestion::TYPE_PROPERTY,
+                    'name' => '$foo',
+                    'short_description' => 'pub static $foo',
+                ],
+                [
+                    'type' => Suggestion::TYPE_CONSTANT,
+                    'name' => 'class',
+                    'short_description' => 'Foobar',
+                ],
+            ]
+        ];
+
+        yield 'Partially completed method with brackets' => [
+            <<<'EOT'
+                <?php
+
+                class Foobar
+                {
+                    public function aaa()
+                    {
+                        $this->bb<>();
+                    }
+
+                    public function bbb() {}
+                    public function ccc() {}
+                }
+
+                EOT
+            , [
+                [
+                    'type' => Suggestion::TYPE_METHOD,
+                    'name' => 'bbb',
+                    'short_description' => 'pub bbb()',
+                    'snippet' => 'bbb',
+                ]
+            ]
+        ];
+
+        yield 'Partially completed static method with brackets' => [
+            <<<'EOT'
+                <?php
+
+                class Foobar
+                {
+                    public function aaa()
+                    {
+                        self::bb<>();
+                    }
+
+                    public static function bbb() {}
+                    public static function ccc() {}
+                }
+
+                EOT
+            , [
+                [
+                    'type' => Suggestion::TYPE_METHOD,
+                    'name' => 'bbb',
+                    'short_description' => 'pub bbb()',
+                    'snippet' => 'bbb',
+                ]
+            ]
+        ];
 
         yield 'Partially completed 3' => [
             <<<'EOT'
@@ -295,14 +347,14 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 $foobar::$f<>
 
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_PROPERTY,
-                'name' => '$foobar',
-                'short_description' => 'pub static $foobar',
+            , [
+                [
+                    'type' => Suggestion::TYPE_PROPERTY,
+                    'name' => '$foobar',
+                    'short_description' => 'pub static $foobar',
+                ]
             ]
-        ]
-    ];
+        ];
 
         yield 'Partially completed 2' => [
             <<<'EOT'
@@ -320,15 +372,16 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 }
 
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_METHOD,
-                'name' => 'bbb',
-                'short_description' => 'pub bbb()',
-                'snippet' => 'bbb()',
+            , [
+                [
+                    'type' => Suggestion::TYPE_METHOD,
+                    'name' => 'bbb',
+                    'short_description' => 'pub bbb()',
+                    'snippet' => 'bbb()',
+                ]
             ]
-        ]
-    ];
+        ];
+
         yield 'Partially completed' => [
             <<<'EOT'
                 <?php
@@ -343,24 +396,24 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 $foobar::<>
 
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_CONSTANT,
-                'name' => 'BARFOO',
-                'short_description' => 'BARFOO = "barfoo"',
+            , [
+                [
+                    'type' => Suggestion::TYPE_CONSTANT,
+                    'name' => 'BARFOO',
+                    'short_description' => 'BARFOO = "barfoo"',
+                ],
+                [
+                    'type' => Suggestion::TYPE_CONSTANT,
+                    'name' => 'FOOBAR',
+                    'short_description' => 'FOOBAR = "foobar"',
+                ],
+                [
+                    'type' => Suggestion::TYPE_CONSTANT,
+                    'name' => 'class',
+                    'short_description' => 'Foobar',
+                ],
             ],
-            [
-                'type' => Suggestion::TYPE_CONSTANT,
-                'name' => 'FOOBAR',
-                'short_description' => 'FOOBAR = "foobar"',
-            ],
-            [
-                'type' => Suggestion::TYPE_CONSTANT,
-                'name' => 'class',
-                'short_description' => 'Foobar',
-            ],
-        ],
-    ];
+        ];
 
         yield 'Accessor on new line' => [
             <<<'EOT'
@@ -376,14 +429,14 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                     ->    <>
 
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_PROPERTY,
-                'name' => 'foobar',
-                'short_description' => 'pub $foobar',
+            , [
+                [
+                    'type' => Suggestion::TYPE_PROPERTY,
+                    'name' => 'foobar',
+                    'short_description' => 'pub $foobar',
+                ],
             ],
-        ],
-    ];
+        ];
 
         yield 'Completion on collection' => [
             <<<'EOT'
@@ -407,15 +460,15 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 $collection-><>
 
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_METHOD,
-                'name' => 'heyho',
-                'short_description' => 'pub heyho()',
-                'snippet' => 'heyho()',
+            , [
+                [
+                    'type' => Suggestion::TYPE_METHOD,
+                    'name' => 'heyho',
+                    'short_description' => 'pub heyho()',
+                    'snippet' => 'heyho()',
+                ],
             ],
-        ],
-    ];
+        ];
 
         yield 'Completion on assignment' => [
             <<<'EOT'
@@ -430,15 +483,15 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 $foobar = $foobar->meth<>
 
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_METHOD,
-                'name' => 'method1',
-                'short_description' => 'pub method1()',
-                'snippet' => 'method1()',
+            , [
+                [
+                    'type' => Suggestion::TYPE_METHOD,
+                    'name' => 'method1',
+                    'short_description' => 'pub method1()',
+                    'snippet' => 'method1()',
+                ],
             ],
-        ],
-    ];
+        ];
 
         yield 'member is variable name' => [
             <<<'EOT'
@@ -461,8 +514,9 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 $foobar = new Foobar();
                 $foobar->$bar<>;
                 EOT
-        , [
-        ]];
+            , [
+            ]
+        ];
 
         yield 'chained method call with arguments' => [
             <<<'EOT'
@@ -481,13 +535,14 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                     ->hello('one', 'two')
                     -><>
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_METHOD,
-                'name' => 'goodbye',
-                'snippet' => 'goodbye()',
-            ],
-        ]];
+            , [
+                [
+                    'type' => Suggestion::TYPE_METHOD,
+                    'name' => 'goodbye',
+                    'snippet' => 'goodbye()',
+                ],
+            ]
+        ];
 
         yield 'chained static method call with arguments' => [
             <<<'EOT'
@@ -505,13 +560,14 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                     ->hello('one', 'two')
                     -><>
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_METHOD,
-                'name' => 'goodbye',
-                'snippet' => 'goodbye()',
-            ],
-        ]];
+            , [
+                [
+                    'type' => Suggestion::TYPE_METHOD,
+                    'name' => 'goodbye',
+                    'snippet' => 'goodbye()',
+                ],
+            ]
+        ];
 
         yield 'instance member on static method' => [
             <<<'EOT'
@@ -525,18 +581,19 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 BarBar::<>
 
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_CONSTANT,
-                'name' => 'class',
-                'short_description' => 'BarBar',
-            ],
-            [
-                'type' => Suggestion::TYPE_METHOD,
-                'name' => 'hello',
-                'snippet' => 'hello()',
-            ],
-        ]];
+            , [
+                [
+                    'type' => Suggestion::TYPE_CONSTANT,
+                    'name' => 'class',
+                    'short_description' => 'BarBar',
+                ],
+                [
+                    'type' => Suggestion::TYPE_METHOD,
+                    'name' => 'hello',
+                    'snippet' => 'hello()',
+                ],
+            ]
+        ];
 
         yield 'shows static member on instance method' => [
             <<<'EOT'
@@ -551,18 +608,19 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 $bar-><>
 
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_METHOD,
-                'name' => 'goodbye',
-                'snippet' => 'goodbye()',
-            ],
-            [
-                'type' => Suggestion::TYPE_METHOD,
-                'name' => 'hello',
-                'snippet' => 'hello()',
-            ],
-        ]];
+            , [
+                [
+                    'type' => Suggestion::TYPE_METHOD,
+                    'name' => 'goodbye',
+                    'snippet' => 'goodbye()',
+                ],
+                [
+                    'type' => Suggestion::TYPE_METHOD,
+                    'name' => 'hello',
+                    'snippet' => 'hello()',
+                ],
+            ]
+        ];
 
         yield 'static property' => [
             <<<'EOT'
@@ -576,13 +634,14 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 BarBar::$f<>
 
                 EOT
-        , [
-            [
-                'type' => Suggestion::TYPE_PROPERTY,
-                'name' => '$foo',
-                'short_description' => 'pub static $foo: Foo',
-            ],
-        ]];
+            , [
+                [
+                    'type' => Suggestion::TYPE_PROPERTY,
+                    'name' => '$foo',
+                    'short_description' => 'pub static $foo: Foo',
+                ],
+            ]
+        ];
     }
 
     /**
