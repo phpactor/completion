@@ -44,6 +44,7 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 'short_description' => 'pub $foo',
                 'snippet' => null
             ]
+        ]
         ];
 
         yield 'Private property' => [
@@ -213,22 +214,14 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 $foobar-><>
 
                 EOT
-<<<<<<< HEAD
         , [
             [
                 'type' => Suggestion::TYPE_METHOD,
                 'name' => 'foo',
                 'short_description' => 'pub foo(): Foobar',
                 'snippet' => 'foo()',
-=======
-            , [
-                [
-                    'type' => Suggestion::TYPE_METHOD,
-                    'name' => 'foo',
-                    'short_description' => 'pub foo(): Foobar',
-                ]
->>>>>>> e2dd0ea (Complete only method name if brackets are already there)
             ]
+          ]
         ];
 
         yield 'Static property' => [
