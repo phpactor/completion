@@ -6,6 +6,7 @@ use Generator;
 use Microsoft\PhpParser\Node;
 use Microsoft\PhpParser\Parser;
 use Phpactor\Completion\Core\Completor;
+use Phpactor\Completion\Core\Suggestion;
 use Phpactor\Completion\Core\Util\OffsetHelper;
 use Phpactor\TextDocument\ByteOffset;
 use Phpactor\TextDocument\TextDocument;
@@ -37,7 +38,7 @@ class ChainTolerantCompletor implements Completor
 
         $node = $this->parser->parseSourceFile($truncatedSource)->getDescendantNodeAtPosition(
             // the parser requires the byte offset, not the char offset
-            strlen($truncatedSource)
+            min(strlen($truncatedSource), $byteOffset->toInt())
         );
 
         $isComplete = true;
@@ -65,11 +66,11 @@ class ChainTolerantCompletor implements Completor
 
     private function truncateSource(string $source, int $byteOffset): string
     {
-        // truncate source at byte offset - we don't want the rest of the source
+        // truncate source at the line where byte offset is - we don't want the rest of the source
         // file contaminating the completion (for example `$foo($<>\n    $bar =
         // ` will evaluate the Variable node as an expression node with a
         // double variable `$\n    $bar = `
-        $truncatedSource = substr($source, 0, $byteOffset);
+        $truncatedSource = substr($source, 0, strpos($source, "\n", $byteOffset) ?: $byteOffset);
         
         // determine the last non-whitespace _character_ offset
         $characterOffset = OffsetHelper::lastNonWhitespaceCharacterOffset($truncatedSource);
