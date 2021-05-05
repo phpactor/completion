@@ -4,7 +4,6 @@ namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
 use Generator;
 use Microsoft\PhpParser\Node;
-use Microsoft\PhpParser\Node\Expression\CallExpression;
 use Microsoft\PhpParser\Node\Expression\Variable;
 use Microsoft\PhpParser\Token;
 use Phpactor\Completion\Bridge\TolerantParser\Qualifier\ClassMemberQualifier;
@@ -81,15 +80,6 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
             return true;
         }
 
-        $callExpression = $node->getParent();
-        if ($callExpression instanceof CallExpression) {
-            $shouldCompleteOnlyName =
-                $callExpression->openParen !== null &&
-                $callExpression->callableExpression == $node;
-        } else {
-            $shouldCompleteOnlyName = false;
-        }
-
         $partialMatch = (string) $memberName->getText($node->getFileContents());
 
         $reflectionOffset = $this->reflector->reflectOffset($source, $offset);
@@ -99,7 +89,7 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
         $static = $node instanceof ScopedPropertyAccessExpression;
 
         foreach ($types as $type) {
-            foreach ($this->populateSuggestions($symbolContext, $type, $static, $shouldCompleteOnlyName) as $suggestion) {
+            foreach ($this->populateSuggestions($symbolContext, $type, $static) as $suggestion) {
                 if ($partialMatch && 0 !== mb_strpos($suggestion->name(), $partialMatch)) {
                     continue;
                 }
@@ -111,7 +101,7 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
         return true;
     }
 
-    private function populateSuggestions(SymbolContext $symbolContext, Type $type, bool $static, bool $completeOnlyName): Generator
+    private function populateSuggestions(SymbolContext $symbolContext, Type $type, bool $static): Generator
     {
         if (false === $type->isDefined()) {
             return;
@@ -154,7 +144,7 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
                 'type' => Suggestion::TYPE_METHOD,
                 'short_description' => $this->formatter->format($method),
                 'documentation' => $method->docblock()->formatted(),
-                'snippet' => $completeOnlyName ? $method->name() : $this->snippetFormatter->format($method),
+                'snippet' => $this->snippetFormatter->format($method),
             ]);
         }
 

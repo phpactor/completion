@@ -37,7 +37,7 @@ class ChainTolerantCompletor implements Completor
 
         $node = $this->parser->parseSourceFile($truncatedSource)->getDescendantNodeAtPosition(
             // the parser requires the byte offset, not the char offset
-            min(strlen($truncatedSource), $byteOffset->toInt())
+            strlen($truncatedSource)
         );
 
         $isComplete = true;
@@ -65,11 +65,11 @@ class ChainTolerantCompletor implements Completor
 
     private function truncateSource(string $source, int $byteOffset): string
     {
-        // truncate source at the line where byte offset is - we don't want the rest of the source
+        // truncate source at byte offset - we don't want the rest of the source
         // file contaminating the completion (for example `$foo($<>\n    $bar =
         // ` will evaluate the Variable node as an expression node with a
         // double variable `$\n    $bar = `
-        $truncatedSource = substr($source, 0, strpos($source, "\n", $byteOffset) ?: $byteOffset);
+        $truncatedSource = substr($source, 0, $byteOffset);
         
         // determine the last non-whitespace _character_ offset
         $characterOffset = OffsetHelper::lastNonWhitespaceCharacterOffset($truncatedSource);
