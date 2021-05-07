@@ -60,14 +60,15 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
 
     public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
+        $memberStartOffset = $offset;
+        
         if ($node instanceof MemberAccessExpression) {
-            $offset = $node->arrowToken->getFullStart();
+            $memberStartOffset = $node->arrowToken->getFullStart();
         }
 
         if ($node instanceof ScopedPropertyAccessExpression) {
-            $offset = $node->doubleColon->getFullStart();
+            $memberStartOffset = $node->doubleColon->getFullStart();
         }
-
 
         assert($node instanceof MemberAccessExpression || $node instanceof ScopedPropertyAccessExpression);
 
@@ -80,19 +81,12 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
         if (!$memberName instanceof Token) {
             return true;
         }
-
-        $callExpression = $node->getParent();
-        if ($callExpression instanceof CallExpression) {
-            $shouldCompleteOnlyName =
-                $callExpression->openParen !== null &&
-                $callExpression->callableExpression == $node;
-        } else {
-            $shouldCompleteOnlyName = false;
-        }
-
+        
+        $shouldCompleteOnlyName = strlen($source) > $offset->toInt() && substr($source, $offset->toInt(), 1) == "(";
+        
         $partialMatch = (string) $memberName->getText($node->getFileContents());
 
-        $reflectionOffset = $this->reflector->reflectOffset($source, $offset);
+        $reflectionOffset = $this->reflector->reflectOffset($source, $memberStartOffset);
 
         $symbolContext = $reflectionOffset->symbolContext();
         $types = $symbolContext->types();

@@ -307,6 +307,32 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
             ]
         ];
 
+        yield 'Partially completed method with text after' => [
+            <<<'EOT'
+                <?php
+
+                class Foobar
+                {
+                    public function aaa()
+                    {
+                        $this->bb<>new Foobar();
+                    }
+
+                    public function bbb() {}
+                    public function ccc() {}
+                }
+
+                EOT
+            , [
+                [
+                    'type' => Suggestion::TYPE_METHOD,
+                    'name' => 'bbb',
+                    'short_description' => 'pub bbb()',
+                    'snippet' => 'bbb()',
+                ]
+            ]
+        ];
+
         yield 'Partially completed static method with brackets' => [
             <<<'EOT'
                 <?php
@@ -329,6 +355,32 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                     'name' => 'bbb',
                     'short_description' => 'pub bbb()',
                     'snippet' => 'bbb',
+                ]
+            ]
+        ];
+
+        yield 'Partially completed static method with text after' => [
+            <<<'EOT'
+                <?php
+
+                class Foobar
+                {
+                    public function aaa()
+                    {
+                        self::bb<>new Foobar();
+                    }
+
+                    public static function bbb() {}
+                    public static function ccc() {}
+                }
+
+                EOT
+            , [
+                [
+                    'type' => Suggestion::TYPE_METHOD,
+                    'name' => 'bbb',
+                    'short_description' => 'pub bbb()',
+                    'snippet' => 'bbb()',
                 ]
             ]
         ];
