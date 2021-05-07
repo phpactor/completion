@@ -59,14 +59,15 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
 
     public function complete(Node $node, TextDocument $source, ByteOffset $offset): Generator
     {
+        $memberStartOffset = $offset;
+        
         if ($node instanceof MemberAccessExpression) {
-            $offset = $node->arrowToken->getFullStart();
+            $memberStartOffset = $node->arrowToken->getFullStart();
         }
 
         if ($node instanceof ScopedPropertyAccessExpression) {
-            $offset = $node->doubleColon->getFullStart();
+            $memberStartOffset = $node->doubleColon->getFullStart();
         }
-
 
         assert($node instanceof MemberAccessExpression || $node instanceof ScopedPropertyAccessExpression);
 
@@ -79,17 +80,19 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
         if (!$memberName instanceof Token) {
             return true;
         }
-
+        
+        $shouldCompleteOnlyName = strlen($source) > $offset->toInt() && substr($source, $offset->toInt(), 1) == '(';
+        
         $partialMatch = (string) $memberName->getText($node->getFileContents());
 
-        $reflectionOffset = $this->reflector->reflectOffset($source, $offset);
+        $reflectionOffset = $this->reflector->reflectOffset($source, $memberStartOffset);
 
         $symbolContext = $reflectionOffset->symbolContext();
         $types = $symbolContext->types();
         $static = $node instanceof ScopedPropertyAccessExpression;
 
         foreach ($types as $type) {
-            foreach ($this->populateSuggestions($symbolContext, $type, $static) as $suggestion) {
+            foreach ($this->populateSuggestions($symbolContext, $type, $static, $shouldCompleteOnlyName) as $suggestion) {
                 if ($partialMatch && 0 !== mb_strpos($suggestion->name(), $partialMatch)) {
                     continue;
                 }
@@ -101,7 +104,7 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
         return true;
     }
 
-    private function populateSuggestions(SymbolContext $symbolContext, Type $type, bool $static): Generator
+    private function populateSuggestions(SymbolContext $symbolContext, Type $type, bool $static, bool $completeOnlyName): Generator
     {
         if (false === $type->isDefined()) {
             return;
@@ -144,7 +147,7 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
                 'type' => Suggestion::TYPE_METHOD,
                 'short_description' => $this->formatter->format($method),
                 'documentation' => $method->docblock()->formatted(),
-                'snippet' => $this->snippetFormatter->format($method),
+                'snippet' => $completeOnlyName ? $method->name() : $this->snippetFormatter->format($method),
             ]);
         }
 

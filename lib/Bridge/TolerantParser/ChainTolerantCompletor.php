@@ -65,7 +65,7 @@ class ChainTolerantCompletor implements Completor
 
     private function truncateSource(string $source, int $byteOffset): string
     {
-        // truncate source at byte offset - we don't want the rest of the source
+        // truncate source at the byte offset - we don't want the rest of the source
         // file contaminating the completion (for example `$foo($<>\n    $bar =
         // ` will evaluate the Variable node as an expression node with a
         // double variable `$\n    $bar = `
