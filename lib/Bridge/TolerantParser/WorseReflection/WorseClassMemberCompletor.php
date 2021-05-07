@@ -4,7 +4,6 @@ namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
 use Generator;
 use Microsoft\PhpParser\Node;
-use Microsoft\PhpParser\Node\Expression\CallExpression;
 use Microsoft\PhpParser\Node\Expression\Variable;
 use Microsoft\PhpParser\Token;
 use Phpactor\Completion\Bridge\TolerantParser\Qualifier\ClassMemberQualifier;
@@ -82,7 +81,7 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
             return true;
         }
         
-        $shouldCompleteOnlyName = strlen($source) > $offset->toInt() && substr($source, $offset->toInt(), 1) == "(";
+        $shouldCompleteOnlyName = strlen($source) > $offset->toInt() && substr($source, $offset->toInt(), 1) == '(';
         
         $partialMatch = (string) $memberName->getText($node->getFileContents());
 
