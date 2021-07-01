@@ -4,6 +4,7 @@ namespace Phpactor\Completion\Core\Completor;
 
 use Generator;
 use Microsoft\PhpParser\Node;
+use Microsoft\PhpParser\Node\NamespaceUseClause;
 use Phpactor\Completion\Core\DocumentPrioritizer\DefaultResultPrioritizer;
 use Phpactor\Completion\Core\DocumentPrioritizer\DocumentPrioritizer;
 use Phpactor\Completion\Core\Suggestion;
@@ -49,6 +50,10 @@ abstract class NameSearcherCompletor
     {
         $options = array_merge($this->createSuggestionOptions($result, null, $node), $options);
 
+        if ($node !== null && $node->getParent() instanceof NamespaceUseClause) {
+            return Suggestion::createWithOptions($result->name()->__toString(), $options);
+        }
+
         return Suggestion::createWithOptions($result->name()->head(), $options);
     }
 
@@ -57,13 +62,20 @@ abstract class NameSearcherCompletor
         ?TextDocumentUri $sourceUri = null,
         ?Node $node = null
     ): array {
-        return [
+        $options = [
             'short_description' => $result->name()->__toString(),
             'type' => $this->suggestionType($result),
-            'class_import' => $this->classImport($result),
-            'name_import' => $result->name()->__toString(),
+            'class_import' => null,
+            'name_import' => null,
             'priority' => $this->prioritizer->priority($result->uri(), $sourceUri)
         ];
+
+        if ($node === null || !($node->getParent() instanceof NamespaceUseClause)) {
+            $options['class_import'] = $this->classImport($result);
+            $options['name_import'] = $result->name()->__toString();
+        }
+
+        return $options;
     }
 
     protected function suggestionType(NameSearchResult $result): ?string
