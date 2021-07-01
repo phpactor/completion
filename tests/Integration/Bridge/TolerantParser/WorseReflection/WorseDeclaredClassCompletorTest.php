@@ -35,7 +35,6 @@ class WorseDeclaredClassCompletorTest extends TolerantCompletorTestCase
                 [
                     'type' => Suggestion::TYPE_CLASS,
                     'name' => 'RangeException',
-                    'short_description' => 'RangeException(string $message = \'\', int $code = 0, null|Throwable $previous = NULL)',
                 ]
             ]
         ];
