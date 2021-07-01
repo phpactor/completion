@@ -74,14 +74,21 @@ class NameSearcherCompletorTest extends TolerantCompletorTestCase
                 ]
             ]
         ];
+        yield 'import in use context' => [
+            '<?php namespace Foo; class Bar {} namespace Bar; use b<>', [
+                [
+                    'type'              => Suggestion::TYPE_CLASS,
+                    'name'              => 'Foo\\Bar',
+                    'short_description' => 'Foo\\Bar',
+                    'snippet'           => null,
+                ]
+            ]
+        ];
     }
 
     protected function createTolerantCompletor(TextDocument $source): TolerantCompletor
     {
         $searcher = $this->prophesize(NameSearcher::class);
-        $searcher->search('Foo')->willYield([
-            NameSearchResult::create('class', 'Foobar')
-        ]);
         $searcher->search('Foo')->willYield([
             NameSearchResult::create('class', 'Foobar')
         ]);
@@ -91,8 +98,8 @@ class NameSearcherCompletorTest extends TolerantCompletorTestCase
         $searcher->search('ba')->willYield([
             NameSearchResult::create('function', 'bar'),
         ]);
-        $searcher->search('ba')->willYield([
-            NameSearchResult::create('function', 'bar'),
+        $searcher->search('b')->willYield([
+            NameSearchResult::create('class', 'Foo\\Bar'),
         ]);
 
         $reflector = ReflectorBuilder::create()->addSource($source)->build();
