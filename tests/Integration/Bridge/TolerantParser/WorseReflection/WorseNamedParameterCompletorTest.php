@@ -49,6 +49,12 @@ class WorseNamedParameterCompletorTest extends TolerantCompletorTestCase
             ]
         ];
 
+        yield 'Ignore when completing a variable' => [
+            '<?php class A{function bee(string $one){}} $a = new A(); $a->bee($o<>',
+            [
+            ]
+        ];
+
         yield 'Method call in partial method call' => [
             '<?php class B {function boo(): B{}}' .
             'class A{function bee(string $one){}} $b=new B();$a=new A(); $a->bee($b->boo()-><>',

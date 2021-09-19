@@ -10,6 +10,7 @@ use Microsoft\PhpParser\Node\Expression\CallExpression;
 use Microsoft\PhpParser\Node\Expression\MemberAccessExpression;
 use Microsoft\PhpParser\Node\Expression\ObjectCreationExpression;
 use Microsoft\PhpParser\Node\Expression\ScopedPropertyAccessExpression;
+use Microsoft\PhpParser\Node\Expression\Variable;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Phpactor\Completion\Bridge\TolerantParser\TolerantCompletor;
 use Phpactor\Completion\Bridge\TolerantParser\Helper\NodeQuery;
@@ -55,6 +56,10 @@ class WorseNamedParameterCompletor implements TolerantCompletor
                 ArgumentExpressionList::class
             ]
         )) {
+            return true;
+        }
+
+        if ($node instanceof Variable) {
             return true;
         }
 
