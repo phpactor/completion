@@ -32,6 +32,6 @@ class SimilarityResultPrioritizer implements DocumentPrioritizer
 
         $range = Suggestion::PRIORITY_LOW - Suggestion::PRIORITY_MEDIUM;
 
-        return Suggestion::PRIORITY_MEDIUM + $range - $range * $similarity;
+        return (int) (Suggestion::PRIORITY_MEDIUM + $range - $range * $similarity);
     }
 }
