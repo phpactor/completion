@@ -62,11 +62,11 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
         $memberStartOffset = $offset;
         
         if ($node instanceof MemberAccessExpression) {
-            $memberStartOffset = $node->arrowToken->getFullStart();
+            $memberStartOffset = $node->arrowToken->getFullStartPosition();
         }
 
         if ($node instanceof ScopedPropertyAccessExpression) {
-            $memberStartOffset = $node->doubleColon->getFullStart();
+            $memberStartOffset = $node->doubleColon->getFullStartPosition();
         }
 
         assert($node instanceof MemberAccessExpression || $node instanceof ScopedPropertyAccessExpression);

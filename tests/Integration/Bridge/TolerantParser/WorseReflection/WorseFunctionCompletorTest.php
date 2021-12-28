@@ -10,7 +10,7 @@ use Phpactor\TextDocument\TextDocument;
 use Phpactor\WorseReflection\ReflectorBuilder;
 use Generator;
 
-class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
+class WorseFunctionCompletorTest extends TolerantCompletorTestCase
 {
 
     /**
@@ -56,7 +56,9 @@ class WorseBuiltInFunctionCompletorTest extends TolerantCompletorTestCase
     public function provideCouldNotComplete(): Generator
     {
         yield 'non member access' => [ '<?php $hello<>' ];
+
         yield 'return value' => [ '<?php function barfoo() {}; class Hello { function barbar(): bar<>' ];
+
         yield 'parameter type' => [ '<?php function barfoo() {}; class Hello { function barbar(bar<>)' ];
     }
     protected function createTolerantCompletor(TextDocument $source): TolerantCompletor

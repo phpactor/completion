@@ -187,7 +187,7 @@ class WorseSignatureHelper implements SignatureHelper
             ));
         }
 
-        $offset = $this->reflector->reflectOffset($node->getFileContents(), $name->getStart());
+        $offset = $this->reflector->reflectOffset($node->getFileContents(), $name->getStartPosition());
 
         $reflectionClass = $this->reflector->reflectClass($offset->symbolContext()->type()->__toString());
         $constructor = $reflectionClass->methods()->get('__construct');
@@ -250,7 +250,7 @@ class WorseSignatureHelper implements SignatureHelper
             ));
         }
 
-        $offset = $this->reflector->reflectOffset($attrNode->getFileContents(), $name->getStart());
+        $offset = $this->reflector->reflectOffset($attrNode->getFileContents(), $name->getStartPosition());
 
         $reflectionClass = $this->reflector->reflectClass($offset->symbolContext()->type()->__toString());
         $constructor = $reflectionClass->methods()->get('__construct');

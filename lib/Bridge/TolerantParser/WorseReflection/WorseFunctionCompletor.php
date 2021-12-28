@@ -4,6 +4,7 @@ namespace Phpactor\Completion\Bridge\TolerantParser\WorseReflection;
 
 use Generator;
 use Microsoft\PhpParser\Node;
+use Microsoft\PhpParser\Node\DelimitedList\QualifiedNameList;
 use Microsoft\PhpParser\Node\MethodDeclaration;
 use Microsoft\PhpParser\Node\Parameter;
 use Microsoft\PhpParser\Node\QualifiedName;
@@ -51,6 +52,10 @@ class WorseFunctionCompletor implements TolerantCompletor
         }
 
         if ($node->parent instanceof MethodDeclaration) {
+            return true;
+        }
+
+        if ($node->parent instanceof QualifiedNameList) {
             return true;
         }
 

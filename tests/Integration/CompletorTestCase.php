@@ -19,7 +19,8 @@ abstract class CompletorTestCase extends IntegrationTestCase
             ByteOffset::fromInt($offset)
         );
 
-        $this->assertEmpty(iterator_to_array($suggestions));
+        $array = iterator_to_array($suggestions);
+        $this->assertEmpty($array);
         $this->assertTrue($suggestions->getReturn());
     }
     abstract protected function createCompletor(string $source): Completor;
