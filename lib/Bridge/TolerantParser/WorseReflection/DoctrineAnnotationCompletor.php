@@ -107,8 +107,8 @@ class DoctrineAnnotationCompletor extends NameSearcherCompletor implements Compl
         /** @var Node $node */
         foreach ($sourceNodeFile->getDescendantNodes() as $node) {
             if (
-                $node->getFullStart() < $position
-                && $position < $node->getStart()
+                $node->getFullStartPosition() < $position
+                && $position < $node->getStartPosition()
             ) {
                 // If the text is a phpdoc block return the node
                 return $node->getDocCommentText() ? $node : null;

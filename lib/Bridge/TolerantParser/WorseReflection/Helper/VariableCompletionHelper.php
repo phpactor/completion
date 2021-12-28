@@ -47,7 +47,7 @@ class VariableCompletionHelper
         // Get all declared variables up until the start of the current
         // expression. The most recently declared variables should be first
         // (which is why we reverse the array).
-        $reversedLocals = $this->orderedVariablesUntilOffset($frame, $node->getStart());
+        $reversedLocals = $this->orderedVariablesUntilOffset($frame, $node->getStartPosition());
 
         // Ignore variables that have already been suggested.
         $seen = [];
@@ -92,7 +92,7 @@ class VariableCompletionHelper
         //
         // Otherwise $left will be evaluated to <unknown>.
         if ($parentNode instanceof AssignmentExpression) {
-            $offset = $parentNode->getFullStart();
+            $offset = $parentNode->getFullStartPosition();
         }
         return $offset;
     }

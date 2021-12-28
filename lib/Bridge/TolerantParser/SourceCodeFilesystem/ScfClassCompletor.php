@@ -121,7 +121,7 @@ class ScfClassCompletor implements TolerantCompletor, TolerantQualifiable
     private function getRange(Node $node, ByteOffset $offset): Range
     {
         if ($node instanceof QualifiedName) {
-            return Range::fromStartAndEnd($node->getStart(), $node->getEndPosition());
+            return Range::fromStartAndEnd($node->getStartPosition(), $node->getEndPosition());
         }
 
         return new Range($offset, $offset);
