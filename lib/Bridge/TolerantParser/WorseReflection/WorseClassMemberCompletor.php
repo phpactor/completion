@@ -179,11 +179,11 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
         if ($classReflection instanceof ReflectionClass ||
             $classReflection instanceof ReflectionInterface
         ) {
-            foreach ($classReflection->constants() as $case) {
-                yield Suggestion::createWithOptions($case->name(), [
+            foreach ($classReflection->constants() as $constant) {
+                yield Suggestion::createWithOptions($constant->name(), [
                     'type' => Suggestion::TYPE_CONSTANT,
-                    'short_description' => $this->formatter->format($case),
-                    'documentation' => $case->docblock()->formatted(),
+                    'short_description' => $this->formatter->format($constant),
+                    'documentation' => $constant->docblock()->formatted(),
                 ]);
             }
         }
