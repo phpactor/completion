@@ -6,7 +6,6 @@ use Phpactor\Completion\Core\Formatter\Formatter;
 use Phpactor\Completion\Core\Formatter\ObjectFormatter;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionConstant;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionEnumCase;
-use Phpactor\WorseReflection\Core\Type;
 
 class EnumCaseFormatter implements Formatter
 {

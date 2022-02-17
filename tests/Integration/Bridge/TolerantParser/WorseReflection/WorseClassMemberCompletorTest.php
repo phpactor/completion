@@ -696,45 +696,47 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
             ]
         ];
 
-        yield 'enum' => [
-            <<<'EOT'
-                <?php
+        if (defined('T_ENUM')) {
+            yield 'enum' => [
+                <<<'EOT'
+                    <?php
 
-                enum Enum1 {
-                    case FOOBAR;
-                }
+                    enum Enum1 {
+                        case FOOBAR;
+                    }
 
-                Enum1::F<>
+                    Enum1::F<>
 
-                EOT
-            , [
-                [
-                    'type' => Suggestion::TYPE_ENUM,
-                    'name' => 'FOOBAR',
-                    'short_description' => 'case FOOBAR',
-                ],
-            ]
-        ];
+                    EOT
+                , [
+                    [
+                        'type' => Suggestion::TYPE_ENUM,
+                        'name' => 'FOOBAR',
+                        'short_description' => 'case FOOBAR',
+                    ],
+                ]
+            ];
 
-        yield 'backed enum' => [
-            <<<'EOT'
-                <?php
+            yield 'backed enum' => [
+                <<<'EOT'
+                    <?php
 
-                enum Enum1 {
-                    case FOOBAR = 'bar';
-                }
+                    enum Enum1 {
+                        case FOOBAR = 'bar';
+                    }
 
-                Enum1::F<>
+                    Enum1::F<>
 
-                EOT
-            , [
-                [
-                    'type' => Suggestion::TYPE_ENUM,
-                    'name' => 'FOOBAR',
-                    'short_description' => 'case FOOBAR = "bar"',
-                ],
-            ]
-        ];
+                    EOT
+                , [
+                    [
+                        'type' => Suggestion::TYPE_ENUM,
+                        'name' => 'FOOBAR',
+                        'short_description' => 'case FOOBAR = "bar"',
+                    ],
+                ]
+            ];
+        }
     }
 
     /**
