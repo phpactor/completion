@@ -4,6 +4,7 @@ namespace Phpactor\Completion\Tests\Integration;
 
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\ClassFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\ConstantFormatter;
+use Phpactor\Completion\Bridge\WorseReflection\Formatter\EnumCaseFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\FunctionFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\InterfaceFormatter;
 use Phpactor\Completion\Bridge\WorseReflection\Formatter\MethodFormatter;
@@ -39,6 +40,7 @@ class IntegrationTestCase extends TestCase
             new InterfaceFormatter(),
             new TraitFormatter(),
             new ConstantFormatter(),
+            new EnumCaseFormatter(),
         ]);
     }
 
