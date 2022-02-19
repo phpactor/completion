@@ -10,12 +10,12 @@
     ],
     "require": {
         "php": "^7.3 || ^8.0",
-        "phpactor/class-to-file": "~0.4.0",
+        "phpactor/class-to-file": "~0.4.2",
         "phpactor/container": "^2.0.0",
         "phpactor/reference-finder": "^0.1.5",
         "phpactor/source-code-filesystem": "~0.1.6",
         "phpactor/text-document": "~1.2.3",
-        "phpactor/worse-reflection": "^0.4.7"
+        "phpactor/worse-reflection": "^0.4.8"
     },
     "require-dev": {
         "dms/phpunit-arraysubset-asserts": "dev-master",

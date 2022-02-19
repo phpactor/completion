@@ -15,6 +15,7 @@ use Phpactor\TextDocument\TextDocument;
 use Phpactor\WorseReflection\Core\Exception\NotFound;
 use Phpactor\WorseReflection\Core\Inference\SymbolContext;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionClass;
+use Phpactor\WorseReflection\Core\Reflection\ReflectionEnum;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionMethod;
 use Phpactor\WorseReflection\Core\Reflection\ReflectionProperty;
 use Phpactor\WorseReflection\Core\Type;
@@ -183,6 +184,16 @@ class WorseClassMemberCompletor implements TolerantCompletor, TolerantQualifiabl
                     'type' => Suggestion::TYPE_CONSTANT,
                     'short_description' => $this->formatter->format($constant),
                     'documentation' => $constant->docblock()->formatted(),
+                ]);
+            }
+        }
+
+        if ($classReflection instanceof ReflectionEnum) {
+            foreach ($classReflection->cases() as $case) {
+                yield Suggestion::createWithOptions($case->name(), [
+                    'type' => Suggestion::TYPE_ENUM,
+                    'short_description' => $this->formatter->format($case),
+                    'documentation' => $case->docblock()->formatted(),
                 ]);
             }
         }

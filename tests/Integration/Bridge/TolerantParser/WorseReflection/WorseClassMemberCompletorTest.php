@@ -695,6 +695,48 @@ class WorseClassMemberCompletorTest extends TolerantCompletorTestCase
                 ],
             ]
         ];
+
+        if (defined('T_ENUM')) {
+            yield 'enum' => [
+                <<<'EOT'
+                    <?php
+
+                    enum Enum1 {
+                        case FOOBAR;
+                    }
+
+                    Enum1::F<>
+
+                    EOT
+                , [
+                    [
+                        'type' => Suggestion::TYPE_ENUM,
+                        'name' => 'FOOBAR',
+                        'short_description' => 'case FOOBAR',
+                    ],
+                ]
+            ];
+
+            yield 'backed enum' => [
+                <<<'EOT'
+                    <?php
+
+                    enum Enum1 {
+                        case FOOBAR = 'bar';
+                    }
+
+                    Enum1::F<>
+
+                    EOT
+                , [
+                    [
+                        'type' => Suggestion::TYPE_ENUM,
+                        'name' => 'FOOBAR',
+                        'short_description' => 'case FOOBAR = "bar"',
+                    ],
+                ]
+            ];
+        }
     }
 
     /**
